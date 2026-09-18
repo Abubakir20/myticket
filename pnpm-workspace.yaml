@@ -1,3 +1,10 @@
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  unrs-resolver: set this to true or false
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  bcrypt: set this to true or false
+  esbuild: true
+  msgpackr-extract: true
+  prisma: true
+  unrs-resolver: true
+  workerd: true

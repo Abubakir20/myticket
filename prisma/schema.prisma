@@ -1,0 +1,334 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//                         ENUMS                     
+
+enum Role {
+  USER
+  ORGANIZER
+  CONTROLLER
+  ADMIN
+  SUPERADMIN
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum SeatingType {
+  SEATED
+  GENERAL
+}
+
+enum SessionStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELLED
+}
+
+//                           USERS 
+
+model User {
+  id             String   @id @default(uuid()) @db.Uuid
+  fullName       String
+  email          String   @unique
+  hashedPassword String
+  role           Role     @default(USER)
+  isVerified     Boolean  @default(false)
+  createdById    String?  @db.Uuid
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdUsers User[] @relation("UserCreatedBy")
+
+  applications         OrganizerApplication[] @relation("ApplicationUser")
+  reviewedApplications OrganizerApplication[] @relation("ApplicationReviewer")
+  venues               Venue[]
+  organizedEvents      Event[]                @relation("EventOrganizer")
+  reviewedEvents       Event[]                @relation("EventReviewer")
+  controllerEvents     ControllerEvent[]
+  orders               Order[]
+  checkedTickets       Ticket[]               @relation("TicketChecker")
+
+  @@map("users")
+}
+
+model OrganizerApplication {
+  id           String            @id @default(uuid()) @db.Uuid
+  userId       String            @db.Uuid
+  companyName  String
+  phone        String
+  description  String            @db.Text
+  status       ApplicationStatus @default(PENDING)
+  rejectReason String?
+  reviewedById String?           @db.Uuid
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  user       User  @relation("ApplicationUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("ApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@map("organizer_applications")
+}
+
+//                      VENUES                     
+
+model Venue {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  address     String
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy User      @relation(fields: [createdById], references: [id])
+  sectors   Sector[]
+  sessions  Session[]
+
+  @@map("venues")
+}
+
+model Sector {
+  id        String   @id @default(uuid()) @db.Uuid
+  venueId   String   @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  venue            Venue            @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  rows             Row[]
+  ticketCategories TicketCategory[]
+
+  @@map("sectors")
+}
+
+model Row {
+  id       String @id @default(uuid()) @db.Uuid
+  sectorId String @db.Uuid
+  number   Int
+
+  sector Sector @relation(fields: [sectorId], references: [id], onDelete: Cascade)
+  seats  Seat[]
+
+  @@unique([sectorId, number])
+  @@map("rows")
+}
+
+model Seat {
+  id     String @id @default(uuid()) @db.Uuid
+  rowId  String @db.Uuid
+  number Int
+
+  row        Row         @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  tickets    Ticket[]
+
+  @@unique([rowId, number])
+  @@map("seats")
+}
+
+//                      EVENTS                     
+
+model Event {
+  id           String      @id @default(uuid()) @db.Uuid
+  organizerId  String      @db.Uuid
+  title        String
+  description  String      @db.Text
+  ageLimit     Int?
+  duration     Int
+  posterUrl    String
+  status       EventStatus @default(PENDING)
+  rejectReason String?
+  reviewedById String?     @db.Uuid
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  organizer   User              @relation("EventOrganizer", fields: [organizerId], references: [id])
+  reviewedBy  User?             @relation("EventReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  images      EventImage[]
+  sessions    Session[]
+  controllers ControllerEvent[]
+
+  @@map("events")
+}
+
+model EventImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  eventId   String   @db.Uuid
+  url       String
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_images")
+}
+
+// ==================== SESSIONS ====================
+
+model Session {
+  id          String        @id @default(uuid()) @db.Uuid
+  eventId     String        @db.Uuid
+  venueId     String        @db.Uuid
+  startTime   DateTime
+  seatingType SeatingType
+  status      SessionStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  event            Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  venue            Venue            @relation(fields: [venueId], references: [id])
+  ticketCategories TicketCategory[]
+  orders           Order[]
+  tickets          Ticket[]
+
+  @@map("sessions")
+}
+
+model TicketCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  sessionId String   @db.Uuid
+  name      String
+  price     Decimal  @db.Decimal(12, 2)
+  sectorId  String?  @db.Uuid // faqat SEATED
+  quantity  Int? // faqat GENERAL
+  soldCount Int      @default(0) // faqat GENERAL
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session    Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sector     Sector?     @relation(fields: [sectorId], references: [id])
+  orderItems OrderItem[]
+
+  @@unique([sessionId, sectorId])
+  @@map("ticket_categories")
+}
+
+// ==================== CONTROLLERS ====================
+
+model ControllerEvent {
+  id           String   @id @default(uuid()) @db.Uuid
+  controllerId String   @db.Uuid
+  eventId      String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  controller User  @relation(fields: [controllerId], references: [id], onDelete: Cascade)
+  event      Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([controllerId, eventId])
+  @@map("controller_events")
+}
+
+// ==================== ORDERS ====================
+
+model Order {
+  id        String      @id @default(uuid()) @db.Uuid
+  userId    String      @db.Uuid
+  sessionId String      @db.Uuid
+  status    OrderStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user    User        @relation(fields: [userId], references: [id])
+  session Session     @relation(fields: [sessionId], references: [id])
+  items   OrderItem[]
+  payment Payment?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String   @id @default(uuid()) @db.Uuid
+  orderId          String   @db.Uuid
+  ticketCategoryId String   @db.Uuid
+  seatId           String?  @db.Uuid // faqat SEATED
+  price            Decimal  @db.Decimal(12, 2)
+  createdAt        DateTime @default(now())
+
+  order          Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticketCategory TicketCategory @relation(fields: [ticketCategoryId], references: [id])
+  seat           Seat?          @relation(fields: [seatId], references: [id])
+  ticket         Ticket?
+
+  @@map("order_items")
+}
+
+// ==================== PAYMENTS ====================
+
+model Payment {
+  id            String        @id @default(uuid()) @db.Uuid
+  orderId       String        @unique @db.Uuid
+  status        PaymentStatus @default(PENDING)
+  transactionId String        @unique
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// ==================== TICKETS ====================
+
+model Ticket {
+  id          String       @id @default(uuid()) @db.Uuid
+  orderItemId String       @unique @db.Uuid
+  sessionId   String       @db.Uuid
+  seatId      String?      @db.Uuid
+  qrCode      String       @unique
+  status      TicketStatus @default(ACTIVE)
+  usedAt      DateTime?
+  checkedById String?      @db.Uuid
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  session   Session   @relation(fields: [sessionId], references: [id])
+  seat      Seat?     @relation(fields: [seatId], references: [id])
+  checkedBy User?     @relation("TicketChecker", fields: [checkedById], references: [id], onDelete: SetNull)
+
+  @@unique([sessionId, seatId])
+  @@map("tickets")
+}
