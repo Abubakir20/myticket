@@ -1,0 +1,165 @@
+// Chipta sotish platformasi — DB diagramma
+// dbdiagram.io saytiga to'liq nusxalab qo'ying
+
+Enum role { USER ORGANIZER CONTROLLER ADMIN SUPERADMIN }
+Enum application_status { PENDING APPROVED REJECTED }
+Enum event_status { PENDING APPROVED REJECTED CANCELLED }
+Enum seating_type { SEATED GENERAL }
+Enum session_status { ACTIVE CANCELLED }
+Enum order_status { PENDING PAID CANCELLED EXPIRED }
+Enum payment_status { PENDING SUCCESS FAILED }
+Enum ticket_status { ACTIVE USED CANCELLED }
+
+Table users {
+  id uuid [pk]
+  full_name varchar [not null]
+  email varchar [not null, unique]
+  password varchar [not null]
+  role role [not null, default: 'USER']
+  is_verified boolean [not null, default: false]
+  created_by_id uuid [ref: > users.id, note: 'Controllerni yaratgan Organizer']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table organizer_applications {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  company_name varchar [not null]
+  phone varchar [not null]
+  description text [not null]
+  status application_status [not null, default: 'PENDING']
+  reject_reason varchar
+  reviewed_by_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table venues {
+  id uuid [pk]
+  name varchar [not null]
+  address varchar [not null]
+  description text
+  is_active boolean [not null, default: true]
+  created_by_id uuid [not null, ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sectors {
+  id uuid [pk]
+  venue_id uuid [not null, ref: > venues.id]
+  name varchar [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table rows {
+  id uuid [pk]
+  sector_id uuid [not null, ref: > sectors.id]
+  number int [not null]
+  indexes { (sector_id, number) [unique] }
+}
+
+Table seats {
+  id uuid [pk]
+  row_id uuid [not null, ref: > rows.id]
+  number int [not null]
+  indexes { (row_id, number) [unique] }
+}
+
+Table events {
+  id uuid [pk]
+  organizer_id uuid [not null, ref: > users.id]
+  title varchar [not null]
+  description text [not null]
+  age_limit int
+  duration int [not null, note: 'daqiqada']
+  poster_url varchar [not null]
+  status event_status [not null, default: 'PENDING']
+  reject_reason varchar
+  reviewed_by_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_images {
+  id uuid [pk]
+  event_id uuid [not null, ref: > events.id]
+  url varchar [not null]
+  created_at timestamp
+}
+
+Table sessions {
+  id uuid [pk]
+  event_id uuid [not null, ref: > events.id]
+  venue_id uuid [not null, ref: > venues.id]
+  start_time timestamp [not null]
+  seating_type seating_type [not null]
+  status session_status [not null, default: 'ACTIVE']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ticket_categories {
+  id uuid [pk]
+  session_id uuid [not null, ref: > sessions.id]
+  name varchar [not null]
+  price decimal(12,2) [not null]
+  sector_id uuid [ref: > sectors.id, note: 'faqat SEATED']
+  quantity int [note: 'faqat GENERAL']
+  sold_count int [not null, default: 0, note: 'faqat GENERAL']
+  created_at timestamp
+  updated_at timestamp
+  indexes { (session_id, sector_id) [unique] }
+}
+
+Table controller_events {
+  id uuid [pk]
+  controller_id uuid [not null, ref: > users.id]
+  event_id uuid [not null, ref: > events.id]
+  created_at timestamp
+  indexes { (controller_id, event_id) [unique] }
+}
+
+Table orders {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  session_id uuid [not null, ref: > sessions.id]
+  status order_status [not null, default: 'PENDING']
+  expires_at timestamp [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table order_items {
+  id uuid [pk]
+  order_id uuid [not null, ref: > orders.id]
+  ticket_category_id uuid [not null, ref: > ticket_categories.id]
+  seat_id uuid [ref: > seats.id, note: 'faqat SEATED']
+  price decimal(12,2) [not null]
+  created_at timestamp
+}
+
+Table payments {
+  id uuid [pk]
+  order_id uuid [not null, unique, ref: - orders.id]
+  status payment_status [not null, default: 'PENDING']
+  transaction_id varchar [not null, unique]
+  paid_at timestamp
+  created_at timestamp
+}
+
+Table tickets {
+  id uuid [pk]
+  order_item_id uuid [not null, unique, ref: - order_items.id]
+  session_id uuid [not null, ref: > sessions.id]
+  seat_id uuid [ref: > seats.id]
+  qr_code varchar [not null, unique]
+  status ticket_status [not null, default: 'ACTIVE']
+  used_at timestamp
+  checked_by_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  indexes { (session_id, seat_id) [unique] }
+}
