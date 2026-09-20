@@ -54,15 +54,14 @@ Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointl
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| POST | /auth/customer/signup | Public | fullName, email, password; status ACTIVE, emailga OTP yuboradi |
-| POST | /auth/customer/signin | Public | Access token qaytaradi, refresh token cookie'ga yoziladi |
+| POST | /auth/customer/signup | Public | fullName, email, password; status ACTIVE |
+| POST | /auth/customer/signin | Public | email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
 | POST | /auth/organizer/signup | Public | fullName, email, password + companyName, phone, description; `users` (PENDING) va `organizer_profiles` bitta transactionda yaratiladi, OTP yuboriladi |
-| POST | /auth/organizer/signin | Public | Faqat tasdiqlangan va ACTIVE Organizer kira oladi |
+| POST | /auth/organizer/signin | Public | email va password kiritiladi Faqat tasdiqlangan va ACTIVE Organizer kira oladi, agar malumotlar to'g;ri bo'lsa emailga otp jonatiladi|
 | POST | /auth/controller/signin | Public | Controller kirishi |
-| POST | /auth/admin/signin | Public | Admin kirishi |
-| POST | /auth/superadmin/signin | Public | Superadmin kirishi |
-| POST | /auth/verify-otp | Public | Umumiy: email + kod; `isVerified = true` |
-| POST | /auth/resend-otp | Public | Umumiy: OTP ni qayta yuborish |
+| POST | /auth/admin/signin | Public | Admin kirishi, email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
+| POST | /auth/superadmin/signin | Public | Superadmin kirishi, email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
+| POST | /auth/confirm | Public | Umumiy: Body da email va signin da emailga jonatilgan otp kiritiladi agar malumotlar to'g'ri bo'lsa, tizimga kiradi va Access token qaytaradi, refresh token cookie'ga yoziladi  |
 | POST | /auth/refresh | Cookie | Umumiy: yangi access token (status tekshiriladi) |
 | POST | /auth/logout | Auth | Umumiy: refresh cookie'ni tozalaydi |
 
@@ -87,6 +86,7 @@ Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointl
 | GET | /admin/organizers?status= | ADMIN | Organizerlar ro'yxati (PENDING — faollashtirishni kutayotganlar) |
 | PATCH | /admin/organizers/:id/activate | ADMIN | PENDING → ACTIVE; faqat emaili tasdiqlangan Organizer uchun |
 | GET | /admin/customers | ADMIN | Customerlar ro'yxati |
+| GET | /admin/organizers | ADMIN | Organizerlar ro'yxati |
 | PATCH | /admin/users/:id/block | ADMIN | ACTIVE → BLOCKED; faqat CUSTOMER va ORGANIZER |
 | PATCH | /admin/users/:id/unblock | ADMIN | BLOCKED → ACTIVE |
 
