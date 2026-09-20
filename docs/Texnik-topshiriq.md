@@ -86,6 +86,7 @@ Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointl
 | GET | /admin/organizers?status= | ADMIN | Organizerlar ro'yxati (PENDING — faollashtirishni kutayotganlar) |
 | PATCH | /admin/organizers/:id/activate | ADMIN | PENDING → ACTIVE; faqat emaili tasdiqlangan Organizer uchun |
 | GET | /admin/customers | ADMIN | Customerlar ro'yxati |
+| GET | /admin/organizers | ADMIN | Organizerlar ro'yxati |
 | PATCH | /admin/users/:id/block | ADMIN | ACTIVE → BLOCKED; faqat CUSTOMER va ORGANIZER |
 | PATCH | /admin/users/:id/unblock | ADMIN | BLOCKED → ACTIVE |
 
