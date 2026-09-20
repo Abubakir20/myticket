@@ -52,7 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  OrganizerApplication: 'OrganizerApplication',
+  OrganizerProfile: 'OrganizerProfile',
   Venue: 'Venue',
   Sector: 'Sector',
   Row: 'Row',
@@ -90,6 +90,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   hashedPassword: 'hashedPassword',
   role: 'role',
+  status: 'status',
   isVerified: 'isVerified',
   createdById: 'createdById',
   createdAt: 'createdAt',
@@ -99,20 +100,17 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const OrganizerApplicationScalarFieldEnum = {
+export const OrganizerProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   companyName: 'companyName',
   phone: 'phone',
   description: 'description',
-  status: 'status',
-  rejectReason: 'rejectReason',
-  reviewedById: 'reviewedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type OrganizerApplicationScalarFieldEnum = (typeof OrganizerApplicationScalarFieldEnum)[keyof typeof OrganizerApplicationScalarFieldEnum]
+export type OrganizerProfileScalarFieldEnum = (typeof OrganizerProfileScalarFieldEnum)[keyof typeof OrganizerProfileScalarFieldEnum]
 
 
 export const VenueScalarFieldEnum = {

@@ -30,6 +30,7 @@ export type UserMinAggregateOutputType = {
   email: string | null
   hashedPassword: string | null
   role: $Enums.Role | null
+  status: $Enums.UserStatus | null
   isVerified: boolean | null
   createdById: string | null
   createdAt: Date | null
@@ -42,6 +43,7 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   hashedPassword: string | null
   role: $Enums.Role | null
+  status: $Enums.UserStatus | null
   isVerified: boolean | null
   createdById: string | null
   createdAt: Date | null
@@ -54,6 +56,7 @@ export type UserCountAggregateOutputType = {
   email: number
   hashedPassword: number
   role: number
+  status: number
   isVerified: number
   createdById: number
   createdAt: number
@@ -68,6 +71,7 @@ export type UserMinAggregateInputType = {
   email?: true
   hashedPassword?: true
   role?: true
+  status?: true
   isVerified?: true
   createdById?: true
   createdAt?: true
@@ -80,6 +84,7 @@ export type UserMaxAggregateInputType = {
   email?: true
   hashedPassword?: true
   role?: true
+  status?: true
   isVerified?: true
   createdById?: true
   createdAt?: true
@@ -92,6 +97,7 @@ export type UserCountAggregateInputType = {
   email?: true
   hashedPassword?: true
   role?: true
+  status?: true
   isVerified?: true
   createdById?: true
   createdAt?: true
@@ -177,6 +183,7 @@ export type UserGroupByOutputType = {
   email: string
   hashedPassword: string
   role: $Enums.Role
+  status: $Enums.UserStatus
   isVerified: boolean
   createdById: string | null
   createdAt: Date
@@ -210,14 +217,14 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   hashedPassword?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdById?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   createdUsers?: Prisma.UserListRelationFilter
-  applications?: Prisma.OrganizerApplicationListRelationFilter
-  reviewedApplications?: Prisma.OrganizerApplicationListRelationFilter
+  organizerProfile?: Prisma.XOR<Prisma.OrganizerProfileNullableScalarRelationFilter, Prisma.OrganizerProfileWhereInput> | null
   venues?: Prisma.VenueListRelationFilter
   organizedEvents?: Prisma.EventListRelationFilter
   reviewedEvents?: Prisma.EventListRelationFilter
@@ -232,14 +239,14 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   hashedPassword?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.UserOrderByWithRelationInput
   createdUsers?: Prisma.UserOrderByRelationAggregateInput
-  applications?: Prisma.OrganizerApplicationOrderByRelationAggregateInput
-  reviewedApplications?: Prisma.OrganizerApplicationOrderByRelationAggregateInput
+  organizerProfile?: Prisma.OrganizerProfileOrderByWithRelationInput
   venues?: Prisma.VenueOrderByRelationAggregateInput
   organizedEvents?: Prisma.EventOrderByRelationAggregateInput
   reviewedEvents?: Prisma.EventOrderByRelationAggregateInput
@@ -257,14 +264,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   fullName?: Prisma.StringFilter<"User"> | string
   hashedPassword?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdById?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   createdUsers?: Prisma.UserListRelationFilter
-  applications?: Prisma.OrganizerApplicationListRelationFilter
-  reviewedApplications?: Prisma.OrganizerApplicationListRelationFilter
+  organizerProfile?: Prisma.XOR<Prisma.OrganizerProfileNullableScalarRelationFilter, Prisma.OrganizerProfileWhereInput> | null
   venues?: Prisma.VenueListRelationFilter
   organizedEvents?: Prisma.EventListRelationFilter
   reviewedEvents?: Prisma.EventListRelationFilter
@@ -279,6 +286,7 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   hashedPassword?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -297,6 +305,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   hashedPassword?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+  status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdById?: Prisma.UuidNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -309,13 +318,13 @@ export type UserCreateInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -330,13 +339,13 @@ export type UserUncheckedCreateInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -351,13 +360,13 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -372,13 +381,13 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -393,6 +402,7 @@ export type UserCreateManyInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
@@ -405,6 +415,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -416,6 +427,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,6 +455,7 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   hashedPassword?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -455,6 +468,7 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   hashedPassword?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -467,6 +481,7 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   hashedPassword?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -504,6 +519,10 @@ export type StringFieldUpdateOperationsInput = {
 
 export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
+}
+
+export type EnumUserStatusFieldUpdateOperationsInput = {
+  set?: $Enums.UserStatus
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -556,34 +575,18 @@ export type UserUncheckedUpdateManyWithoutCreatedByNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
-export type UserCreateNestedOneWithoutApplicationsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicationsInput, Prisma.UserUncheckedCreateWithoutApplicationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicationsInput
+export type UserCreateNestedOneWithoutOrganizerProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizerProfileInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserCreateNestedOneWithoutReviewedApplicationsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedApplicationsInput, Prisma.UserUncheckedCreateWithoutReviewedApplicationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedApplicationsInput
+export type UserUpdateOneRequiredWithoutOrganizerProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizerProfileInput
+  upsert?: Prisma.UserUpsertWithoutOrganizerProfileInput
   connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutApplicationsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicationsInput, Prisma.UserUncheckedCreateWithoutApplicationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicationsInput
-  upsert?: Prisma.UserUpsertWithoutApplicationsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicationsInput, Prisma.UserUpdateWithoutApplicationsInput>, Prisma.UserUncheckedUpdateWithoutApplicationsInput>
-}
-
-export type UserUpdateOneWithoutReviewedApplicationsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedApplicationsInput, Prisma.UserUncheckedCreateWithoutReviewedApplicationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedApplicationsInput
-  upsert?: Prisma.UserUpsertWithoutReviewedApplicationsInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedApplicationsInput, Prisma.UserUpdateWithoutReviewedApplicationsInput>, Prisma.UserUncheckedUpdateWithoutReviewedApplicationsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrganizerProfileInput, Prisma.UserUpdateWithoutOrganizerProfileInput>, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
 }
 
 export type UserCreateNestedOneWithoutVenuesInput = {
@@ -680,12 +683,12 @@ export type UserCreateWithoutCreatedUsersInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -700,12 +703,12 @@ export type UserUncheckedCreateWithoutCreatedUsersInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -725,12 +728,12 @@ export type UserCreateWithoutCreatedByInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -745,12 +748,12 @@ export type UserUncheckedCreateWithoutCreatedByInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -786,12 +789,12 @@ export type UserUpdateWithoutCreatedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -806,12 +809,12 @@ export type UserUncheckedUpdateWithoutCreatedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -845,24 +848,25 @@ export type UserScalarWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   hashedPassword?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdById?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
-export type UserCreateWithoutApplicationsInput = {
+export type UserCreateWithoutOrganizerProfileInput = {
   id?: string
   fullName: string
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -871,18 +875,18 @@ export type UserCreateWithoutApplicationsInput = {
   checkedTickets?: Prisma.TicketCreateNestedManyWithoutCheckedByInput
 }
 
-export type UserUncheckedCreateWithoutApplicationsInput = {
+export type UserUncheckedCreateWithoutOrganizerProfileInput = {
   id?: string
   fullName: string
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -891,79 +895,34 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   checkedTickets?: Prisma.TicketUncheckedCreateNestedManyWithoutCheckedByInput
 }
 
-export type UserCreateOrConnectWithoutApplicationsInput = {
+export type UserCreateOrConnectWithoutOrganizerProfileInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutApplicationsInput, Prisma.UserUncheckedCreateWithoutApplicationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
 }
 
-export type UserCreateWithoutReviewedApplicationsInput = {
-  id?: string
-  fullName: string
-  email: string
-  hashedPassword: string
-  role?: $Enums.Role
-  isVerified?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
-  createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
-  organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
-  reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
-  controllerEvents?: Prisma.ControllerEventCreateNestedManyWithoutControllerInput
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
-  checkedTickets?: Prisma.TicketCreateNestedManyWithoutCheckedByInput
-}
-
-export type UserUncheckedCreateWithoutReviewedApplicationsInput = {
-  id?: string
-  fullName: string
-  email: string
-  hashedPassword: string
-  role?: $Enums.Role
-  isVerified?: boolean
-  createdById?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
-  organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
-  reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
-  controllerEvents?: Prisma.ControllerEventUncheckedCreateNestedManyWithoutControllerInput
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
-  checkedTickets?: Prisma.TicketUncheckedCreateNestedManyWithoutCheckedByInput
-}
-
-export type UserCreateOrConnectWithoutReviewedApplicationsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedApplicationsInput, Prisma.UserUncheckedCreateWithoutReviewedApplicationsInput>
-}
-
-export type UserUpsertWithoutApplicationsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutApplicationsInput, Prisma.UserUncheckedUpdateWithoutApplicationsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutApplicationsInput, Prisma.UserUncheckedCreateWithoutApplicationsInput>
+export type UserUpsertWithoutOrganizerProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOrganizerProfileInput, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutApplicationsInput = {
+export type UserUpdateToOneWithWhereWithoutOrganizerProfileInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutApplicationsInput, Prisma.UserUncheckedUpdateWithoutApplicationsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOrganizerProfileInput, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
 }
 
-export type UserUpdateWithoutApplicationsInput = {
+export type UserUpdateWithoutOrganizerProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -972,69 +931,18 @@ export type UserUpdateWithoutApplicationsInput = {
   checkedTickets?: Prisma.TicketUpdateManyWithoutCheckedByNestedInput
 }
 
-export type UserUncheckedUpdateWithoutApplicationsInput = {
+export type UserUncheckedUpdateWithoutOrganizerProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
-  venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
-  organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
-  reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
-  controllerEvents?: Prisma.ControllerEventUncheckedUpdateManyWithoutControllerNestedInput
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
-  checkedTickets?: Prisma.TicketUncheckedUpdateManyWithoutCheckedByNestedInput
-}
-
-export type UserUpsertWithoutReviewedApplicationsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedApplicationsInput, Prisma.UserUncheckedUpdateWithoutReviewedApplicationsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedApplicationsInput, Prisma.UserUncheckedCreateWithoutReviewedApplicationsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutReviewedApplicationsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedApplicationsInput, Prisma.UserUncheckedUpdateWithoutReviewedApplicationsInput>
-}
-
-export type UserUpdateWithoutReviewedApplicationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  fullName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
-  createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
-  organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
-  reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
-  controllerEvents?: Prisma.ControllerEventUpdateManyWithoutControllerNestedInput
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
-  checkedTickets?: Prisma.TicketUpdateManyWithoutCheckedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutReviewedApplicationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  fullName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -1049,13 +957,13 @@ export type UserCreateWithoutVenuesInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
   controllerEvents?: Prisma.ControllerEventCreateNestedManyWithoutControllerInput
@@ -1069,13 +977,13 @@ export type UserUncheckedCreateWithoutVenuesInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
   controllerEvents?: Prisma.ControllerEventUncheckedCreateNestedManyWithoutControllerInput
@@ -1105,13 +1013,13 @@ export type UserUpdateWithoutVenuesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
   controllerEvents?: Prisma.ControllerEventUpdateManyWithoutControllerNestedInput
@@ -1125,13 +1033,13 @@ export type UserUncheckedUpdateWithoutVenuesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
   controllerEvents?: Prisma.ControllerEventUncheckedUpdateManyWithoutControllerNestedInput
@@ -1145,13 +1053,13 @@ export type UserCreateWithoutOrganizedEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
   controllerEvents?: Prisma.ControllerEventCreateNestedManyWithoutControllerInput
@@ -1165,13 +1073,13 @@ export type UserUncheckedCreateWithoutOrganizedEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
   controllerEvents?: Prisma.ControllerEventUncheckedCreateNestedManyWithoutControllerInput
@@ -1190,13 +1098,13 @@ export type UserCreateWithoutReviewedEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   controllerEvents?: Prisma.ControllerEventCreateNestedManyWithoutControllerInput
@@ -1210,13 +1118,13 @@ export type UserUncheckedCreateWithoutReviewedEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   controllerEvents?: Prisma.ControllerEventUncheckedCreateNestedManyWithoutControllerInput
@@ -1246,13 +1154,13 @@ export type UserUpdateWithoutOrganizedEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
   controllerEvents?: Prisma.ControllerEventUpdateManyWithoutControllerNestedInput
@@ -1266,13 +1174,13 @@ export type UserUncheckedUpdateWithoutOrganizedEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
   controllerEvents?: Prisma.ControllerEventUncheckedUpdateManyWithoutControllerNestedInput
@@ -1297,13 +1205,13 @@ export type UserUpdateWithoutReviewedEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   controllerEvents?: Prisma.ControllerEventUpdateManyWithoutControllerNestedInput
@@ -1317,13 +1225,13 @@ export type UserUncheckedUpdateWithoutReviewedEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   controllerEvents?: Prisma.ControllerEventUncheckedUpdateManyWithoutControllerNestedInput
@@ -1337,13 +1245,13 @@ export type UserCreateWithoutControllerEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -1357,13 +1265,13 @@ export type UserUncheckedCreateWithoutControllerEventsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -1393,13 +1301,13 @@ export type UserUpdateWithoutControllerEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -1413,13 +1321,13 @@ export type UserUncheckedUpdateWithoutControllerEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -1433,13 +1341,13 @@ export type UserCreateWithoutOrdersInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -1453,13 +1361,13 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -1489,13 +1397,13 @@ export type UserUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -1509,13 +1417,13 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -1529,13 +1437,13 @@ export type UserCreateWithoutCheckedTicketsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
   createdUsers?: Prisma.UserCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventCreateNestedManyWithoutReviewedByInput
@@ -1549,13 +1457,13 @@ export type UserUncheckedCreateWithoutCheckedTicketsInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatedByInput
-  applications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutUserInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedCreateNestedManyWithoutReviewedByInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
   venues?: Prisma.VenueUncheckedCreateNestedManyWithoutCreatedByInput
   organizedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutOrganizerInput
   reviewedEvents?: Prisma.EventUncheckedCreateNestedManyWithoutReviewedByInput
@@ -1585,13 +1493,13 @@ export type UserUpdateWithoutCheckedTicketsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -1605,13 +1513,13 @@ export type UserUncheckedUpdateWithoutCheckedTicketsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -1625,6 +1533,7 @@ export type UserCreateManyCreatedByInput = {
   email: string
   hashedPassword: string
   role?: $Enums.Role
+  status?: $Enums.UserStatus
   isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1636,12 +1545,12 @@ export type UserUpdateWithoutCreatedByInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUpdateManyWithoutReviewedByNestedInput
@@ -1656,12 +1565,12 @@ export type UserUncheckedUpdateWithoutCreatedByInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatedByNestedInput
-  applications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutUserNestedInput
-  reviewedApplications?: Prisma.OrganizerApplicationUncheckedUpdateManyWithoutReviewedByNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
   venues?: Prisma.VenueUncheckedUpdateManyWithoutCreatedByNestedInput
   organizedEvents?: Prisma.EventUncheckedUpdateManyWithoutOrganizerNestedInput
   reviewedEvents?: Prisma.EventUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -1676,6 +1585,7 @@ export type UserUncheckedUpdateManyWithoutCreatedByInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   hashedPassword?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1688,8 +1598,6 @@ export type UserUncheckedUpdateManyWithoutCreatedByInput = {
 
 export type UserCountOutputType = {
   createdUsers: number
-  applications: number
-  reviewedApplications: number
   venues: number
   organizedEvents: number
   reviewedEvents: number
@@ -1700,8 +1608,6 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdUsers?: boolean | UserCountOutputTypeCountCreatedUsersArgs
-  applications?: boolean | UserCountOutputTypeCountApplicationsArgs
-  reviewedApplications?: boolean | UserCountOutputTypeCountReviewedApplicationsArgs
   venues?: boolean | UserCountOutputTypeCountVenuesArgs
   organizedEvents?: boolean | UserCountOutputTypeCountOrganizedEventsArgs
   reviewedEvents?: boolean | UserCountOutputTypeCountReviewedEventsArgs
@@ -1725,20 +1631,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountCreatedUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.OrganizerApplicationWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountReviewedApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.OrganizerApplicationWhereInput
 }
 
 /**
@@ -1790,14 +1682,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   hashedPassword?: boolean
   role?: boolean
+  status?: boolean
   isVerified?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   createdBy?: boolean | Prisma.User$createdByArgs<ExtArgs>
   createdUsers?: boolean | Prisma.User$createdUsersArgs<ExtArgs>
-  applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
-  reviewedApplications?: boolean | Prisma.User$reviewedApplicationsArgs<ExtArgs>
+  organizerProfile?: boolean | Prisma.User$organizerProfileArgs<ExtArgs>
   venues?: boolean | Prisma.User$venuesArgs<ExtArgs>
   organizedEvents?: boolean | Prisma.User$organizedEventsArgs<ExtArgs>
   reviewedEvents?: boolean | Prisma.User$reviewedEventsArgs<ExtArgs>
@@ -1813,6 +1705,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   hashedPassword?: boolean
   role?: boolean
+  status?: boolean
   isVerified?: boolean
   createdById?: boolean
   createdAt?: boolean
@@ -1826,6 +1719,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   hashedPassword?: boolean
   role?: boolean
+  status?: boolean
   isVerified?: boolean
   createdById?: boolean
   createdAt?: boolean
@@ -1839,18 +1733,18 @@ export type UserSelectScalar = {
   email?: boolean
   hashedPassword?: boolean
   role?: boolean
+  status?: boolean
   isVerified?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "email" | "hashedPassword" | "role" | "isVerified" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "email" | "hashedPassword" | "role" | "status" | "isVerified" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.User$createdByArgs<ExtArgs>
   createdUsers?: boolean | Prisma.User$createdUsersArgs<ExtArgs>
-  applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
-  reviewedApplications?: boolean | Prisma.User$reviewedApplicationsArgs<ExtArgs>
+  organizerProfile?: boolean | Prisma.User$organizerProfileArgs<ExtArgs>
   venues?: boolean | Prisma.User$venuesArgs<ExtArgs>
   organizedEvents?: boolean | Prisma.User$organizedEventsArgs<ExtArgs>
   reviewedEvents?: boolean | Prisma.User$reviewedEventsArgs<ExtArgs>
@@ -1871,8 +1765,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     createdBy: Prisma.$UserPayload<ExtArgs> | null
     createdUsers: Prisma.$UserPayload<ExtArgs>[]
-    applications: Prisma.$OrganizerApplicationPayload<ExtArgs>[]
-    reviewedApplications: Prisma.$OrganizerApplicationPayload<ExtArgs>[]
+    organizerProfile: Prisma.$OrganizerProfilePayload<ExtArgs> | null
     venues: Prisma.$VenuePayload<ExtArgs>[]
     organizedEvents: Prisma.$EventPayload<ExtArgs>[]
     reviewedEvents: Prisma.$EventPayload<ExtArgs>[]
@@ -1886,6 +1779,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     hashedPassword: string
     role: $Enums.Role
+    status: $Enums.UserStatus
     isVerified: boolean
     createdById: string | null
     createdAt: Date
@@ -2286,8 +2180,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   createdBy<T extends Prisma.User$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdUsers<T extends Prisma.User$createdUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdUsersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  applications<T extends Prisma.User$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reviewedApplications<T extends Prisma.User$reviewedApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizerProfile<T extends Prisma.User$organizerProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizerProfileArgs<ExtArgs>>): Prisma.Prisma__OrganizerProfileClient<runtime.Types.Result.GetResult<Prisma.$OrganizerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   venues<T extends Prisma.User$venuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$venuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VenuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   organizedEvents<T extends Prisma.User$organizedEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizedEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedEvents<T extends Prisma.User$reviewedEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2328,6 +2221,7 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly hashedPassword: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
+  readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdById: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -2776,51 +2670,22 @@ export type User$createdUsersArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * User.applications
+ * User.organizerProfile
  */
-export type User$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$organizerProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the OrganizerApplication
+   * Select specific fields to fetch from the OrganizerProfile
    */
-  select?: Prisma.OrganizerApplicationSelect<ExtArgs> | null
+  select?: Prisma.OrganizerProfileSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the OrganizerApplication
+   * Omit specific fields from the OrganizerProfile
    */
-  omit?: Prisma.OrganizerApplicationOmit<ExtArgs> | null
+  omit?: Prisma.OrganizerProfileOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.OrganizerApplicationInclude<ExtArgs> | null
-  where?: Prisma.OrganizerApplicationWhereInput
-  orderBy?: Prisma.OrganizerApplicationOrderByWithRelationInput | Prisma.OrganizerApplicationOrderByWithRelationInput[]
-  cursor?: Prisma.OrganizerApplicationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.OrganizerApplicationScalarFieldEnum | Prisma.OrganizerApplicationScalarFieldEnum[]
-}
-
-/**
- * User.reviewedApplications
- */
-export type User$reviewedApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the OrganizerApplication
-   */
-  select?: Prisma.OrganizerApplicationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the OrganizerApplication
-   */
-  omit?: Prisma.OrganizerApplicationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OrganizerApplicationInclude<ExtArgs> | null
-  where?: Prisma.OrganizerApplicationWhereInput
-  orderBy?: Prisma.OrganizerApplicationOrderByWithRelationInput | Prisma.OrganizerApplicationOrderByWithRelationInput[]
-  cursor?: Prisma.OrganizerApplicationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.OrganizerApplicationScalarFieldEnum | Prisma.OrganizerApplicationScalarFieldEnum[]
+  include?: Prisma.OrganizerProfileInclude<ExtArgs> | null
+  where?: Prisma.OrganizerProfileWhereInput
 }
 
 /**
