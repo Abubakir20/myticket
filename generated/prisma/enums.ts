@@ -10,7 +10,7 @@
 */
 
 export const Role = {
-  USER: 'USER',
+  CUSTOMER: 'CUSTOMER',
   ORGANIZER: 'ORGANIZER',
   CONTROLLER: 'CONTROLLER',
   ADMIN: 'ADMIN',
@@ -20,13 +20,13 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
-export const ApplicationStatus = {
+export const UserStatus = {
   PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED'
 } as const
 
-export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
 
 export const EventStatus = {

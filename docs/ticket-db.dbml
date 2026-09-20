@@ -1,8 +1,8 @@
 // Chipta sotish platformasi — DB diagramma
 // dbdiagram.io saytiga to'liq nusxalab qo'ying
 
-Enum role { USER ORGANIZER CONTROLLER ADMIN SUPERADMIN }
-Enum application_status { PENDING APPROVED REJECTED }
+Enum role { CUSTOMER ORGANIZER CONTROLLER ADMIN SUPERADMIN }
+Enum user_status { PENDING ACTIVE BLOCKED }
 Enum event_status { PENDING APPROVED REJECTED CANCELLED }
 Enum seating_type { SEATED GENERAL }
 Enum session_status { ACTIVE CANCELLED }
@@ -15,22 +15,20 @@ Table users {
   full_name varchar [not null]
   email varchar [not null, unique]
   password varchar [not null]
-  role role [not null, default: 'USER']
+  role role [not null, default: 'CUSTOMER']
+  status user_status [not null, default: 'ACTIVE']
   is_verified boolean [not null, default: false]
   created_by_id uuid [ref: > users.id, note: 'Controllerni yaratgan Organizer']
   created_at timestamp
   updated_at timestamp
 }
 
-Table organizer_applications {
+Table organizer_profiles {
   id uuid [pk]
-  user_id uuid [not null, ref: > users.id]
+  user_id uuid [not null, unique, ref: - users.id]
   company_name varchar [not null]
   phone varchar [not null]
-  description text [not null]
-  status application_status [not null, default: 'PENDING']
-  reject_reason varchar
-  reviewed_by_id uuid [ref: > users.id]
+  description text
   created_at timestamp
   updated_at timestamp
 }

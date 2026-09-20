@@ -13,20 +13,20 @@ datasource db {
   provider = "postgresql"
 }
 
-//                         ENUMS                     
+// ==================== ENUMS ====================
 
 enum Role {
-  USER
+  CUSTOMER
   ORGANIZER
   CONTROLLER
   ADMIN
   SUPERADMIN
 }
 
-enum ApplicationStatus {
-  PENDING
-  APPROVED
-  REJECTED
+enum UserStatus {
+  PENDING // faqat Organizer: Admin faollashtirishini kutmoqda
+  ACTIVE
+  BLOCKED
 }
 
 enum EventStatus {
@@ -65,53 +65,49 @@ enum TicketStatus {
   CANCELLED
 }
 
-//                           USERS 
+// ==================== USERS ====================
 
 model User {
-  id             String   @id @default(uuid()) @db.Uuid
+  id             String     @id @default(uuid()) @db.Uuid
   fullName       String
-  email          String   @unique
+  email          String     @unique
   hashedPassword String
-  role           Role     @default(USER)
-  isVerified     Boolean  @default(false)
-  createdById    String?  @db.Uuid
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  role           Role       @default(CUSTOMER)
+  status         UserStatus @default(ACTIVE)
+  isVerified     Boolean    @default(false)
+  createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdUsers User[] @relation("UserCreatedBy")
 
-  applications         OrganizerApplication[] @relation("ApplicationUser")
-  reviewedApplications OrganizerApplication[] @relation("ApplicationReviewer")
-  venues               Venue[]
-  organizedEvents      Event[]                @relation("EventOrganizer")
-  reviewedEvents       Event[]                @relation("EventReviewer")
-  controllerEvents     ControllerEvent[]
-  orders               Order[]
-  checkedTickets       Ticket[]               @relation("TicketChecker")
+  organizerProfile OrganizerProfile?
+  venues           Venue[]
+  organizedEvents  Event[]           @relation("EventOrganizer")
+  reviewedEvents   Event[]           @relation("EventReviewer")
+  controllerEvents ControllerEvent[]
+  orders           Order[]
+  checkedTickets   Ticket[]          @relation("TicketChecker")
 
   @@map("users")
 }
 
-model OrganizerApplication {
-  id           String            @id @default(uuid()) @db.Uuid
-  userId       String            @db.Uuid
-  companyName  String
-  phone        String
-  description  String            @db.Text
-  status       ApplicationStatus @default(PENDING)
-  rejectReason String?
-  reviewedById String?           @db.Uuid
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+model OrganizerProfile {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @db.Uuid
+  companyName String
+  phone       String
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user       User  @relation("ApplicationUser", fields: [userId], references: [id], onDelete: Cascade)
-  reviewedBy User? @relation("ApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("organizer_applications")
+  @@map("organizer_profiles")
 }
 
-//                      VENUES                     
+// ==================== VENUES ====================
 
 model Venue {
   id          String   @id @default(uuid()) @db.Uuid
@@ -169,7 +165,7 @@ model Seat {
   @@map("seats")
 }
 
-//                      EVENTS                     
+// ==================== EVENTS ====================
 
 model Event {
   id           String      @id @default(uuid()) @db.Uuid
