@@ -89,6 +89,7 @@ model User {
   controllerEvents ControllerEvent[]
   orders           Order[]
   checkedTickets   Ticket[]          @relation("TicketChecker")
+  devices          Device[]
 
   @@map("users")
 }
@@ -105,6 +106,25 @@ model OrganizerProfile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("organizer_profiles")
+}
+
+// ==================== DEVICES ====================
+// Login seanslari (qurilmalar).
+
+model Device {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @db.Uuid
+  hashedRefreshToken String
+  userAgent          String?
+  ipAddress          String?
+  lastActiveAt       DateTime @default(now())
+  expiresAt          DateTime // refresh token muddati
+  createdAt          DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("devices")
 }
 
 // ==================== VENUES ====================

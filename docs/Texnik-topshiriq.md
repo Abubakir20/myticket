@@ -1,6 +1,6 @@
 # Chipta sotish platformasi — Backend Texnik-topshiriq
 
-2026-09-18
+2026-09-21
 
 ## 1. Umumiy ma'lumot
 
@@ -22,75 +22,88 @@ Loyiha doirasidan tashqari: promo-kod, refund, sevimlilar, izoh/baho, kategoriya
 
 Ochiq savol: OTP kodni emailga yuborish uchun SMTP kutubxonasi (masalan, nodemailer) kerak bo'ladi — texnologiyalar ro'yxatiga qo'shish jamoa qaroriga bog'liq.
 
-## 2. Rollar va huquqlar
+## 2. Rollar, holatlar va huquqlar
 
-Tizimda 5 ta rol bor: `CUSTOMER`, `ORGANIZER`, `CONTROLLER`, `ADMIN`, `SUPERADMIN`. Barcha foydalanuvchilar bitta `users` jadvalida saqlanadi: rol `users.role`, holat `users.status` (PENDING, ACTIVE, BLOCKED) ustunida. Email butun tizim bo'yicha unique — bitta email bilan faqat bitta akkaunt ochiladi. Har bir rol o'z signin endpointi orqali kiradi.
+Tizimda 5 ta rol bor: `USER`, `ORGANIZER`, `CONTROLLER`, `ADMIN`, `SUPERADMIN`. Barcha foydalanuvchilar bitta `users` jadvalida saqlanadi. Email butun tizim bo'yicha unique — bitta email bilan faqat bitta akkaunt ochiladi. Rol `RolesGuard` + `@Roles()` dekoratori orqali tekshiriladi.
 
-| Rol | Qanday paydo bo'ladi | Kirish | Asosiy huquqlari |
-| --- | --- | --- | --- |
-| CUSTOMER | `/auth/customer/signup` + email OTP; status darhol ACTIVE | `/auth/customer/signin` | Tadbirlarni ko'rish, buyurtma berish, to'lash, o'z chiptalarini ko'rish |
-| ORGANIZER | `/auth/organizer/signup` (kompaniya ma'lumotlari bilan) + email OTP; status PENDING, Admin faollashtirgach ACTIVE | `/auth/organizer/signin` | Tadbir va seans yaratish (tayyor zallardan tanlab), afisha/galereya yuklash, narx kategoriyalari, Controller yaratish va o'z tadbirlariga biriktirish, tadbirni bekor qilish |
-| CONTROLLER | ORGANIZER yaratadi (`createdById`), darhol ACTIVE | `/auth/controller/signin` | Biriktirilgan tadbirlarning barcha seanslarida QR kodni tekshirish (check-in) |
-| ADMIN | SUPERADMIN yaratadi | `/auth/admin/signin` | Zal, sektor, qator, o'rindiq yaratish; tadbirlarni tasdiqlash yoki rad etish; Organizer'ni faollashtirish; Organizer va Customer'ni bloklash; tadbirni bekor qilish |
-| SUPERADMIN | Seed orqali (`.env`: `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD`) | `/auth/superadmin/signin` | ADMIN huquqlari + adminlarni yaratish va o'chirish |
+Foydalanuvchi holati uchta mustaqil ustun bilan boshqariladi:
 
-**Signin qoidalari** (barcha rollar uchun bir xil tartib):
+| Ustun | Qiymatlar | Vazifasi |
+| --- | --- | --- |
+| `role` | USER, ORGANIZER, CONTROLLER, ADMIN, SUPERADMIN | Nima qila olishi |
+| `status` | ACTIVE, BLOCKED | Akkaunt faolmi yoki bloklanganmi |
+| `isVerified` | true / false | Email OTP orqali tasdiqlanganmi |
 
-1. Email va parol tekshiriladi.
-2. Akkaunt roli endpoint roliga mos kelishi kerak. Mos kelmasa ham, parol noto'g'ri bo'lsa ham bir xil javob qaytadi: 401 "email yoki parol noto'g'ri" — akkaunt borligi oshkor qilinmaydi.
-3. CUSTOMER va ORGANIZER uchun `isVerified = true` bo'lishi kerak, aks holda 403 "email tasdiqlanmagan".
-4. `status = PENDING` bo'lsa 403 "akkaunt Admin tomonidan faollashtirilmagan", `BLOCKED` bo'lsa 403 "akkaunt bloklangan".
-5. JWT payload: `sub` (userId) va `role`. `JwtStrategy` va `/auth/refresh` har safar foydalanuvchi statusi ACTIVE ekanini tekshiradi, shuning uchun bloklangan akkaunt darhol to'xtatiladi.
+| Rol | Qanday paydo bo'ladi | Asosiy huquqlari |
+| --- | --- | --- |
+| USER | O'zi ro'yxatdan o'tadi, emailni OTP bilan tasdiqlaydi | Tadbirlarni ko'rish, buyurtma berish, to'lash, o'z chiptalarini ko'rish, Organizer bo'lishga ariza berish |
+| ORGANIZER | USER ariza beradi, ADMIN tasdiqlaydi — rol ORGANIZER ga o'zgaradi | Tadbir va seans yaratish (tayyor zallardan tanlab), afisha/galereya yuklash, narx kategoriyalarini belgilash, Controller yaratish va o'z tadbirlariga biriktirish, tadbirni bekor qilish |
+| CONTROLLER | ORGANIZER yaratadi (`createdById`) | Biriktirilgan tadbirlarning barcha seanslarida QR kodni tekshirish (check-in) |
+| ADMIN | SUPERADMIN yaratadi | Zal, sektor, qator, o'rindiq yaratish; Organizer arizalarini va tadbirlarni tasdiqlash yoki rad etish; USER va ORGANIZER ni bloklash; tadbirni bekor qilish |
+| SUPERADMIN | Seed orqali (`.env`: `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD`) | ADMIN huquqlari + adminlarni yaratish va o'chirish |
 
-**Status o'zgarishlari:** CUSTOMER: ACTIVE ↔ BLOCKED. ORGANIZER: PENDING → ACTIVE ↔ BLOCKED. CONTROLLER, ADMIN, SUPERADMIN: doim ACTIVE, `isVerified = true`.
+ADMIN, CONTROLLER va SUPERADMIN yaratilganda darhol `isVerified = true`, `status = ACTIVE` bo'ladi.
 
-Ochiq savol: Organizer bloklansa, uning tadbirlari va sotilgan chiptalari nima bo'ladi — saytda qoladimi yoki avtomatik bekor qilinadimi?
+**Login qoidalari** (barcha rollar uchun bitta `/auth/login`):
+
+1. Email va parol tekshiriladi. Email topilmasa ham, parol noto'g'ri bo'lsa ham bir xil javob qaytadi: 401 "email yoki parol noto'g'ri" — akkaunt borligi oshkor qilinmaydi.
+2. `isVerified = false` bo'lsa 403 "email tasdiqlanmagan".
+3. `status = BLOCKED` bo'lsa 403 "akkaunt bloklangan".
+4. Muvaffaqiyatli loginda `devices` ga yangi yozuv qo'shiladi (hash'langan refresh token, userAgent, ipAddress, expiresAt). Qurilmalar soni cheklanmaydi.
+5. JWT payload: `sub` (userId), `role` va `deviceId`. `JwtStrategy` va `/auth/refresh` har safar foydalanuvchi statusi ACTIVE ekanini tekshiradi, shuning uchun bloklangan akkaunt darhol to'xtatiladi. `/auth/refresh` qo'shimcha ravishda `deviceId` bo'yicha qurilma mavjudligi va refresh token hash'i mosligini tekshiradi.
+
+**Holat o'zgarishlari:** USER va ORGANIZER: ACTIVE ↔ BLOCKED. CONTROLLER, ADMIN, SUPERADMIN: doim ACTIVE. Rol o'zgarishi: USER → ORGANIZER (faqat ariza tasdiqlanganda).
+
+**Organizer'ni bloklash qoidasi:** agar Organizer tadbirlari bo'yicha chiptalar sotilgan bo'lsa, uni bloklab bo'lmaydi. Avval o'sha tadbirlarga boshqa Organizer biriktiriladi, shundan keyingina eski Organizer'ni bloklash mumkin.
 
 ## 3. Modullar va endpointlar
 
-Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointlar `/api` prefiksi bilan ishlaydi; "Public" — tokensiz ochiq.
+Loyiha 10 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointlar `/api` prefiksi bilan ishlaydi; "Public" — tokensiz ochiq.
 
 ### 3.1 Auth
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| POST | /auth/customer/signup | Public | fullName, email, password; status ACTIVE |
-| POST | /auth/customer/signin | Public | email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
-| POST | /auth/organizer/signup | Public | fullName, email, password + companyName, phone, description; `users` (PENDING) va `organizer_profiles` bitta transactionda yaratiladi, OTP yuboriladi |
-| POST | /auth/organizer/signin | Public | email va password kiritiladi Faqat tasdiqlangan va ACTIVE Organizer kira oladi, agar malumotlar to'g;ri bo'lsa emailga otp jonatiladi|
-| POST | /auth/controller/signin | Public | Controller kirishi |
-| POST | /auth/admin/signin | Public | Admin kirishi, email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
-| POST | /auth/superadmin/signin | Public | Superadmin kirishi, email va password kiritiladi agar malumotlar to'g'ri bo'lsa emailga otp habar jonatiladi |
-| POST | /auth/confirm | Public | Umumiy: Body da email va signin da emailga jonatilgan otp kiritiladi agar malumotlar to'g'ri bo'lsa, tizimga kiradi va Access token qaytaradi, refresh token cookie'ga yoziladi  |
-| POST | /auth/refresh | Cookie | Umumiy: yangi access token (status tekshiriladi) |
-| POST | /auth/logout | Auth | Umumiy: refresh cookie'ni tozalaydi |
+| POST | /auth/register | Public | fullName, email, password; USER yaratiladi (`isVerified = false`, `status = ACTIVE`), emailga OTP yuboriladi |
+| POST | /auth/verify-otp | Public | email + kod; `isVerified = true` |
+| POST | /auth/resend-otp | Public | OTP ni qayta yuborish |
+| POST | /auth/login | Public | 2-bo'limdagi login qoidalari; `devices` ga yozuv qo'shiladi, access token qaytaradi, refresh token cookie'ga yoziladi |
+| POST | /auth/refresh | Cookie | Yangi access token (status va qurilma tekshiriladi) |
+| POST | /auth/logout | Auth | Joriy qurilma yozuvini `devices` dan o'chiradi va refresh cookie'ni tozalaydi |
 
 ### 3.2 Users
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| GET | /users/me | Auth | O'z profili (Organizer uchun `organizer_profiles` bilan) |
+| GET | /users/me | Auth | O'z profili |
 | PATCH | /users/me | Auth | fullName, parolni o'zgartirish |
-| PATCH | /organizers/me | ORGANIZER | companyName, phone, description ni tahrirlash |
 | POST | /admins | SUPERADMIN | Admin yaratish |
 | GET | /admins | SUPERADMIN | Adminlar ro'yxati |
 | DELETE | /admins/:id | SUPERADMIN | Adminni o'chirish |
-| POST | /controllers | ORGANIZER | Controller yaratish |
+| POST | /controllers | ORGANIZER | Controller yaratish: `fullName`, `email`, `password`. `users` ga `role = CONTROLLER`, `createdById = organizerId`, `isVerified = true`, `status = ACTIVE` bilan yoziladi (OTP talab qilinmaydi). Email tizimda band bo'lsa 409. Controller o'z emaili va paroli bilan umumiy `POST /auth/login` orqali kiradi |
 | GET | /controllers | ORGANIZER | O'zi yaratgan controllerlar |
 | DELETE | /controllers/:id | ORGANIZER | Controllerni o'chirish |
 
-### 3.3 Foydalanuvchilarni boshqarish (Admin)
+### 3.3 Organizer Applications
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| GET | /admin/organizers?status= | ADMIN | Organizerlar ro'yxati (PENDING — faollashtirishni kutayotganlar) |
-| PATCH | /admin/organizers/:id/activate | ADMIN | PENDING → ACTIVE; faqat emaili tasdiqlangan Organizer uchun |
-| GET | /admin/customers | ADMIN | Customerlar ro'yxati |
-| GET | /admin/organizers | ADMIN | Organizerlar ro'yxati |
-| PATCH | /admin/users/:id/block | ADMIN | ACTIVE → BLOCKED; faqat CUSTOMER va ORGANIZER |
+| POST | /organizer-applications | USER | Ariza berish (companyName, phone, description) |
+| GET | /organizer-applications/me | USER | O'z arizasi holati |
+| GET | /organizer-applications?status= | ADMIN | Arizalar ro'yxati |
+| PATCH | /organizer-applications/:id/approve | ADMIN | Tasdiqlash, user roli ORGANIZER bo'ladi |
+| PATCH | /organizer-applications/:id/reject | ADMIN | Rad etish (rejectReason) |
+
+### 3.4 Foydalanuvchilarni boshqarish (Admin)
+
+| Method | Endpoint | Rol | Tavsif |
+| --- | --- | --- | --- |
+| GET | /admin/users | ADMIN | USER lar ro'yxati |
+| GET | /admin/organizers | ADMIN | ORGANIZER lar ro'yxati |
+| PATCH | /admin/users/:id/block | ADMIN | ACTIVE → BLOCKED; faqat USER va ORGANIZER. Tadbirlari bo'yicha chipta sotilgan ORGANIZER uchun rad etiladi (409) — avval tadbirlar boshqa Organizer'ga biriktiriladi (2-bo'lim) |
 | PATCH | /admin/users/:id/unblock | ADMIN | BLOCKED → ACTIVE |
 
-### 3.4 Venues
+### 3.5 Venues
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
@@ -102,14 +115,14 @@ Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointl
 | POST | /sectors/:id/rows | ADMIN | Qator qo'shish: `number` + `seatsCount`, o'rindiqlar avtomatik yaratiladi |
 | DELETE | /sectors/:id, /rows/:id | ADMIN | O'chirish |
 
-### 3.5 Events
+### 3.6 Events
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
 | POST | /events | ORGANIZER | multipart: ma'lumotlar + `poster`; status PENDING |
 | POST | /events/:id/images | ORGANIZER | multipart: galereya rasmlari |
 | DELETE | /events/:id/images/:imageId | ORGANIZER | Rasmni o'chirish |
-| PATCH | /events/:id | ORGANIZER | O'z tadbirini tahrirlash |
+| PATCH | /events/:id | ORGANIZER | O'z tadbirini tahrirlash; APPROVED tadbir tahrirlansa, status qayta PENDING ga o'tadi |
 | GET | /events | Public | Faqat APPROVED tadbirlar, pagination, Redis kesh |
 | GET | /events/:id | Public | Tadbir + galereya + seanslar |
 | GET | /events/my | ORGANIZER | O'z tadbirlari (barcha statuslar) |
@@ -117,9 +130,9 @@ Loyiha 9 ta biznes modul va umumiy (shared) modullardan iborat. Barcha endpointl
 | PATCH | /events/:id/approve, /reject | ADMIN | Tasdiqlash yoki rad etish |
 | PATCH | /events/:id/cancel | ORGANIZER (o'ziniki), ADMIN | Tadbirni bekor qilish |
 
-Ochiq savol: APPROVED tadbir tahrirlansa, u qayta PENDING (moderatsiya) holatiga tushadimi?
+**Qayta moderatsiya:** APPROVED tadbir tahrirlansa, u PENDING holatiga qaytadi va ADMIN qayta tasdiqlamaguncha `GET /events` ro'yxatida ko'rinmaydi. 4.1-banddagi "tadbir APPROVED" sharti sababli bu vaqtda yangi buyurtma qabul qilinmaydi. Tahrirdan keyin `cache:events:*` tozalanadi.
 
-### 3.6 Sessions va Ticket Categories
+### 3.7 Sessions va Ticket Categories
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
@@ -130,29 +143,29 @@ Ochiq savol: APPROVED tadbir tahrirlansa, u qayta PENDING (moderatsiya) holatiga
 | PATCH | /ticket-categories/:id | ORGANIZER | Narx yoki sonini o'zgartirish (sotuv boshlanmagan bo'lsa) |
 | PATCH | /sessions/:id/cancel | ORGANIZER, ADMIN | Seansni bekor qilish |
 
-### 3.7 Orders
+### 3.8 Orders
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| POST | /orders | CUSTOMER | sessionId + items (SEATED: seatId lar; GENERAL: ticketCategoryId + quantity), jami ≤ 5 ta |
-| GET | /orders/me | CUSTOMER | O'z buyurtmalari |
-| GET | /orders/:id | CUSTOMER | Buyurtma tafsiloti |
-| PATCH | /orders/:id/cancel | CUSTOMER | PENDING buyurtmani bekor qilish, band joylar bo'shaydi |
+| POST | /orders | USER | sessionId + items (SEATED: seatId lar; GENERAL: ticketCategoryId + quantity), jami ≤ 5 ta |
+| GET | /orders/me | USER | O'z buyurtmalari |
+| GET | /orders/:id | USER | Buyurtma tafsiloti |
+| PATCH | /orders/:id/cancel | USER | PENDING buyurtmani bekor qilish, band joylar bo'shaydi |
 
-### 3.8 Payments (mock)
-
-| Method | Endpoint | Rol | Tavsif |
-| --- | --- | --- | --- |
-| POST | /payments/:orderId/pay | CUSTOMER | Mock to'lov; body'dagi `success` bayrog'i orqali muvaffaqiyatsiz holatni ham sinash mumkin |
-
-### 3.9 Tickets
+### 3.9 Payments (mock)
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
-| GET | /tickets/me | CUSTOMER | O'z chiptalari (qrCode bilan) |
-| GET | /tickets/:id | CUSTOMER | Bitta chipta |
+| POST | /payments/:orderId/pay | USER | Mock to'lov; body'dagi `success` bayrog'i orqali muvaffaqiyatsiz holatni ham sinash mumkin |
 
-### 3.10 Controllers / Check-in
+### 3.10 Tickets
+
+| Method | Endpoint | Rol | Tavsif |
+| --- | --- | --- | --- |
+| GET | /tickets/me | USER | O'z chiptalari (qrCode bilan) |
+| GET | /tickets/:id | USER | Bitta chipta |
+
+### 3.11 Controllers / Check-in
 
 | Method | Endpoint | Rol | Tavsif |
 | --- | --- | --- | --- |
@@ -161,17 +174,31 @@ Ochiq savol: APPROVED tadbir tahrirlansa, u qayta PENDING (moderatsiya) holatiga
 | GET | /check-in/events | CONTROLLER | Biriktirilgan tadbirlar |
 | POST | /check-in | CONTROLLER | qrCode ni tekshirish, chipta USED bo'ladi |
 
-### 3.11 Shared modullar
+### 3.12 Shared modullar
 
 `PrismaModule` (global), `RedisModule` (global), `UploadModule` (Multer konfiguratsiyasi), `common/` papkasi: `JwtAuthGuard`, `RolesGuard`, `@Roles()`, `@CurrentUser()`, global `ValidationPipe`, exception filter.
 
 ## 4. Asosiy biznes jarayonlar
 
+### 4.0 Organizer bo'lish
+
+```mermaid
+flowchart TD
+    A[USER register] --> B[Email OTP verify]
+    B --> C[USER: chipta sotib olishi mumkin]
+    B --> D[POST /organizer-applications]
+    D --> E{ADMIN}
+    E -->|approve| F[Application APPROVED, users.role = ORGANIZER]
+    E -->|reject| G[Application REJECTED, rejectReason]
+```
+
+### Xarid oqimi
+
 Xarid 3 qadamdan iborat: buyurtma (joy band qilinadi) → mock to'lov → chipta yaratiladi. Band qilish muddati 10 daqiqa (`.env` dagi `ORDER_HOLD_MINUTES`).
 
 ```mermaid
 sequenceDiagram
-    participant U as Customer
+    participant U as User
     participant API as NestJS API
     participant R as Redis
     participant DB as PostgreSQL
@@ -202,7 +229,7 @@ sequenceDiagram
 
 ### 4.3 Buyurtmani bekor qilish va muddati o'tishi
 
-Customer PENDING buyurtmani bekor qilsa, status CANCELLED bo'ladi va Redis kalitlari o'chiriladi. Muddati o'tgan buyurtmalar to'lov urinishida yoki ro'yxat so'ralganda EXPIRED ga o'tkaziladi; Redis kalitlari TTL bilan o'zi o'chadi.
+User PENDING buyurtmani bekor qilsa, status CANCELLED bo'ladi va Redis kalitlari o'chiriladi. Muddati o'tgan buyurtmalar to'lov urinishida yoki ro'yxat so'ralganda EXPIRED ga o'tkaziladi; Redis kalitlari TTL bilan o'zi o'chadi.
 
 ### 4.4 Check-in (POST /check-in)
 
@@ -238,12 +265,12 @@ Redis uch vazifani bajaradi: OTP saqlash, o'rindiqni vaqtincha band qilish va ta
 
 ## 6. Ma'lumotlar bazasi
 
-Baza 15 ta jadvaldan iborat, barcha PK lar UUID. To'liq ustunlar `schema.prisma` va `ticket-db.dbml` fayllarida, ER diagramma `erd.png` faylida.
+Baza 16 ta jadvaldan iborat, barcha PK lar UUID. To'liq ustunlar `schema.prisma` va `ticket-db.dbml` fayllarida, ER diagramma `erd.png` faylida.
 
 | # | Jadval | Asosiy bog'lanishlar | Muhim cheklovlar |
 | --- | --- | --- | --- |
-| 1 | users | createdById → users | email unique |
-| 2 | organizer_profiles | userId → users (1:1) | userId unique, onDelete Cascade |
+| 1 | users | createdById → users | email unique; `role`, `status`, `isVerified` |
+| 2 | organizer_applications | userId, reviewedById → users | |
 | 3 | venues | createdById → users | |
 | 4 | sectors | venueId → venues | |
 | 5 | rows | sectorId → sectors | (sectorId, number) unique |
@@ -257,13 +284,15 @@ Baza 15 ta jadvaldan iborat, barcha PK lar UUID. To'liq ustunlar `schema.prisma`
 | 13 | order_items | orderId → orders, ticketCategoryId, seatId | onDelete Cascade |
 | 14 | payments | orderId → orders | orderId unique, transactionId unique |
 | 15 | tickets | orderItemId, sessionId, seatId, checkedById | orderItemId unique, qrCode unique, (sessionId, seatId) unique |
+| 16 | devices | userId → users | onDelete Cascade |
 
 ![ER diagramma](erd.png)
 
 **Enumlar:**
 
-- `Role`: CUSTOMER, ORGANIZER, CONTROLLER, ADMIN, SUPERADMIN
-- `UserStatus`: PENDING, ACTIVE, BLOCKED
+- `Role`: USER, ORGANIZER, CONTROLLER, ADMIN, SUPERADMIN
+- `UserStatus`: ACTIVE, BLOCKED
+- `ApplicationStatus`: PENDING, APPROVED, REJECTED
 - `EventStatus`: PENDING, APPROVED, REJECTED, CANCELLED
 - `SeatingType`: SEATED, GENERAL
 - `SessionStatus`: ACTIVE, CANCELLED
@@ -281,8 +310,8 @@ Ish 3 ta mustaqil yo'nalishga bo'lingan: 1-dasturchi — foydalanuvchilar va xav
 
 | Dasturchi | Modullar | Asosiy vazifalar |
 | --- | --- | --- |
-| 1-dasturchi | Auth, Users, Admin boshqaruvi, Shared | Loyiha skeleti, Prisma va Redis modullari, 5 ta rol uchun signup/signin, JWT + cookie, OTP, status tekshiruvi, Guard va dekoratorlar, Superadmin seed, admin/controller yaratish, Organizer faollashtirish va bloklash |
-| 2-dasturchi | Venues, Events, Sessions, Ticket Categories | Zal/sektor/qator/o'rindiq CRUD, Multer (afisha, galereya), tadbir moderatsiyasi, Redis kesh, seans va narx kategoriyalari, o'rindiqlar holati endpointi |
+| 1-dasturchi | Auth, Users, Organizer Applications, Admin boshqaruvi, Shared | Loyiha skeleti, Prisma va Redis modullari, register/login, JWT + cookie, qurilmalar (`devices`), OTP, status tekshiruvi, Guard va dekoratorlar, Superadmin seed, admin/controller yaratish, arizalar moderatsiyasi, bloklash |
+| 2-dasturchi | Venues, Events, Sessions, Ticket Categories | Zal/sektor/qator/o'rindiq CRUD, Multer (afisha, galereya), tadbir moderatsiyasi (tahrirdan keyin qayta moderatsiya bilan), Redis kesh, seans va narx kategoriyalari, o'rindiqlar holati endpointi |
 | 3-dasturchi | Orders, Payments, Tickets, Controllers/Check-in | Redis orqali band qilish, 5 ta cheklov, mock to'lov transaction, QR kod, check-in, bekor qilish zanjiri |
 
 **Ish tartibi:**
