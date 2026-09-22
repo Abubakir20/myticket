@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  OrganizerProfile: 'OrganizerProfile',
+  OrganizerApplication: 'OrganizerApplication',
+  Devices: 'Devices',
   Venue: 'Venue',
   Sector: 'Sector',
   Row: 'Row',
@@ -87,30 +88,52 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   fullName: 'fullName',
+  phone: 'phone',
   email: 'email',
   hashedPassword: 'hashedPassword',
+  imageUrl: 'imageUrl',
   role: 'role',
   status: 'status',
   isVerified: 'isVerified',
-  createdById: 'createdById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  createdById: 'createdById'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const OrganizerProfileScalarFieldEnum = {
+export const OrganizerApplicationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   companyName: 'companyName',
   phone: 'phone',
   description: 'description',
+  status: 'status',
+  rejectReason: 'rejectReason',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type OrganizerProfileScalarFieldEnum = (typeof OrganizerProfileScalarFieldEnum)[keyof typeof OrganizerProfileScalarFieldEnum]
+export type OrganizerApplicationScalarFieldEnum = (typeof OrganizerApplicationScalarFieldEnum)[keyof typeof OrganizerApplicationScalarFieldEnum]
+
+
+export const DevicesScalarFieldEnum = {
+  deviceId: 'deviceId',
+  device: 'device',
+  userId: 'userId',
+  hashedRefreshToken: 'hashedRefreshToken',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  lastActiveAt: 'lastActiveAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DevicesScalarFieldEnum = (typeof DevicesScalarFieldEnum)[keyof typeof DevicesScalarFieldEnum]
 
 
 export const VenueScalarFieldEnum = {

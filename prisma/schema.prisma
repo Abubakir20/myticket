@@ -24,9 +24,15 @@ enum Role {
 }
 
 enum UserStatus {
-  PENDING // faqat Organizer: Admin faollashtirishini kutmoqda
+  PENDING
   ACTIVE
   BLOCKED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum EventStatus {
@@ -69,42 +75,76 @@ enum TicketStatus {
 
 model User {
   id             String     @id @default(uuid()) @db.Uuid
-  fullName       String
+  fullName       String?
+  phone          String?
   email          String     @unique
   hashedPassword String
+  imageUrl       String?
   role           Role       @default(CUSTOMER)
   status         UserStatus @default(ACTIVE)
   isVerified     Boolean    @default(false)
-  createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
 
   createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdUsers User[] @relation("UserCreatedBy")
 
-  organizerProfile OrganizerProfile?
-  venues           Venue[]
-  organizedEvents  Event[]           @relation("EventOrganizer")
-  reviewedEvents   Event[]           @relation("EventReviewer")
-  controllerEvents ControllerEvent[]
-  orders           Order[]
-  checkedTickets   Ticket[]          @relation("TicketChecker")
+  applications         OrganizerApplication[] @relation("ApplicationUser")
+  reviewedApplications OrganizerApplication[] @relation("ApplicationReviewer")
+  venues               Venue[]
+  organizedEvents      Event[]                @relation("EventOrganizer")
+  reviewedEvents       Event[]                @relation("EventReviewer")
+  controllerEvents     ControllerEvent[]
+  orders               Order[]
+  checkedTickets       Ticket[]               @relation("TicketChecker")
+  devices              Devices[]
 
   @@map("users")
 }
 
-model OrganizerProfile {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @unique @db.Uuid
-  companyName String
-  phone       String
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// ==================== ORGANIZER APPLICATIONS ====================
+// Rad etilgan user qayta ariza bera oladi; bir vaqtda bitta PENDING ariza servisda tekshiriladi.
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model OrganizerApplication {
+  id           String            @id @default(uuid()) @db.Uuid
+  userId       String            @db.Uuid
+  companyName  String
+  phone        String
+  description  String?           @db.Text
+  status       ApplicationStatus @default(PENDING)
+  rejectReason String?
+  reviewedById String?           @db.Uuid
+  reviewedAt   DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
-  @@map("organizer_profiles")
+  user       User  @relation("ApplicationUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("ApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@map("organizer_applications")
+}
+
+// ==================== DEVICES ====================
+// Login seanslari (qurilmalar).
+
+model Devices {
+  deviceId           String   @id @default(uuid()) @db.Uuid
+  device             String
+  userId             String   @db.Uuid
+  hashedRefreshToken String
+  userAgent          String?
+  ipAddress          String?
+  lastActiveAt       DateTime @default(now())
+  expiresAt          String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("devices")
 }
 
 // ==================== VENUES ====================
@@ -115,11 +155,11 @@ model Venue {
   address     String
   description String?  @db.Text
   isActive    Boolean  @default(true)
-  createdById String   @db.Uuid
+  createdById String?  @db.Uuid // Admin o'chirilsa null bo'ladi
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  createdBy User      @relation(fields: [createdById], references: [id])
+  createdBy User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
   sectors   Sector[]
   sessions  Session[]
 

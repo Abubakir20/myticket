@@ -45,10 +45,15 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
- * Model OrganizerProfile
+ * Model OrganizerApplication
  * 
  */
-export type OrganizerProfile = Prisma.OrganizerProfileModel
+export type OrganizerApplication = Prisma.OrganizerApplicationModel
+/**
+ * Model Devices
+ * 
+ */
+export type Devices = Prisma.DevicesModel
 /**
  * Model Venue
  * 

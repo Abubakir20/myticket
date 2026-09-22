@@ -2,6 +2,9 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ORGANIZER', 'CONTROLLER', 'ADMIN', 'SUPERADMIN');
 
 -- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'BLOCKED');
+
+-- CreateEnum
 CREATE TYPE "ApplicationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
@@ -27,8 +30,9 @@ CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "fullName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "hashedPassword" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "createdById" UUID,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -43,14 +47,29 @@ CREATE TABLE "organizer_applications" (
     "userId" UUID NOT NULL,
     "companyName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
+    "description" TEXT,
     "status" "ApplicationStatus" NOT NULL DEFAULT 'PENDING',
     "rejectReason" TEXT,
     "reviewedById" UUID,
+    "reviewedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "organizer_applications_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "devices" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "hashedRefreshToken" TEXT NOT NULL,
+    "userAgent" TEXT,
+    "ipAddress" TEXT,
+    "lastActiveAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "devices_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -60,7 +79,7 @@ CREATE TABLE "venues" (
     "address" TEXT NOT NULL,
     "description" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdById" UUID NOT NULL,
+    "createdById" UUID,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -220,6 +239,15 @@ CREATE TABLE "tickets" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
+CREATE INDEX "organizer_applications_userId_idx" ON "organizer_applications"("userId");
+
+-- CreateIndex
+CREATE INDEX "organizer_applications_status_idx" ON "organizer_applications"("status");
+
+-- CreateIndex
+CREATE INDEX "devices_userId_idx" ON "devices"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "rows_sectorId_number_key" ON "rows"("sectorId", "number");
 
 -- CreateIndex
@@ -256,7 +284,10 @@ ALTER TABLE "organizer_applications" ADD CONSTRAINT "organizer_applications_user
 ALTER TABLE "organizer_applications" ADD CONSTRAINT "organizer_applications_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "venues" ADD CONSTRAINT "venues_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "devices" ADD CONSTRAINT "devices_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "venues" ADD CONSTRAINT "venues_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "sectors" ADD CONSTRAINT "sectors_venueId_fkey" FOREIGN KEY ("venueId") REFERENCES "venues"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -42,6 +42,7 @@ export class PrismaService
           email: env.SUPERADMIN.EMAIL,
           hashedPassword: await Crypt.hash(env.SUPERADMIN.PASSWORD),
           role: Role.SUPERADMIN,
+          isVerified: true,
         },
       });
       console.log('Super admin created');

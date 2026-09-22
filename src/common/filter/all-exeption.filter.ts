@@ -90,7 +90,7 @@ export class AllExceptionsFilter
       errorStack,
     );
 
-    if (statusCode == 400 || statusCode == 500) {
+    if (statusCode == 401 || statusCode == 500) {
       const telegramMessage =
         this.buildTelegramMessage({
           request,
