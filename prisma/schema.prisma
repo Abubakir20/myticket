@@ -16,7 +16,7 @@ datasource db {
 // ==================== ENUMS ====================
 
 enum Role {
-  USER
+  CUSTOMER
   ORGANIZER
   CONTROLLER
   ADMIN
@@ -24,6 +24,7 @@ enum Role {
 }
 
 enum UserStatus {
+  PENDING
   ACTIVE
   BLOCKED
 }
@@ -74,15 +75,15 @@ enum TicketStatus {
 
 model User {
   id             String     @id @default(uuid()) @db.Uuid
-  fullName       String
+  fullName       String?
+  phone          String?
   email          String     @unique
   hashedPassword String
-  role           Role       @default(USER)
+  imageUrl       String?
+  role           Role       @default(CUSTOMER)
   status         UserStatus @default(ACTIVE)
   isVerified     Boolean    @default(false)
   createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
 
   createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdUsers User[] @relation("UserCreatedBy")
@@ -99,7 +100,6 @@ model User {
 
   @@map("users")
 }
-
 // ==================== ORGANIZER APPLICATIONS ====================
 // Rad etilgan user qayta ariza bera oladi; bir vaqtda bitta PENDING ariza servisda tekshiriladi.
 
@@ -142,6 +142,7 @@ model Device {
   @@index([userId])
   @@map("devices")
 }
+
 
 // ==================== VENUES ====================
 
