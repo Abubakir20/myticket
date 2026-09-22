@@ -5,7 +5,7 @@ export class LoggerBot {
   static logger = new Logger(LoggerBot.name);
 
   static async sendMessage(message: string) {
-    if (!env.TELEGRAM.TOKEN || !env.TELEGRAM.ID) {
+    if (!env.TELEGRAM.TOKEN || !env.TELEGRAM.CHAT_ID) {
       this.logger.warn('Telegram configuration is missing');
       return;
     }
@@ -18,7 +18,8 @@ export class LoggerBot {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: env.TELEGRAM.ID,
+          chat_id: env.TELEGRAM.CHAT_ID,
+          message_thread_id: env.TELEGRAM.TOPIC_ID,
           text: message,
           parse_mode: 'HTML',
           disable_web_page_preview: true,

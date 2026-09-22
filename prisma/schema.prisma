@@ -83,6 +83,8 @@ model User {
   role           Role       @default(CUSTOMER)
   status         UserStatus @default(ACTIVE)
   isVerified     Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
   createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
 
   createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
@@ -96,10 +98,11 @@ model User {
   controllerEvents     ControllerEvent[]
   orders               Order[]
   checkedTickets       Ticket[]               @relation("TicketChecker")
-  devices              Device[]
+  devices              Devices[]
 
   @@map("users")
 }
+
 // ==================== ORGANIZER APPLICATIONS ====================
 // Rad etilgan user qayta ariza bera oladi; bir vaqtda bitta PENDING ariza servisda tekshiriladi.
 
@@ -127,22 +130,22 @@ model OrganizerApplication {
 // ==================== DEVICES ====================
 // Login seanslari (qurilmalar).
 
-model Device {
-  id                 String   @id @default(uuid()) @db.Uuid
+model Devices {
+  deviceId           String   @id @default(uuid()) @db.Uuid
+  device             String
   userId             String   @db.Uuid
   hashedRefreshToken String
   userAgent          String?
   ipAddress          String?
   lastActiveAt       DateTime @default(now())
-  expiresAt          DateTime // refresh token muddati
+  expiresAt          String
   createdAt          DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("devices")
 }
-
 
 // ==================== VENUES ====================
 

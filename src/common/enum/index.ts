@@ -5,3 +5,9 @@ export enum Role {
   ADMIN = "ADMIN",
   SUPERADMIN = "SUPERADMIN"
 }
+
+export enum UserStatus {
+  PENDING,
+  ACTIVE,
+  BLOCKED
+}

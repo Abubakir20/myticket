@@ -5,11 +5,14 @@ import helmet from 'helmet';
 import { AllExceptionsFilter } from './common/filter/all-exeption.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 export class App {
   static async main() {
     const app = await NestFactory.create(AppModule);
     const port = env.PORT;
     const url = 'api/v1';
+
+    app.use(cookieParser());
 
     app.useGlobalPipes(
       new ValidationPipe({

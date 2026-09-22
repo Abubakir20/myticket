@@ -28,10 +28,10 @@ export type User = Prisma.UserModel
  */
 export type OrganizerApplication = Prisma.OrganizerApplicationModel
 /**
- * Model Device
+ * Model Devices
  * 
  */
-export type Device = Prisma.DeviceModel
+export type Devices = Prisma.DevicesModel
 /**
  * Model Venue
  * 

@@ -10,7 +10,7 @@
  */
 export type * from './models/User.js'
 export type * from './models/OrganizerApplication.js'
-export type * from './models/Device.js'
+export type * from './models/Devices.js'
 export type * from './models/Venue.js'
 export type * from './models/Sector.js'
 export type * from './models/Row.js'
