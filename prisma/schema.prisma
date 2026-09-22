@@ -16,7 +16,7 @@ datasource db {
 // ==================== ENUMS ====================
 
 enum Role {
-  CUSTOMER
+  USER
   ORGANIZER
   CONTROLLER
   ADMIN
@@ -24,9 +24,14 @@ enum Role {
 }
 
 enum UserStatus {
-  PENDING // faqat Organizer: Admin faollashtirishini kutmoqda
   ACTIVE
   BLOCKED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum EventStatus {
@@ -72,7 +77,7 @@ model User {
   fullName       String
   email          String     @unique
   hashedPassword String
-  role           Role       @default(CUSTOMER)
+  role           Role       @default(USER)
   status         UserStatus @default(ACTIVE)
   isVerified     Boolean    @default(false)
   createdById    String?    @db.Uuid // Controllerni yaratgan Organizer
@@ -82,30 +87,41 @@ model User {
   createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdUsers User[] @relation("UserCreatedBy")
 
-  organizerProfile OrganizerProfile?
-  venues           Venue[]
-  organizedEvents  Event[]           @relation("EventOrganizer")
-  reviewedEvents   Event[]           @relation("EventReviewer")
-  controllerEvents ControllerEvent[]
-  orders           Order[]
-  checkedTickets   Ticket[]          @relation("TicketChecker")
-  devices          Device[]
+  applications         OrganizerApplication[] @relation("ApplicationUser")
+  reviewedApplications OrganizerApplication[] @relation("ApplicationReviewer")
+  venues               Venue[]
+  organizedEvents      Event[]                @relation("EventOrganizer")
+  reviewedEvents       Event[]                @relation("EventReviewer")
+  controllerEvents     ControllerEvent[]
+  orders               Order[]
+  checkedTickets       Ticket[]               @relation("TicketChecker")
+  devices              Device[]
 
   @@map("users")
 }
 
-model OrganizerProfile {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @unique @db.Uuid
-  companyName String
-  phone       String
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// ==================== ORGANIZER APPLICATIONS ====================
+// Rad etilgan user qayta ariza bera oladi; bir vaqtda bitta PENDING ariza servisda tekshiriladi.
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model OrganizerApplication {
+  id           String            @id @default(uuid()) @db.Uuid
+  userId       String            @db.Uuid
+  companyName  String
+  phone        String
+  description  String?           @db.Text
+  status       ApplicationStatus @default(PENDING)
+  rejectReason String?
+  reviewedById String?           @db.Uuid
+  reviewedAt   DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
-  @@map("organizer_profiles")
+  user       User  @relation("ApplicationUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("ApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@map("organizer_applications")
 }
 
 // ==================== DEVICES ====================
@@ -135,11 +151,11 @@ model Venue {
   address     String
   description String?  @db.Text
   isActive    Boolean  @default(true)
-  createdById String   @db.Uuid
+  createdById String?  @db.Uuid // Admin o'chirilsa null bo'ladi
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  createdBy User      @relation(fields: [createdById], references: [id])
+  createdBy User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
   sectors   Sector[]
   sessions  Session[]
 

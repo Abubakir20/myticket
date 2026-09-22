@@ -23,10 +23,15 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
- * Model OrganizerProfile
+ * Model OrganizerApplication
  * 
  */
-export type OrganizerProfile = Prisma.OrganizerProfileModel
+export type OrganizerApplication = Prisma.OrganizerApplicationModel
+/**
+ * Model Device
+ * 
+ */
+export type Device = Prisma.DeviceModel
 /**
  * Model Venue
  * 

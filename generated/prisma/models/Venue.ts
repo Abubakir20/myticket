@@ -171,7 +171,7 @@ export type VenueGroupByOutputType = {
   address: string
   description: string | null
   isActive: boolean
-  createdById: string
+  createdById: string | null
   createdAt: Date
   updatedAt: Date
   _count: VenueCountAggregateOutputType | null
@@ -203,10 +203,10 @@ export type VenueWhereInput = {
   address?: Prisma.StringFilter<"Venue"> | string
   description?: Prisma.StringNullableFilter<"Venue"> | string | null
   isActive?: Prisma.BoolFilter<"Venue"> | boolean
-  createdById?: Prisma.UuidFilter<"Venue"> | string
+  createdById?: Prisma.UuidNullableFilter<"Venue"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   sectors?: Prisma.SectorListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
 }
@@ -217,7 +217,7 @@ export type VenueOrderByWithRelationInput = {
   address?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.UserOrderByWithRelationInput
@@ -234,10 +234,10 @@ export type VenueWhereUniqueInput = Prisma.AtLeast<{
   address?: Prisma.StringFilter<"Venue"> | string
   description?: Prisma.StringNullableFilter<"Venue"> | string | null
   isActive?: Prisma.BoolFilter<"Venue"> | boolean
-  createdById?: Prisma.UuidFilter<"Venue"> | string
+  createdById?: Prisma.UuidNullableFilter<"Venue"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   sectors?: Prisma.SectorListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
 }, "id">
@@ -248,7 +248,7 @@ export type VenueOrderByWithAggregationInput = {
   address?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
-  createdById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.VenueCountOrderByAggregateInput
@@ -265,7 +265,7 @@ export type VenueScalarWhereWithAggregatesInput = {
   address?: Prisma.StringWithAggregatesFilter<"Venue"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Venue"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Venue"> | boolean
-  createdById?: Prisma.UuidWithAggregatesFilter<"Venue"> | string
+  createdById?: Prisma.UuidNullableWithAggregatesFilter<"Venue"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Venue"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Venue"> | Date | string
 }
@@ -278,7 +278,7 @@ export type VenueCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutVenuesInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutVenuesInput
   sectors?: Prisma.SectorCreateNestedManyWithoutVenueInput
   sessions?: Prisma.SessionCreateNestedManyWithoutVenueInput
 }
@@ -289,7 +289,7 @@ export type VenueUncheckedCreateInput = {
   address: string
   description?: string | null
   isActive?: boolean
-  createdById: string
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sectors?: Prisma.SectorUncheckedCreateNestedManyWithoutVenueInput
@@ -304,7 +304,7 @@ export type VenueUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutVenuesNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutVenuesNestedInput
   sectors?: Prisma.SectorUpdateManyWithoutVenueNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutVenueNestedInput
 }
@@ -315,7 +315,7 @@ export type VenueUncheckedUpdateInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sectors?: Prisma.SectorUncheckedUpdateManyWithoutVenueNestedInput
@@ -328,7 +328,7 @@ export type VenueCreateManyInput = {
   address: string
   description?: string | null
   isActive?: boolean
-  createdById: string
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -349,7 +349,7 @@ export type VenueUncheckedUpdateManyInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -531,7 +531,7 @@ export type VenueScalarWhereInput = {
   address?: Prisma.StringFilter<"Venue"> | string
   description?: Prisma.StringNullableFilter<"Venue"> | string | null
   isActive?: Prisma.BoolFilter<"Venue"> | boolean
-  createdById?: Prisma.UuidFilter<"Venue"> | string
+  createdById?: Prisma.UuidNullableFilter<"Venue"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Venue"> | Date | string
 }
@@ -544,7 +544,7 @@ export type VenueCreateWithoutSectorsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutVenuesInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutVenuesInput
   sessions?: Prisma.SessionCreateNestedManyWithoutVenueInput
 }
 
@@ -554,7 +554,7 @@ export type VenueUncheckedCreateWithoutSectorsInput = {
   address: string
   description?: string | null
   isActive?: boolean
-  createdById: string
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutVenueInput
@@ -584,7 +584,7 @@ export type VenueUpdateWithoutSectorsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutVenuesNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutVenuesNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutVenueNestedInput
 }
 
@@ -594,7 +594,7 @@ export type VenueUncheckedUpdateWithoutSectorsInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutVenueNestedInput
@@ -608,7 +608,7 @@ export type VenueCreateWithoutSessionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutVenuesInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutVenuesInput
   sectors?: Prisma.SectorCreateNestedManyWithoutVenueInput
 }
 
@@ -618,7 +618,7 @@ export type VenueUncheckedCreateWithoutSessionsInput = {
   address: string
   description?: string | null
   isActive?: boolean
-  createdById: string
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sectors?: Prisma.SectorUncheckedCreateNestedManyWithoutVenueInput
@@ -648,7 +648,7 @@ export type VenueUpdateWithoutSessionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutVenuesNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutVenuesNestedInput
   sectors?: Prisma.SectorUpdateManyWithoutVenueNestedInput
 }
 
@@ -658,7 +658,7 @@ export type VenueUncheckedUpdateWithoutSessionsInput = {
   address?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sectors?: Prisma.SectorUncheckedUpdateManyWithoutVenueNestedInput
@@ -757,7 +757,7 @@ export type VenueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
   sectors?: boolean | Prisma.Venue$sectorsArgs<ExtArgs>
   sessions?: boolean | Prisma.Venue$sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.VenueCountOutputTypeDefaultArgs<ExtArgs>
@@ -772,7 +772,7 @@ export type VenueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["venue"]>
 
 export type VenueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -784,7 +784,7 @@ export type VenueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["venue"]>
 
 export type VenueSelectScalar = {
@@ -800,22 +800,22 @@ export type VenueSelectScalar = {
 
 export type VenueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "description" | "isActive" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["venue"]>
 export type VenueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
   sectors?: boolean | Prisma.Venue$sectorsArgs<ExtArgs>
   sessions?: boolean | Prisma.Venue$sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.VenueCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type VenueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
 }
 export type VenueIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Venue$createdByArgs<ExtArgs>
 }
 
 export type $VenuePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Venue"
   objects: {
-    createdBy: Prisma.$UserPayload<ExtArgs>
+    createdBy: Prisma.$UserPayload<ExtArgs> | null
     sectors: Prisma.$SectorPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
   }
@@ -825,7 +825,7 @@ export type $VenuePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     address: string
     description: string | null
     isActive: boolean
-    createdById: string
+    createdById: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["venue"]>
@@ -1222,7 +1222,7 @@ readonly fields: VenueFieldRefs;
  */
 export interface Prisma__VenueClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.Venue$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Venue$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sectors<T extends Prisma.Venue$sectorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Venue$sectorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SectorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.Venue$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Venue$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1660,6 +1660,25 @@ export type VenueDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Venues to delete.
    */
   limit?: number
+}
+
+/**
+ * Venue.createdBy
+ */
+export type Venue$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

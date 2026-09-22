@@ -1,8 +1,9 @@
 // Chipta sotish platformasi — DB diagramma
 // dbdiagram.io saytiga to'liq nusxalab qo'ying
 
-Enum role { CUSTOMER ORGANIZER CONTROLLER ADMIN SUPERADMIN }
-Enum user_status { PENDING ACTIVE BLOCKED }
+Enum role { USER ORGANIZER CONTROLLER ADMIN SUPERADMIN }
+Enum user_status { ACTIVE BLOCKED }
+Enum application_status { PENDING APPROVED REJECTED }
 Enum event_status { PENDING APPROVED REJECTED CANCELLED }
 Enum seating_type { SEATED GENERAL }
 Enum session_status { ACTIVE CANCELLED }
@@ -14,8 +15,8 @@ Table users {
   id uuid [pk]
   full_name varchar [not null]
   email varchar [not null, unique]
-  password varchar [not null]
-  role role [not null, default: 'CUSTOMER']
+  hashed_password varchar [not null]
+  role role [not null, default: 'USER']
   status user_status [not null, default: 'ACTIVE']
   is_verified boolean [not null, default: false]
   created_by_id uuid [ref: > users.id, note: 'Controllerni yaratgan Organizer']
@@ -23,14 +24,29 @@ Table users {
   updated_at timestamp
 }
 
-Table organizer_profiles {
+Table organizer_applications {
   id uuid [pk]
-  user_id uuid [not null, unique, ref: - users.id]
+  user_id uuid [not null, ref: > users.id]
   company_name varchar [not null]
   phone varchar [not null]
   description text
+  status application_status [not null, default: 'PENDING']
+  reject_reason varchar
+  reviewed_by_id uuid [ref: > users.id]
+  reviewed_at timestamp
   created_at timestamp
   updated_at timestamp
+}
+
+Table devices {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  hashed_refresh_token varchar [not null]
+  user_agent varchar
+  ip_address varchar
+  last_active_at timestamp
+  expires_at timestamp [not null, note: 'refresh token muddati']
+  created_at timestamp
 }
 
 Table venues {
@@ -39,7 +55,7 @@ Table venues {
   address varchar [not null]
   description text
   is_active boolean [not null, default: true]
-  created_by_id uuid [not null, ref: > users.id]
+  created_by_id uuid [ref: > users.id, note: 'Admin o\'chirilsa null']
   created_at timestamp
   updated_at timestamp
 }
