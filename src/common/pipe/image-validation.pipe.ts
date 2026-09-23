@@ -22,7 +22,7 @@ export class ImageValidationPipe implements PipeTransform<
     'image/heic',
   ];
 
-  private readonly maxFileSize = 20 * 1024 * 1024;
+  private readonly maxFileSize = 5 * 1024 * 1024;
 
   async transform(file: Express.Multer.File | undefined) {
     if (!file) {
@@ -30,7 +30,7 @@ export class ImageValidationPipe implements PipeTransform<
     }
 
     if (file.size > this.maxFileSize) {
-      throw new BadRequestException('Fayl hajmi 10 MB dan oshmasin');
+      throw new BadRequestException('Fayl hajmi 5 MB dan oshmasin');
     }
 
     const extension = extname(file.originalname).toLowerCase();

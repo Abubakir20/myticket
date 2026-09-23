@@ -32,7 +32,7 @@ export class DeviceService {
         if (verifiedData.deviceId === id) {
             throw new BadRequestException("Joriy qurilmani o'chirib bo'lmaydi");
         }
-        await this.db.devices.delete({ where: { deviceId: id } });
+        await this.db.devices.delete({ where: { deviceId: id, userId: verifiedData.sub } });
         return successRes({});
     }
 }

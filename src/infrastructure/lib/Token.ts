@@ -42,7 +42,7 @@ export class Token {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: false,
-      maxAge: parseInt(env.TOKEN.ACCESS_TIME) * 24 * 60 * 60 * 1000,
+      maxAge: parseInt(env.TOKEN.ACCESS_TIME) * 60 * 1000,
     });
     if (refreshToken) {
       res.cookie('refreshToken', refreshToken, {

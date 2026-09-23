@@ -6,18 +6,16 @@ import { RolesGuard } from '../../common/guard/roles.guard';
 import { AccessRoles } from '../../common/decorator/roles.decorator';
 import { RefreshToken } from '../../common/decorator/get-cookie.decorator';
 
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Controller('device')
 export class DeviceController {
     constructor(private readonly deviceService: DeviceService) { }
 
-    @AccessRoles('ID')
     @Get()
     findAll(@UserId() userId: string) {
         return this.deviceService.findAll(userId);
     }
 
-    @AccessRoles('ID')
     @Delete(':id')
     remove(
         @RefreshToken() refreshToken: string,
