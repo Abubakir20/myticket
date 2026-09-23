@@ -18,7 +18,7 @@ export class App {
       new ValidationPipe({
         transform: true,
         whitelist: true,
-        forbidNonWhitelisted: true,
+        forbidNonWhitelisted: false,
       }),
     );
 
