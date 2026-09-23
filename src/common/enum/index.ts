@@ -1,5 +1,5 @@
 export enum Role {
-  USER = 'USER',
+  COSTOOMER = 'COSTOMER',
   ORGANIZER = "ORGANIZER",
   CONTROLLER = "CONTROLLER",
   ADMIN = "ADMIN",
@@ -7,7 +7,7 @@ export enum Role {
 }
 
 export enum UserStatus {
-  PENDING,
-  ACTIVE,
-  BLOCKED
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED'
 }

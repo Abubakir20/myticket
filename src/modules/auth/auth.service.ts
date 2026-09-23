@@ -31,7 +31,7 @@ export class AuthService {
       user ? user.hashedPassword : '',
     );
     if (!isMatchPass) {
-      throw new BadRequestException('Email yoki parol xato!');
+      throw new BadRequestException('Email yoki parol xato');
     }
     const data = await this.otp.sendOtp(user.email);
     return successRes(data, 201);
