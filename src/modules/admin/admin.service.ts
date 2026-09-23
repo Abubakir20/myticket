@@ -19,7 +19,7 @@ export class AdminService {
     const { email, password } = createAdminDto;
     const existsPhone = await this.db.user.findUnique({ where: { email } });
     if (existsPhone) {
-      throw new ConflictException('Bunday telefon raqam allaqachon mavjud');
+      throw new ConflictException('Bunday email tizimda allaqachon mavjud');
     }
     const hashedPassword = await Crypt.hash(password);
     const admin = await this.db.user.create({
