@@ -27,7 +27,6 @@ export class OrderController {
     return this.orderService.create(userId, dto);
   }
 
-  // 'me' route ':id' dan oldin turishi kerak, aks holda 'me' id deb qabul qilinadi
   @Get('me')
   findMyOrders(@UserId() userId: string) {
     return this.orderService.findMyOrders(userId);

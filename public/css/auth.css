@@ -1,0 +1,67 @@
+/* Auth (dizayn: Chipta Auth 1a–1m) — mobil birinchi, katta ekranda markazdagi ustun */
+body { overflow-x: hidden; }
+.auth {
+  position: relative; min-height: 100vh; display: flex; justify-content: center;
+}
+.auth .blob {
+  position: fixed; width: 300px; height: 300px; border-radius: 50%; background: var(--color-accent);
+  opacity: 0.16; filter: blur(40px); top: -120px; right: -90px; z-index: 0; pointer-events: none;
+}
+.auth-body {
+  position: relative; z-index: 1; width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; padding: 0 26px 30px;
+}
+.auth-top { display: flex; align-items: center; justify-content: space-between; margin: 16px 0 0; }
+.brand { font-family: var(--font-heading); font-size: 22px; letter-spacing: -0.01em; margin: 0; color: inherit; text-decoration: none; }
+.kicker { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); margin: 34px 0 8px; }
+.auth h1 { font-size: 31px; line-height: 1.1; margin: 0 0 8px; letter-spacing: -0.02em; }
+.sub { font-size: 13.5px; line-height: 1.5; margin: 0 0 24px; color: var(--color-muted); }
+.sub b { color: var(--color-text); }
+.auth .banner { margin-top: 18px; }
+.auth form { display: flex; flex-direction: column; }
+.f { display: flex; flex-direction: column; gap: 14px; }
+.auth .field > label { font-size: 11.5px; }
+.auth .input { min-height: 48px; font-size: 15px; }
+.auth .btn { font-size: 15px; }
+.auth .btn-primary { min-height: 52px; }
+.auth .btn-secondary { min-height: 48px; }
+.submit { margin-top: 22px; }
+.forgot { margin: 12px 0 0; font-size: 13px; }
+.foot {
+  margin-top: auto; padding-top: 26px; font-size: 13px; text-align: center;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}
+.foot a, .forgot a { font-weight: 700; }
+@media (min-width: 700px) {
+  .auth { align-items: center; }
+  .auth-body { min-height: 0; padding-top: 24px; padding-bottom: 48px; }
+  .foot { margin-top: 0; }
+}
+
+/* OTP kataklari: bitta yashirin input + 6 ta ko'rinadigan katak */
+.otp { position: relative; display: flex; gap: 9px; margin: 4px 0 0; }
+.otp input {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0;
+  font-size: 16px; /* iOS zoom qilmasligi uchun */ caret-color: transparent; cursor: text;
+}
+.cell {
+  flex: 1; aspect-ratio: 1 / 1.16; display: grid; place-items: center; border-radius: 18px;
+  background: var(--color-surface); border: 1px solid var(--color-divider);
+  font-family: var(--font-heading); font-size: 24px; min-width: 0;
+}
+.otp:focus-within .cell.current { border-color: var(--color-accent); border-width: 2px; }
+.dot9 { width: 9px; height: 9px; border-radius: 50%; background: var(--color-accent); }
+.otp[data-state='error'] .cell { border-color: var(--c-err); color: var(--c-err); }
+.otp[data-state='expired'] .cell { opacity: 0.45; }
+.otp-hint { font-size: 12px; margin: 14px 0 0; opacity: 0.6; }
+.otp-error { margin-top: 12px; }
+.resend {
+  display: flex; align-items: center; gap: 8px; margin-top: 22px; padding: 12px 16px;
+  border-radius: 99px; background: var(--color-surface); font-size: 13px;
+}
+.resend span { opacity: 0.65; }
+.resend b { margin-left: auto; font-family: var(--font-heading); font-weight: 400; }
+.resend button {
+  margin-left: auto; background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; font-weight: 700; color: var(--color-accent);
+}

@@ -1,0 +1,66 @@
+/* Kontroller ilovasi (dizayn: Chipta Controller 4a–4g) — mobil, katta ekranda markazdagi ustun */
+body { background: var(--page-bg-alt); }
+.capp {
+  max-width: 480px; min-height: 100vh; margin: 0 auto; background: var(--color-bg);
+  display: flex; flex-direction: column; position: relative;
+}
+.chead { padding: 22px 22px 14px; display: flex; align-items: flex-end; gap: 10px; }
+.chead .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.55; }
+.chead h3 { margin: 0; font-size: 22px; }
+.chead .actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.cbody { flex: 1; padding: 0 22px 24px; }
+.evrow { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid var(--color-divider); }
+.evrow:first-child { border-top: none; }
+.evposter { width: 44px; height: 44px; border-radius: 12px; flex: none; position: relative; overflow: hidden; }
+.evinfo { flex: 1; min-width: 0; }
+.evinfo .t { font-weight: 600; font-size: 14px; }
+.evinfo .v { font-size: 11.5px; opacity: 0.6; margin-top: 2px; }
+.evrow .btn { min-height: 34px; padding: 0 14px; font-size: 12.5px; flex: none; }
+
+/* Skaner */
+.scan { background: #0e0d0c; color: #f5ead8; }
+.scanhead { padding: 16px 22px 10px; display: flex; align-items: center; gap: 12px; }
+.scanhead a { color: inherit; opacity: 0.7; text-decoration: none; font-size: 20px; padding: 4px; }
+.scanhead .t { font-weight: 600; font-size: 14.5px; }
+.scanhead .v { font-size: 11.5px; opacity: 0.6; }
+.scanframe {
+  flex: 1; min-height: 360px; background: #0e0d0c; position: relative;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.scanframe video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.scanbox { width: 220px; height: 220px; border-radius: 22px; position: relative; z-index: 1; }
+.scancorner { position: absolute; width: 30px; height: 30px; border-color: #fff; border-style: solid; }
+.scancorner.tl { top: -3px; left: -3px; border-width: 4px 0 0 4px; border-radius: 8px 0 0 0; }
+.scancorner.tr { top: -3px; right: -3px; border-width: 4px 4px 0 0; border-radius: 0 8px 0 0; }
+.scancorner.bl { bottom: -3px; left: -3px; border-width: 0 0 4px 4px; border-radius: 0 0 0 8px; }
+.scancorner.br { bottom: -3px; right: -3px; border-width: 0 4px 4px 0; border-radius: 0 0 8px 0; }
+.scanhint { position: absolute; z-index: 1; bottom: 26px; left: 20px; right: 20px; text-align: center; font-size: 13px; opacity: 0.75; margin: 0; }
+.manual { padding: 20px 22px 28px; background: #171412; display: flex; flex-direction: column; gap: 10px; }
+.manual label { font-size: 12px; opacity: 0.65; }
+.manual .input {
+  background: #241f1b; border: 1px solid rgba(245, 234, 216, 0.2); border-radius: 14px;
+  padding: 13px 16px; color: #f5ead8; font-size: 15px; min-height: 48px;
+}
+.manual .field-error { color: #ff9c85; }
+.manual .btn-primary { color: #0e0d0c; }
+
+/* Natija */
+.result {
+  position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 0 30px 110px; color: #fff;
+}
+.result.ok { background: linear-gradient(160deg, #7a8a5e, #3d472b); }
+.result.warn { background: linear-gradient(160deg, #d8a021, #8a5f10); }
+.result.err { background: linear-gradient(160deg, #a83a28, #5c1c12); }
+.ricon {
+  width: 88px; height: 88px; border-radius: 50%; background: rgba(255, 255, 255, 0.18);
+  display: grid; place-items: center; font-size: 44px; margin-bottom: 20px;
+}
+.rtitle { font-size: 26px; margin: 0 0 10px; }
+.rmeta { font-size: 14px; opacity: 0.9; line-height: 1.6; white-space: pre-line; }
+.rback {
+  position: absolute; bottom: 36px; left: 26px; right: 26px; max-width: 428px; margin: 0 auto;
+  background: rgba(255, 255, 255, 0.16); border: none; border-radius: 14px; padding: 14px;
+  color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.rback:hover { background: rgba(255, 255, 255, 0.24); }

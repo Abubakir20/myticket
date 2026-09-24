@@ -15,7 +15,6 @@ export class ControllerEventService {
   constructor(private readonly db: PrismaService) {}
 
   async create(organizerId: string, dto: CreateControllerEventDto) {
-    // Organizer faqat o'zi yaratgan controllerni o'z tadbiriga biriktira oladi
     const controller = await this.db.user.findFirst({
       where: {
         id: dto.controllerId,

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Buyurtmani tasdiqlash — Chipta</title>
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/checkout.css">
+<script type="module" src="/js/pages/checkout.js"></script>
+</head>
+<body>
+<main class="page">
+  <div class="frame">
+
+    <section class="view" data-view="loading">
+      <div class="centerframe" role="status"><div class="spinner" aria-hidden="true"></div><p class="text-muted">Yuklanmoqda…</p></div>
+    </section>
+
+    <!-- 2a / 2b: buyurtma va taymer -->
+    <section class="view" data-view="summary" hidden>
+      <div class="frame-top"><a href="/orders/">← Buyurtmalarim</a></div>
+      <h3 class="title">Buyurtmani tasdiqlash</h3>
+      <div class="timer" id="timer">
+        <span>Joylar band qilingan</span><b id="timer-value" role="timer" aria-label="Qolgan vaqt">--:--</b>
+      </div>
+      <p class="sr-only" id="timer-alert" role="alert"></p>
+      <div id="order-lines"></div>
+      <div class="total"><span>Jami</span><span id="order-total"></span></div>
+      <p class="field-error" id="summary-error" role="alert" hidden></p>
+      <button class="btn btn-primary btn-block" id="pay-open" type="button">To'lash</button>
+      <button class="btn btn-ghost btn-block" id="order-cancel" type="button">Bekor qilish</button>
+    </section>
+
+    <!-- 2d -->
+    <section class="view" data-view="success" hidden>
+      <div class="centerframe">
+        <div class="resicon resicon-ok" aria-hidden="true">✓</div>
+        <h2>To'lov muvaffaqiyatli</h2>
+        <p class="result-text">Chiptalaringiz "Mening chiptalarim" bo'limida</p>
+        <a class="btn btn-primary" href="/tickets/">Chiptalarni ko'rish</a>
+      </div>
+    </section>
+
+    <!-- 2e -->
+    <section class="view" data-view="failed" hidden>
+      <div class="centerframe">
+        <div class="resicon resicon-err" aria-hidden="true">✕</div>
+        <h2>To'lov amalga oshmadi</h2>
+        <p class="result-text">To'lov amalga oshmadi, qayta urinib ko'ring</p>
+        <button class="btn btn-primary" id="retry" type="button">Qayta urinib ko'rish</button>
+      </div>
+    </section>
+
+    <!-- 2f -->
+    <section class="view" data-view="expired" hidden>
+      <div class="centerframe">
+        <div class="resicon resicon-neutral" aria-hidden="true">⏱</div>
+        <h2>Buyurtma muddati tugadi</h2>
+        <p class="result-text">Buyurtma muddati tugadi</p>
+        <a class="btn btn-primary" data-event-link href="/">Tadbirga qaytish</a>
+      </div>
+    </section>
+
+    <section class="view" data-view="cancelled" hidden>
+      <div class="centerframe">
+        <div class="resicon resicon-neutral" aria-hidden="true">✕</div>
+        <h2>Buyurtma bekor qilindi</h2>
+        <p class="result-text">Band qilingan joylar bo'shatildi</p>
+        <a class="btn btn-primary" data-event-link href="/">Tadbirga qaytish</a>
+      </div>
+    </section>
+
+    <section class="view" data-view="error" hidden>
+      <div class="centerframe">
+        <div class="resicon resicon-err" aria-hidden="true">!</div>
+        <h2>Xatolik</h2>
+        <p class="result-text" id="error-text">Buyurtmani yuklab bo'lmadi</p>
+        <button class="btn btn-primary" id="error-retry" type="button">Qayta urinib ko'rish</button>
+        <a class="btn btn-ghost" href="/orders/">Buyurtmalarim</a>
+      </div>
+    </section>
+
+    <!-- 2c: mock to'lov modali -->
+    <div class="modalbg" id="pay-modal" hidden>
+      <form class="modal" id="pay-form" role="dialog" aria-modal="true" aria-labelledby="pay-title" novalidate>
+        <h4 id="pay-title">Karta ma'lumotlari</h4>
+        <p class="modal-sub"><span id="pay-amount"></span> to'lash</p>
+        <div class="field field-gap">
+          <label for="card-number">Karta raqami</label>
+          <input class="input" id="card-number" inputmode="numeric" autocomplete="cc-number" placeholder="8600 0000 0000 0000" maxlength="19">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="card-exp">Amal qilish muddati</label>
+            <input class="input" id="card-exp" inputmode="numeric" autocomplete="cc-exp" placeholder="OO/YY" maxlength="5">
+          </div>
+          <div class="field">
+            <label for="card-cvv">CVV</label>
+            <input class="input" id="card-cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="3">
+          </div>
+        </div>
+        <p class="field-error" id="pay-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="pay-submit" type="submit">To'lash</button>
+        <button class="btn btn-ghost btn-block" id="pay-close" type="button">Orqaga</button>
+        <p class="mock-hint">Test to'lovi: pul yechilmaydi. 0000 bilan tugagan karta rad etiladi.</p>
+      </form>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

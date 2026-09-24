@@ -8,7 +8,10 @@
   "scripts": {
     "build": "nest build",
     "start": "nest start",
-    "start:dev": "nest start --watch"
+    "start:dev": "nest start --watch",
+    "typecheck:web": "tsc -p public/tsconfig.json",
+    "lint:web": "eslint public/js test/web",
+    "test:web": "node --test test/web/*.test.mjs"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.3.7",

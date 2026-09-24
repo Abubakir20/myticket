@@ -41,7 +41,6 @@ export class CheckInService {
   }
 
   async checkIn(controllerId: string, dto: CheckInDto) {
-    // 1. Chipta qrCode bo'yicha topiladi
     const ticket = await this.db.ticket.findUnique({
       where: { qrCode: dto.qrCode },
       include: {
@@ -66,7 +65,6 @@ export class CheckInService {
       throw new NotFoundException('Chipta topilmadi');
     }
 
-    // 2. Controller shu tadbirga biriktirilgan bo'lishi kerak
     const assigned = await this.db.controllerEvent.findUnique({
       where: {
         controllerId_eventId: {
@@ -79,7 +77,6 @@ export class CheckInService {
       throw new ForbiddenException('Siz bu tadbirga biriktirilmagansiz');
     }
 
-    // 3. Faqat ACTIVE chipta o'tkaziladi
     if (ticket.status === TicketStatus.USED) {
       throw new ConflictException('Chipta allaqachon ishlatilgan');
     }
@@ -87,8 +84,6 @@ export class CheckInService {
       throw new BadRequestException('Chipta bekor qilingan');
     }
 
-    // 4. Chipta USED bo'ladi. status: ACTIVE sharti — ikki controller bir vaqtda
-    // skanerlasa, faqat bittasi o'tkazadi
     const usedAt = new Date();
     const updated = await this.db.ticket.updateMany({
       where: { id: ticket.id, status: TicketStatus.ACTIVE },

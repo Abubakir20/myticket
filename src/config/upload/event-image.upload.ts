@@ -6,8 +6,6 @@ import { mkdir, unlink, writeFile } from 'fs/promises';
 import { memoryStorage } from 'multer';
 import { extname, join } from 'path';
 
-// TZ 5-bo'lim, Multer qoidalari:
-// uploads/events/{uuid}.{ext}, faqat jpg/jpeg/png/webp, maksimal 5 MB, galereya ≤ 10 ta.
 export const UPLOADS_ROOT = join(process.cwd(), 'uploads');
 export const UPLOADS_PREFIX = '/uploads';
 const EVENTS_DIR = join(UPLOADS_ROOT, 'events');
@@ -17,8 +15,6 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-// Fayl avval xotirada ushlanadi va faqat DTO validatsiyasi hamda ruxsat tekshiruvi
-// o'tgandan keyin diskka yoziladi — aks holda xato so'rovlardan yetim fayllar qolardi.
 export const eventImageMulterOptions: MulterOptions = {
   storage: memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE },
@@ -39,7 +35,6 @@ export const eventImageMulterOptions: MulterOptions = {
   },
 };
 
-// Diskka yozadi va public URL qaytaradi: /uploads/events/{uuid}.{ext}
 export async function saveEventImage(file: Express.Multer.File) {
   if (!existsSync(EVENTS_DIR)) {
     await mkdir(EVENTS_DIR, { recursive: true });
@@ -49,8 +44,6 @@ export async function saveEventImage(file: Express.Multer.File) {
   return `${UPLOADS_PREFIX}/events/${fileName}`;
 }
 
-// Rasm yoki tadbir o'chirilganda fayl diskdan ham o'chiriladi.
-// Fayl allaqachon yo'q bo'lsa, xato bermaydi.
 export async function removeEventImage(url: string) {
   if (!url.startsWith(`${UPLOADS_PREFIX}/events/`)) {
     return;

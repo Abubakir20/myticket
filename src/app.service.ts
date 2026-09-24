@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './common/filter/all-exeption.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import {
   UPLOADS_PREFIX,
@@ -16,6 +17,8 @@ export class App {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     // Tadbir rasmlari statik tarzda /uploads orqali beriladi (TZ 5-bo'lim)
     app.useStaticAssets(UPLOADS_ROOT, { prefix: UPLOADS_PREFIX });
+    // Frontend sahifalari (checkout va h.k.) — API bilan bir domenda, cookie auth ishlashi uchun
+    app.useStaticAssets(join(process.cwd(), 'public'));
     const port = env.PORT;
     const url = 'api/v1';
 
