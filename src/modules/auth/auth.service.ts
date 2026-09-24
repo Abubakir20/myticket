@@ -2,7 +2,7 @@ import {
   NotFoundException,
   BadRequestException,
   Injectable,
-  ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../config/database/prisma.service';
 import { SignInDto } from './dto/sign-in.dto';
@@ -14,6 +14,8 @@ import { Token } from '../../infrastructure/lib/Token';
 import type { Response, Request } from 'express';
 import { getDeviceInfo } from '../../common/helper/device-info';
 import { env } from '../../config';
+import { SignUpDto } from './dto/sign-up.dto';
+import { Role } from '../../common/enum';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,19 @@ export class AuthService {
     private readonly db: PrismaService,
     private readonly otp: EmailOtpService,
   ) {}
+
+  async signUp(createAdminDto: SignUpDto) {
+      const { email, password } = createAdminDto;
+      const existsEmail = await this.db.user.findUnique({ where: { email } });
+      if (existsEmail) {
+        throw new ConflictException('Bunday email tizimda allaqachon mavjud');
+      }
+      const hashedPassword = await Crypt.hash(password);
+      const user = await this.db.user.create({
+        data: { email, hashedPassword, role: Role.ADMIN },
+      });
+      return successRes(user, 201);
+    }
 
   async signIn(dto: SignInDto) {
     const user: any = await this.db.user.findUnique({

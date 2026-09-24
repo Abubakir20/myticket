@@ -7,7 +7,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { PrismaService } from '../../config/database/prisma.service';
 import { Crypt } from '../../infrastructure/lib/Crypt';
-import { Role } from '../../common/enum';
+import { ApplicationStatus, Role } from '../../common/enum';
 import { successRes } from '../../common/helper/success-response';
 import { File } from '../../infrastructure/lib/File';
 
@@ -17,8 +17,8 @@ export class AdminService {
 
   async create(createAdminDto: CreateAdminDto) {
     const { email, password } = createAdminDto;
-    const existsPhone = await this.db.user.findUnique({ where: { email } });
-    if (existsPhone) {
+    const existsEmail = await this.db.user.findUnique({ where: { email } });
+    if (existsEmail) {
       throw new ConflictException('Bunday email tizimda allaqachon mavjud');
     }
     const hashedPassword = await Crypt.hash(password);
@@ -42,6 +42,10 @@ export class AdminService {
       },
       orderBy: { updatedAt: 'desc' },
     });
+
+    if (!admins) {
+      throw new NotFoundException('Siz hali admin yaratmagansiz');
+    }
     return successRes(admins);
   }
 
@@ -87,7 +91,9 @@ export class AdminService {
       where: { id },
       data: { imageUrl, hashedPassword, ...updateAdminDto },
     });
-    return successRes({});
+    return successRes({
+      message: "Admin malumolari muvafaqiyatli o'zgartirildi",
+    });
   }
 
   async remove(id: string) {
@@ -99,6 +105,62 @@ export class AdminService {
       await File.delete(admin.imageUrl);
     }
     await this.db.user.delete({ where: { id } });
-    return successRes({});
+    return successRes({ message: "Admin muvafaqiyatli o'chirildi" });
+  }
+
+  async getOrgApplications() {
+    const applications = await this.db.organizerApplication.findMany();
+    if (!applications) {
+      throw new NotFoundException("Arizalar ro'yxati bo'sh");
+    }
+
+    return successRes(applications);
+  }
+
+  async approveApplication(id: string) {
+    const application = await this.db.organizerApplication.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Ariza topilmadi');
+    }
+    const userId = application.userId;
+
+    await this.db.user.update({
+      where: { id: userId },
+      data: {
+        role: Role.ORGANIZER,
+        isVerified: true,
+       },
+    });
+
+    await this.db.organizerApplication.update({
+      where: { id },
+      data: {
+        status: ApplicationStatus.APPROVED,
+      },
+    });
+
+    return successRes({ message: 'Organizator muvafaqilyatli yaratildi' });
+  }
+
+  async rejectApplication(id: string) {
+    const application = await this.db.organizerApplication.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Ariza topilmadi');
+    }
+
+    await this.db.organizerApplication.update({
+      where: { id },
+      data: {
+        status: ApplicationStatus.REJECTED,
+      },
+    });
+
+    return successRes({ message: 'Customer rad javobini oldi' });
   }
 }

@@ -10,4 +10,10 @@ export enum UserStatus {
   PENDING = 'PENDING',
   ACTIVE = 'ACTIVE',
   BLOCKED = 'BLOCKED'
+
+}
+export enum ApplicationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
 }
