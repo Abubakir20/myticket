@@ -1,151 +1,101 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
   UseGuards,
-  BadRequestException,
 } from '@nestjs/common';
 import { VenuesService } from './venues.service';
 import { CreateVenueDto } from './dto/create-venue.dto';
 import { UpdateVenueDto } from './dto/update-venue.dto';
+import { CreateSectorDto } from './dto/create-sector.dto';
 import { CreateRowDto } from './dto/create-row.dto';
-
 import { AuthGuard } from '../../common/guard/jwt-auth.guard';
 import { RolesGuard } from '../../common/guard/roles.guard';
 import { AccessRoles } from '../../common/decorator/roles.decorator';
-import { CreateSectorDto } from './dto/create-sector.dto';
-import { CreatESeatsDto } from './dto/create-seats.dto';
+import { UserId } from '../../common/decorator/current-user.decorator';
+import { Role } from '../../common/enum';
 
-@Controller('venues')
 @UseGuards(AuthGuard, RolesGuard)
+@Controller('venues')
 export class VenuesController {
   constructor(private readonly venuesService: VenuesService) {}
 
   @Post()
-  @AccessRoles('admin')
-  create(@Body() createVenueDto: CreateVenueDto) {
-    return this.venuesService.create(createVenueDto);
+  @AccessRoles(Role.ADMIN)
+  create(@UserId() adminId: string, @Body() dto: CreateVenueDto) {
+    return this.venuesService.create(adminId, dto);
   }
 
   @Get()
-  @AccessRoles('admin', 'organizer')
+  @AccessRoles(Role.ADMIN, Role.ORGANIZER)
   findAll() {
     return this.venuesService.findAll();
   }
 
   @Get(':id')
-  @AccessRoles('admin', 'organizer')
-  findOne(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () =>
-          new BadRequestException(
-            "ID noto'g'ri kiritildi! U UUID v4 formatida bo'lishi shart.",
-          ),
-      }),
-    )
-    id: string,
-  ) {
+  @AccessRoles(Role.ADMIN, Role.ORGANIZER)
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.venuesService.findOne(id);
   }
 
   @Patch(':id')
-  @AccessRoles('admin')
+  @AccessRoles(Role.ADMIN)
   update(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () =>
-          new BadRequestException(
-            "ID noto'g'ri kiritildi! U UUID v4 formatida bo'lishi shart.",
-          ),
-      }),
-    )
-    id: string,
-    @Body() updateVenueDto: UpdateVenueDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateVenueDto,
   ) {
-    return this.venuesService.update(id, updateVenueDto);
-  }
-
-  @Post(':id/sectors')
-  @AccessRoles('admin')
-  async createSector(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () =>
-          new BadRequestException(
-            "ID noto'g'ri kiritildi! Venue ID qiymati UUID v4 bo'lishi shart.",
-          ),
-      }),
-    )
-    venueId: string,
-    @Body() createSectorDto: CreateSectorDto,
-  ) {
-    return this.venuesService.createSector(venueId, createSectorDto);
-  }
-
-  @Post('/sectors/:id/rows')
-  @AccessRoles('admin')
-  async createRow(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () =>
-          new BadRequestException(
-            "ID noto'g'ri kiritildi! sector ID qiymati UUID v4 bo'lishi shart.",
-          ),
-      }),
-    )
-    sectorId: string,
-    @Body() createRowDto: CreateRowDto,
-  ) {
-    return this.venuesService.createRow(sectorId, createRowDto);
-  }
-
-  @Post('/sectors/rows/:id/seats')
-  @AccessRoles('admin')
-  async createSeats(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () => new BadRequestException(
-          "ID notog'ri kiritildi!"
-        ),
-      }),
-    )
-    rowId: string,
-    @Body() createSeatsDto: CreatESeatsDto,
-  ) {
-    return this.venuesService.createSeats(rowId, createSeatsDto)
+    return this.venuesService.update(id, dto);
   }
 
   @Delete(':id')
-  @AccessRoles('admin')
-  async remove(
-    @Param(
-      'id',
-      new ParseUUIDPipe({
-        version: '4',
-        exceptionFactory: () =>
-          new BadRequestException(
-            "ID noto'g'ri kiritildi! U UUID v4 formatida bo'lishi shart.",
-          ),
-      }),
-    )
-    id: string,
-  ) {
+  @AccessRoles(Role.ADMIN)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.venuesService.remove(id);
+  }
+
+  @Post(':id/sectors')
+  @AccessRoles(Role.ADMIN)
+  createSector(
+    @Param('id', ParseUUIDPipe) venueId: string,
+    @Body() dto: CreateSectorDto,
+  ) {
+    return this.venuesService.createSector(venueId, dto);
+  }
+}
+
+@UseGuards(AuthGuard, RolesGuard)
+@AccessRoles(Role.ADMIN)
+@Controller('sectors')
+export class SectorsController {
+  constructor(private readonly venuesService: VenuesService) {}
+
+  @Post(':id/rows')
+  createRow(
+    @Param('id', ParseUUIDPipe) sectorId: string,
+    @Body() dto: CreateRowDto,
+  ) {
+    return this.venuesService.createRow(sectorId, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.venuesService.removeSector(id);
+  }
+}
+
+@UseGuards(AuthGuard, RolesGuard)
+@AccessRoles(Role.ADMIN)
+@Controller('rows')
+export class RowsController {
+  constructor(private readonly venuesService: VenuesService) {}
+
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.venuesService.removeRow(id);
   }
 }
