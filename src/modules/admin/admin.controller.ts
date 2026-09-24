@@ -37,11 +37,11 @@ export class AdminController {
   }
   
   @AccessRoles(Role.ADMIN)
-  @Get('organizer-applications')
+  @Get('organizerapplications')
   getOrgApplications() {
     return this.adminService.getOrgApplications();
   }
-  
+
   @AccessRoles('ID')
   @Get(':id')
   findOne(@Param('id') id: string) {
