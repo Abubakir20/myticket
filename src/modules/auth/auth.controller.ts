@@ -4,10 +4,16 @@ import { SignInDto } from './dto/sign-in.dto';
 import { VerifyOTPDto } from '../mail/dto/verify-mail-otp.dto';
 import type { Response, Request } from 'express';
 import { RefreshToken } from '../../common/decorator/get-cookie.decorator';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('signup')
+  signUp(@Body() dto: SignUpDto) {
+    return this.authService.signUp(dto);
+  }
 
   @Post('signin')
   signIn(@Body() dto: SignInDto) {

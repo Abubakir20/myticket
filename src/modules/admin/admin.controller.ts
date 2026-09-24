@@ -19,6 +19,7 @@ import { RolesGuard } from '../../common/guard/roles.guard';
 import { AccessRoles } from '../../common/decorator/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageValidationPipe } from '../../common/pipe/image-validation.pipe';
+import { Role } from '../../common/enum';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('admin')
@@ -60,5 +61,23 @@ export class AdminController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.adminService.remove(id);
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('organizerapplications')
+  getOrgApplications() {
+    return this.adminService.getOrgApplications();
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Patch(':id/approve')
+  approveApplication(@Param('id') id: string) {
+    return this.adminService.approveApplication(id);
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Patch(':id/reject')
+  rejectApplication(@Param('id') id: string) {
+    return this.adminService.rejectApplication(id);
   }
 }
