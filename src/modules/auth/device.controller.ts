@@ -6,7 +6,7 @@ import { RolesGuard } from '../../common/guard/roles.guard';
 import { AccessRoles } from '../../common/decorator/roles.decorator';
 import { RefreshToken } from '../../common/decorator/get-cookie.decorator';
 
-@UseGuards(RolesGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @Controller('device')
 export class DeviceController {
     constructor(private readonly deviceService: DeviceService) { }
