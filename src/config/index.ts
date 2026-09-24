@@ -39,4 +39,8 @@ export const env = {
     FROM: String(process.env.SMTP_FROM),
     PASSWORD: String(process.env.SMTP_PASSWORD),
   },
+
+  ORDER: {
+    HOLD_MINUTES: Number(process.env.ORDER_HOLD_MINUTES),
+  },
 };
