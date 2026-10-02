@@ -35,6 +35,12 @@ export class AdminController {
   findAll() {
     return this.adminService.findAll();
   }
+  
+  @AccessRoles(Role.ADMIN)
+  @Get('organizerapplications')
+  getOrgApplications() {
+    return this.adminService.getOrgApplications();
+  }
 
   @AccessRoles('ID')
   @Get(':id')
@@ -63,11 +69,6 @@ export class AdminController {
     return this.adminService.remove(id);
   }
 
-  @AccessRoles(Role.ADMIN)
-  @Get('organizerapplications')
-  getOrgApplications() {
-    return this.adminService.getOrgApplications();
-  }
 
   @AccessRoles(Role.ADMIN)
   @Patch(':id/approve')

@@ -1,0 +1,37 @@
+/* Checkout (dizayn: Chipta Checkout 2a–2f) */
+body { background: var(--page-bg-alt); }
+.page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+}
+.frame {
+  width: 100%; max-width: 420px; min-height: 600px; border-radius: 28px; background: var(--color-bg);
+  padding: 28px 26px; display: flex; flex-direction: column; position: relative;
+  box-shadow: 0 18px 44px rgba(32, 30, 29, 0.18);
+}
+.frame > .view { flex: 1; display: flex; flex-direction: column; }
+.frame .title { margin: 0 0 16px; }
+.frame-top { display: flex; justify-content: space-between; align-items: center; margin: -8px 0 12px; }
+.frame-top a { font-size: 13px; color: inherit; opacity: 0.65; text-decoration: none; }
+.frame-top a:hover { opacity: 1; }
+
+.timer {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+  border-radius: 16px; background: var(--color-accent-100); color: var(--color-accent-700);
+  margin-bottom: 20px; transition: background 0.3s, color 0.3s;
+}
+.timer.warn { background: #a83a28; color: #fff; }
+.timer b { font-family: var(--font-heading); font-weight: 400; font-size: 22px; font-variant-numeric: tabular-nums; }
+.view .btn-ghost.btn-block { margin-top: 8px; }
+
+/* Modal ramka ichida (dizaynda kartaning o'zini qoplaydi) */
+.frame .modalbg { position: absolute; border-radius: 28px; }
+.field-gap { margin-bottom: 12px; }
+.field-row { display: flex; gap: 12px; margin-bottom: 18px; }
+.field-row .field { flex: 1; min-width: 0; }
+.mock-hint { font-size: 11.5px; opacity: 0.55; margin: 10px 0 0; text-align: center; }
+
+@media (max-width: 460px) {
+  .page { padding: 0; align-items: stretch; }
+  .frame { max-width: none; min-height: 100vh; border-radius: 0; box-shadow: none; padding: 24px 16px; }
+  .frame .modalbg { position: fixed; border-radius: 0; }
+}

@@ -1,19 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateVenueDto {
-  @ApiProperty({example: 'SaidCinema'})
+  @ApiProperty({ example: 'Humo Arena' })
   @IsString()
   @MinLength(3)
   name!: string;
 
-  @ApiProperty({example: 'Yer sayyorasi'})
+  @ApiProperty({ example: "Toshkent, Olmazor tumani, Beruniy ko'chasi" })
   @IsString()
   @MinLength(5)
   address!: string;
 
-  @ApiProperty({example: 'SaidCinema bittalani bittasi'})
+  @ApiPropertyOptional({ example: '12 000 o‘rinli yopiq arena' })
+  @IsOptional()
   @IsString()
-  @MinLength(5)
-  description!: string;
+  description?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }

@@ -1,0 +1,75 @@
+/* O'rindiq / toifa tanlash (dizayn: Chipta Seat Selection, Chipta Category Selection) */
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; padding-bottom: 60px; }
+@media (max-width: 840px) { .layout { grid-template-columns: 1fr; } }
+
+.hallcard { background: var(--color-surface); border-radius: 24px; padding: 28px 24px; overflow: auto; }
+@media (max-width: 600px) { .hallcard { padding: 20px 14px; } }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; margin-bottom: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
+.stage {
+  text-align: center; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5;
+  padding: 10px; border-bottom: 2px solid var(--color-divider); margin-bottom: 22px;
+}
+.sector { margin-bottom: 22px; }
+.sector h5 { font-size: 13px; margin: 0 0 10px; display: flex; justify-content: space-between; gap: 12px; }
+.sector h5 span { opacity: 0.6; font-family: var(--font-body); }
+.row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.rowlabel { width: 18px; font-size: 10.5px; opacity: 0.45; flex: none; text-align: right; }
+.seats { display: flex; gap: 5px; flex-wrap: nowrap; }
+.seat { width: 22px; height: 22px; border-radius: 6px; border: none; cursor: pointer; padding: 0; flex: none; }
+.seat.free, .legend .free { background: color-mix(in srgb, var(--color-text) 10%, transparent); }
+.seat.free:hover { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+.seat.held, .legend .held { background: var(--c-warn); opacity: 0.55; }
+.seat.sold, .legend .sold { background: color-mix(in srgb, var(--color-text) 30%, transparent); }
+.seat.held, .seat.sold { cursor: not-allowed; }
+.seat.sel, .legend .sel { background: var(--color-accent); }
+.seat:focus-visible { outline: 2px solid var(--color-text); outline-offset: 1px; }
+
+.panel { position: sticky; top: 88px; background: var(--color-surface); border-radius: 24px; padding: 22px; }
+.panel h4 { margin: 0 0 14px; }
+.pline {
+  display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px;
+  padding: 9px 0; border-bottom: 1px solid var(--color-divider);
+}
+.pline small { opacity: 0.6; display: block; font-size: 11px; }
+.pline button {
+  border: 0; background: none; color: inherit; opacity: 0.5; cursor: pointer; font-size: 14px; padding: 0 2px;
+}
+.pline button:hover { opacity: 1; }
+.empty-sel { font-size: 13px; opacity: 0.55; padding: 14px 0; margin: 0; }
+.panel .total { font-size: 19px; margin: 16px 0 18px; }
+@media (max-width: 840px) {
+  .panel { position: sticky; top: auto; bottom: 12px; box-shadow: var(--shadow-lg); }
+}
+
+/* Toifa tanlash */
+.catrow {
+  display: flex; align-items: center; gap: 16px; background: var(--color-surface);
+  border-radius: 20px; padding: 18px 20px; margin-bottom: 12px;
+}
+.catrow.out { opacity: 0.55; }
+.cname { flex: 1; min-width: 0; }
+.cname .t { font-weight: 600; font-size: 15px; }
+.cname .left { font-size: 12px; opacity: 0.6; margin-top: 2px; }
+.cprice { font-family: var(--font-heading); font-size: 17px; flex: none; }
+.stepper { display: flex; align-items: center; gap: 10px; flex: none; }
+.stepbtn {
+  width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--color-divider); background: transparent;
+  font-size: 16px; cursor: pointer; display: grid; place-items: center; color: var(--color-text);
+}
+.stepbtn:disabled { opacity: 0.3; cursor: not-allowed; }
+.stepbtn:not(:disabled):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.qty { width: 22px; text-align: center; font-weight: 600; }
+.soldout {
+  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+}
+@media (max-width: 520px) {
+  .catrow { flex-wrap: wrap; padding: 16px; }
+  .cname { flex-basis: 100%; }
+  .stepper, .soldout { margin-left: auto; }
+}
+.catpanel { background: var(--color-surface); border-radius: 24px; padding: 22px; margin: 20px 0 60px; }
+.catpanel .total { font-size: 19px; margin: 0 0 16px; }
+.stepbtn[aria-disabled='true'] { opacity: 0.3; }

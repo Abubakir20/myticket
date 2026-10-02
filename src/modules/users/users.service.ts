@@ -16,7 +16,19 @@ export class UsersService {
   constructor(private readonly db: PrismaService) {}
 
   async myProfile(id: string) {
-    const user = await this.db.user.findUnique({ where: { id } });
+    const user = await this.db.user.findUnique({ where: { id }, select: {
+      id: true,
+      fullName: true,
+      phone: true,
+      email: true,
+      imageUrl: true,
+      role: true,
+      status: true,
+      isVerified: true,
+      createdAt: true,
+      updatedAt: true,
+      createdById: false,
+    }});
     if (!user) {
       throw new NotFoundException('Bunday foydalanuvchi topilmadi');
     }

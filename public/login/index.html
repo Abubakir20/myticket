@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Kirish — Chipta</title>
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/auth.css">
+<script type="module" src="/js/pages/login.js"></script>
+</head>
+<body>
+<main class="auth">
+  <div class="blob" aria-hidden="true"></div>
+  <div class="auth-body">
+    <div class="auth-top"><a class="brand" href="/">Chipta</a><span id="theme"></span></div>
+    <p class="kicker">Xush kelibsiz</p>
+    <h1>Kirish</h1>
+    <p class="sub" id="sub">Chiptalaringiz va buyurtmalaringiz profilingizda saqlanadi.</p>
+    <div class="banner" id="banner" role="alert" hidden></div>
+    <form id="form" novalidate>
+      <div class="f">
+        <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="username" inputmode="email" required></div>
+        <div class="field"><label for="password">Parol</label><input class="input" id="password" name="password" type="password" autocomplete="current-password" required></div>
+      </div>
+      <button class="btn btn-primary btn-block submit" id="submit" type="submit">Kirish</button>
+    </form>
+    <p class="foot">Akkaunt yo'qmi? <a id="register-link" href="/register/">Ro'yxatdan o'tish</a></p>
+  </div>
+</main>
+</body>
+</html>
