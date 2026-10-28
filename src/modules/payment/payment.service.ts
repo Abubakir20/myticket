@@ -25,7 +25,6 @@ export class PaymentService {
   ) {}
 
   async pay(userId: string, orderId: string, dto: PayOrderDto) {
-    // 1. Buyurtma shu userniki, PENDING va muddati o'tmagan bo'lishi kerak
     const order = await this.db.order.findFirst({
       where: { id: orderId, userId },
       include: {
@@ -52,8 +51,6 @@ export class PaymentService {
     const amount = this.orderService.totalPrice(order.items);
     const transactionId = this.generateTransactionId();
 
-    // 2. Muvaffaqiyatsiz to'lov: payment FAILED, buyurtma PENDING qoladi — muddat ichida qayta urinish mumkin.
-    // payments.orderId unique, shuning uchun qayta urinishda yangi yozuv emas, mavjudi yangilanadi (upsert).
     if (!dto.success) {
       await this.db.payment.upsert({
         where: { orderId },
@@ -70,13 +67,9 @@ export class PaymentService {
       });
     }
 
-    // 3. Muvaffaqiyatli to'lov: hammasi bitta transaction ichida —
-    // biror qadam xato bersa, hech narsa saqlanmaydi
     let tickets: { id: string; qrCode: string; seatId: string | null }[];
     try {
       tickets = await this.db.$transaction(async (tx) => {
-        // Buyurtma hali ham PENDING bo'lsagina PAID ga o'tadi — ikki marta to'lash yoki
-        // shu payt bekor qilishdan himoya
         const updated = await tx.order.updateMany({
           where: { id: orderId, status: OrderStatus.PENDING },
           data: { status: OrderStatus.PAID },
@@ -103,7 +96,6 @@ export class PaymentService {
           await this.increaseSoldCount(tx, order.items);
         }
 
-        // Har bir order_item uchun bitta chipta, qrCode — noyob UUID
         return tx.ticket.createManyAndReturn({
           data: order.items.map((item) => ({
             orderItemId: item.id,
@@ -115,7 +107,6 @@ export class PaymentService {
         });
       });
     } catch (error) {
-      // tickets (sessionId, seatId) unique — o'rindiq boshqa buyurtma orqali sotilib bo'lgan
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
@@ -125,7 +116,6 @@ export class PaymentService {
       throw error;
     }
 
-    // 4. Transactiondan keyin Redis'dagi seat-hold kalitlari o'chiriladi
     await this.orderService.releaseSeatHolds(
       order.id,
       order.sessionId,
@@ -144,8 +134,6 @@ export class PaymentService {
     );
   }
 
-  // GENERAL: soldCount atomar oshiriladi. Oshirilgandan keyin sig'imdan o'tib ketsa,
-  // xato tashlanadi va butun transaction bekor bo'ladi.
   private async increaseSoldCount(
     tx: Prisma.TransactionClient,
     items: { ticketCategoryId: string }[],

@@ -23,9 +23,6 @@ import { CreateOrderDto, GeneralOrderItemDto } from './dto/create-order.dto';
 
 const MAX_TICKETS_PER_ORDER = 5;
 
-// Kalitni faqat uning qiymati shu orderId bo'lsa o'chiradi.
-// Band qilish muddati o'tgach, o'rindiqni boshqa buyurtma egallagan bo'lishi mumkin —
-// oddiy DEL uning bandini ham o'chirib yuborardi.
 const RELEASE_HOLD_SCRIPT = `
   if redis.call('GET', KEYS[1]) == ARGV[1] then
     return redis.call('DEL', KEYS[1])
@@ -44,7 +41,7 @@ export class OrderService {
   constructor(
     private readonly db: PrismaService,
     private readonly redis: RedisService,
-  ) {}
+  ) { }
 
   async create(userId: string, dto: CreateOrderDto) {
     // 1. Seans ACTIVE, tadbir APPROVED va seans hali boshlanmagan bo'lishi kerak

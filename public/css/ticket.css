@@ -1,0 +1,24 @@
+/* Chipta QR ekrani (dizayn: Chipta Ticket Detail) — skanerlash uchun doim to'q fon */
+body { background: #0e0d0c; color: #fff; }
+.twrap {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.tback {
+  position: fixed; top: 24px; left: 24px; color: #fff; opacity: 0.6; text-decoration: none; font-size: 20px;
+  width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+}
+.tback:hover, .tback:focus-visible { opacity: 1; }
+.qrbig {
+  width: min(320px, 80vw); height: min(320px, 80vw); background: #fff; border-radius: 20px;
+  padding: 14px; margin-bottom: 26px;
+}
+.qrbig.used { opacity: 0.35; }
+.twrap h2 { font-size: 24px; margin: 0 0 6px; }
+.twrap .v { opacity: 0.7; font-size: 14px; line-height: 1.6; margin: 0 0 18px; }
+.status { display: inline-block; padding: 6px 16px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; }
+.status-ACTIVE { background: #7a8a5e; }
+.status-USED { background: #a19786; }
+.status-CANCELLED { background: #a83a28; }
+.code { margin: 18px 0 0; font: 12px ui-monospace, Menlo, monospace; opacity: 0.45; user-select: all; word-break: break-all; }
+.twrap .state { color: rgba(255, 255, 255, 0.7); }

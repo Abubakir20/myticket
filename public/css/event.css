@@ -1,0 +1,78 @@
+/* Tadbir sahifasi (dizayn: Chipta Event Detail) */
+.ehero {
+  position: relative; border-radius: 28px; overflow: hidden; color: #fff;
+  padding: 40px 36px; margin: 16px 0 28px; min-height: 280px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.ehero::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 30%, rgba(0, 0, 0, 0.6));
+}
+.ehero .blob {
+  position: absolute; z-index: 1; width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, #fff, transparent 70%); opacity: 0.14; top: -160px; right: -100px;
+}
+.kicker { position: relative; z-index: 2; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kchip {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(4px);
+}
+.ehero h1 { position: relative; z-index: 2; font-size: 44px; margin: 12px 0 0; line-height: 1.02; }
+@media (max-width: 600px) {
+  .ehero { padding: 28px 22px; min-height: 220px; border-radius: 24px; }
+  .ehero h1 { font-size: 34px; }
+}
+
+.grid2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; align-items: start; padding-bottom: 60px; }
+@media (max-width: 760px) {
+  .grid2 { grid-template-columns: 1fr; gap: 20px; }
+  .stickycard { order: -1; }
+}
+.desc { font-size: 14.5px; line-height: 1.7; margin: 0 0 28px; opacity: 0.85; white-space: pre-line; }
+.ecard-box { background: var(--color-surface); border-radius: 20px; padding: 24px; }
+.metaRow { display: flex; flex-wrap: wrap; gap: 22px; font-size: 13.5px; }
+.metaRow span { opacity: 0.6; }
+.metaRow b { font-family: var(--font-heading); font-weight: 400; display: block; font-size: 15px; margin-top: 2px; }
+.stickycard { position: sticky; top: 88px; }
+
+.gal { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 28px; }
+@media (max-width: 480px) { .gal { grid-template-columns: repeat(3, 1fr); } }
+.gph {
+  aspect-ratio: 1; border-radius: 14px; overflow: hidden; border: 0; padding: 0; cursor: zoom-in;
+  background: var(--color-surface); position: relative;
+}
+.gph img { width: 100%; height: 100%; object-fit: cover; }
+
+.sessions { padding: 8px 24px; }
+@media (max-width: 480px) { .sessions { padding: 4px 16px; } }
+.sess {
+  display: flex; align-items: center; gap: 16px; padding: 16px 0;
+  border-top: 1px solid var(--color-divider); color: inherit; text-decoration: none;
+}
+.sess:first-child { border-top: none; }
+.sess.off { opacity: 0.45; }
+.sdate { width: 64px; flex: none; text-align: center; }
+.sdate .d { font-family: var(--font-heading); font-size: 22px; line-height: 1; }
+.sdate .m { font-size: 11px; text-transform: uppercase; opacity: 0.65; }
+.sinfo { flex: 1; min-width: 0; }
+.sinfo .t { font-size: 14.5px; font-weight: 600; }
+.sinfo .v { font-size: 12.5px; opacity: 0.65; margin-top: 2px; }
+.stag {
+  font-size: 10.5px; padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-top: 6px; display: inline-block;
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent); color: var(--color-accent);
+}
+.stag-general { background: color-mix(in srgb, #7a8a5e 20%, transparent); color: #5c6a45; }
+:root[data-theme='dark'] .stag-general { color: #b8c79c; }
+.sess .btn { min-height: 40px; padding-inline: 18px; flex: none; }
+@media (max-width: 480px) {
+  .sess { flex-wrap: wrap; gap: 10px 14px; }
+  .sdate { width: 48px; }
+  .sess .btn { width: 100%; }
+}
+
+.lightbox { background: rgba(10, 8, 7, 0.88); }
+.lightbox img { max-width: min(92vw, 1100px); max-height: 86vh; border-radius: 16px; object-fit: contain; }
+.lightbox .close {
+  position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 50%;
+  border: 0; background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 20px; cursor: pointer;
+}

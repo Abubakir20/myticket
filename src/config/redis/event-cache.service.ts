@@ -5,8 +5,6 @@ import {
   EVENT_CACHE_TTL,
 } from '../../common/helper/redis-keys';
 
-// Tadbirlar keshi. Tadbir tasdiqlansa, tahrirlansa yoki bekor qilinsa
-// cache:events:* to'liq tozalanadi (TZ 3.6, 5-bo'lim).
 @Injectable()
 export class EventCacheService {
   constructor(private readonly redis: RedisService) {}
@@ -25,7 +23,6 @@ export class EventCacheService {
     );
   }
 
-  // KEYS o'rniga SCAN — katta bazada Redis'ni bloklamaydi
   async clear() {
     let cursor = '0';
     do {

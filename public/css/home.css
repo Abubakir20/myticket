@@ -1,0 +1,78 @@
+/* Bosh sahifa (dizayn: Chipta Home) */
+.hero {
+  position: relative; border-radius: 32px; overflow: hidden; background: #171412; color: #f5ead8;
+  padding: 52px 40px; margin: 28px 0 40px; min-height: 340px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.hero .blob1 {
+  position: absolute; width: 520px; height: 520px; border-radius: 50%;
+  background: radial-gradient(circle, var(--color-accent), transparent 70%);
+  opacity: 0.55; top: -220px; right: -140px;
+}
+.hero .blob2 {
+  position: absolute; width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, #7a8a5e, transparent 70%);
+  opacity: 0.4; bottom: -160px; left: -100px;
+}
+.hero-kicker {
+  position: relative; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #ff8163; margin: 0 0 10px; font-weight: 700;
+}
+.hero h1 { position: relative; font-size: 56px; margin: 0 0 14px; line-height: 1; }
+.hero-meta {
+  position: relative; display: flex; gap: 18px; flex-wrap: wrap;
+  font-size: 14px; opacity: 0.85; margin-bottom: 22px;
+}
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-cta { position: relative; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.hero-cta span { font-size: 13px; opacity: 0.75; }
+.hero.skeleton { background-color: var(--color-surface); }
+@media (max-width: 600px) {
+  .hero { padding: 36px 22px; min-height: 280px; border-radius: 24px; margin: 18px 0 28px; }
+  .hero h1 { font-size: 40px; }
+}
+
+.sectionh { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 18px; }
+.sectionh h3 { margin: 0; }
+
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px; margin-bottom: 48px;
+}
+.ecard {
+  border-radius: 24px; overflow: hidden; background: var(--color-surface);
+  display: flex; flex-direction: column; box-shadow: var(--shadow-sm);
+  text-decoration: none; color: inherit; transition: box-shadow 0.15s, transform 0.15s;
+}
+.ecard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ecard.skeleton { height: 290px; box-shadow: none; }
+.poster {
+  height: 200px; position: relative; display: flex; align-items: flex-end;
+  padding: 16px; overflow: hidden; color: #fff;
+}
+.poster::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.55));
+}
+.poster h5 {
+  position: relative; z-index: 1; font-family: var(--font-heading);
+  font-size: 22px; margin: 2px 0 0; line-height: 1.05;
+}
+.agebadge {
+  position: absolute; z-index: 1; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.45);
+  color: #fff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+.ebody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.emeta { font-size: 12px; opacity: 0.65; display: flex; gap: 8px; flex-wrap: wrap; }
+.eprice { font-family: var(--font-heading); font-size: 15px; margin-top: 2px; }
+
+.pager { display: flex; justify-content: center; gap: 8px; margin: 0 0 48px; flex-wrap: wrap; }
+.pgbtn {
+  min-width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--color-divider);
+  background: transparent; color: var(--color-text); font-size: 14px;
+  display: inline-grid; place-items: center; text-decoration: none; padding: 0 8px;
+}
+.pgbtn[aria-current] { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.pgbtn[aria-disabled='true'] { opacity: 0.35; pointer-events: none; }
+.pgbtn:not([aria-current]):hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }

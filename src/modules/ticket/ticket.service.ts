@@ -3,7 +3,6 @@ import { PrismaService } from '../../config/database/prisma.service';
 import { successRes } from '../../common/helper/success-response';
 import { Prisma } from '../../../generated/prisma/client';
 
-// Chipta egasi alohida ustunda saqlanmaydi: tickets → order_items → orders.userId
 const TICKET_INCLUDE = {
   session: {
     select: {

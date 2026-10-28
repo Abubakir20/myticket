@@ -1,0 +1,5 @@
+{
+  "extends": "../../public/tsconfig.json",
+  "compilerOptions": { "checkJs": false, "types": ["node"] },
+  "include": ["*.mjs", "../../public/js/**/*.js"]
+}
