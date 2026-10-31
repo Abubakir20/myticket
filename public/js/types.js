@@ -44,6 +44,8 @@
  * @property {number | null} ageLimit
  * @property {number} duration
  * @property {string | null} nextSessionAt
+ * @property {string | null} [venueName]  eng yaqin seans zali
+ * @property {number | null} [minPrice]  kelgusi seanslardagi eng arzon chipta
  */
 
 /**

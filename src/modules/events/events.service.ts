@@ -159,19 +159,30 @@ export class EventsService {
           sessions: {
             where: { status: SessionStatus.ACTIVE, startTime: { gt: new Date() } },
             orderBy: { startTime: 'asc' },
-            take: 1,
-            select: { startTime: true },
+            select: {
+              startTime: true,
+              venue: { select: { name: true } },
+              ticketCategories: { select: { price: true } },
+            },
           },
         },
       }),
       this.db.event.count({ where }),
     ]);
 
+    // Kartada ko'rsatish uchun: eng yaqin seans, uning zali va kelgusi seanslardagi eng arzon narx
     const data = {
-      items: items.map(({ sessions, ...event }) => ({
-        ...event,
-        nextSessionAt: sessions[0]?.startTime ?? null,
-      })),
+      items: items.map(({ sessions, ...event }) => {
+        const prices = sessions.flatMap((session) =>
+          session.ticketCategories.map((category) => Number(category.price)),
+        );
+        return {
+          ...event,
+          nextSessionAt: sessions[0]?.startTime ?? null,
+          venueName: sessions[0]?.venue.name ?? null,
+          minPrice: prices.length ? Math.min(...prices) : null,
+        };
+      }),
       meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
     await this.cache.set(key, data);

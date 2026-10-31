@@ -9,6 +9,8 @@
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
+    "seed": "node dist/src/seed/seed.js",
+    "seed:reset": "node dist/src/seed/seed.js --reset",
     "typecheck:web": "tsc -p public/tsconfig.json",
     "lint:web": "eslint public/js test/web",
     "test:web": "node --test test/web/*.test.mjs"

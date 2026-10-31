@@ -57,7 +57,7 @@ async function load() {
 
   listEl.replaceChildren(h('div', { class: 'grid' }, items.map(eventCard)));
   renderPager(meta);
-  if (page === 1) void renderHero(items);
+  if (page === 1) renderHero(items);
   else heroEl.replaceChildren();
 }
 
@@ -84,9 +84,17 @@ function eventCard(event) {
   const when = event.nextSessionAt
     ? fmt.dateTime(event.nextSessionAt)
     : 'Seanslar tez kunda';
+  const price =
+    event.minPrice !== null && event.minPrice !== undefined
+      ? `${fmt.price(event.minPrice)} dan`
+      : null;
   return h(
     'a',
-    { class: 'ecard', href: routes.event(event.id) },
+    {
+      class: 'ecard',
+      href: routes.event(event.id),
+      'aria-label': `${event.title}, ${when}${price ? `, ${price}` : ''}`,
+    },
     h(
       'div',
       { class: `poster ${fallbackClass(event.id)}` },
@@ -106,17 +114,24 @@ function eventCard(event) {
         h('span', { text: '·', 'aria-hidden': 'true' }),
         h('span', { text: fmt.duration(event.duration) }),
       ),
-      h('div', { class: 'eprice', text: 'Chipta olish →' }),
+      event.venueName
+        ? h('div', { class: 'evenue', text: `📍 ${event.venueName}` })
+        : null,
+      h(
+        'div',
+        { class: 'efoot' },
+        h('span', { class: 'eprice', text: price ?? 'Chipta olish' }),
+        h('span', { class: 'ego', text: '→', 'aria-hidden': 'true' }),
+      ),
     ),
   );
 }
 
 /**
- * Hero — seansi eng yaqin tadbir. Zal va narx ro'yxat javobida yo'q, shuning uchun
- * faqat shu bitta tadbirning tafsiloti so'raladi.
+ * Hero — seansi eng yaqin tadbir (afisha fonda). Zal va narx ro'yxat javobidan olinadi.
  * @param {EventListItem[]} items
  */
-async function renderHero(items) {
+function renderHero(items) {
   const upcoming = items
     .filter((e) => e.nextSessionAt)
     .sort(
@@ -130,29 +145,12 @@ async function renderHero(items) {
     return;
   }
 
-  let detail = null;
-  try {
-    detail = await api.events.get(pick.id);
-  } catch {
-    // Tafsilot kelmasa ham hero ro'yxatdagi ma'lumot bilan chiziladi
-  }
-  const session = detail?.sessions.find(
-    (s) => s.startTime === pick.nextSessionAt,
-  );
-  const from = detail
-    ? fmt.minPrice(
-        detail.sessions
-          .filter((s) => Date.parse(s.startTime) > Date.now())
-          .flatMap((s) => s.ticketCategories),
-      )
-    : null;
-
   heroEl.replaceChildren(
     h(
       'div',
-      { class: 'hero' },
-      h('div', { class: 'blob1', 'aria-hidden': 'true' }),
-      h('div', { class: 'blob2', 'aria-hidden': 'true' }),
+      { class: `hero ${fallbackClass(pick.id)}` },
+      posterImage(pick.posterUrl, ''),
+      h('div', { class: 'hero-shade', 'aria-hidden': 'true' }),
       h('p', { class: 'hero-kicker', text: 'Eng yaqin tadbir' }),
       h('h1', { text: pick.title }),
       h(
@@ -161,10 +159,9 @@ async function renderHero(items) {
         h('span', {
           text: `📅 ${fmt.dateTime(/** @type {string} */ (pick.nextSessionAt))}`,
         }),
-        session
-          ? h('span', {
-              text: `📍 ${session.venue.name}, ${session.venue.address}`,
-            })
+        pick.venueName ? h('span', { text: `📍 ${pick.venueName}` }) : null,
+        pick.ageLimit !== null
+          ? h('span', { text: `👤 ${fmt.ageLabel(pick.ageLimit)}` })
           : null,
       ),
       h(
@@ -175,7 +172,9 @@ async function renderHero(items) {
           href: routes.event(pick.id),
           text: 'Chipta olish',
         }),
-        from !== null ? h('span', { text: `${fmt.price(from)} dan` }) : null,
+        pick.minPrice !== null && pick.minPrice !== undefined
+          ? h('span', { text: `${fmt.price(pick.minPrice)} dan` })
+          : null,
       ),
     ),
   );

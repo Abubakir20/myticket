@@ -4,16 +4,16 @@
   padding: 52px 40px; margin: 28px 0 40px; min-height: 340px;
   display: flex; flex-direction: column; justify-content: flex-end;
 }
-.hero .blob1 {
-  position: absolute; width: 520px; height: 520px; border-radius: 50%;
-  background: radial-gradient(circle, var(--color-accent), transparent 70%);
-  opacity: 0.55; top: -220px; right: -140px;
+/* Afisha fonda, ustida chapdan o'ngga va pastdan yuqoriga qorayish — matn har qanday rasmda o'qiladi */
+.hero .poster-img { transform: scale(1.02); }
+.hero-shade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(14, 11, 10, 0.92) 0%, rgba(14, 11, 10, 0.7) 45%, rgba(14, 11, 10, 0.15) 100%),
+    linear-gradient(0deg, rgba(14, 11, 10, 0.6) 0%, transparent 55%);
 }
-.hero .blob2 {
-  position: absolute; width: 360px; height: 360px; border-radius: 50%;
-  background: radial-gradient(circle, #7a8a5e, transparent 70%);
-  opacity: 0.4; bottom: -160px; left: -100px;
-}
+.hero h1, .hero-meta, .hero-cta, .hero-kicker { max-width: 640px; }
+.hero h1 { text-wrap: balance; }
 .hero-kicker {
   position: relative; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
   color: #ff8163; margin: 0 0 10px; font-weight: 700;
@@ -28,8 +28,11 @@
 .hero-cta span { font-size: 13px; opacity: 0.75; }
 .hero.skeleton { background-color: var(--color-surface); }
 @media (max-width: 600px) {
-  .hero { padding: 36px 22px; min-height: 280px; border-radius: 24px; margin: 18px 0 28px; }
-  .hero h1 { font-size: 40px; }
+  .hero { padding: 36px 22px; min-height: 340px; border-radius: 24px; margin: 18px 0 28px; }
+  .hero h1 { font-size: 36px; }
+  .hero-shade {
+    background: linear-gradient(0deg, rgba(14, 11, 10, 0.95) 0%, rgba(14, 11, 10, 0.75) 55%, rgba(14, 11, 10, 0.25) 100%);
+  }
 }
 
 .sectionh { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 18px; }
@@ -52,20 +55,41 @@
 }
 .poster::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.55));
+  background: linear-gradient(180deg, transparent 35%, rgba(0, 0, 0, 0.72));
 }
+.poster .poster-img { transition: transform 0.4s ease; }
+.ecard:hover .poster .poster-img { transform: scale(1.04); }
 .poster h5 {
   position: relative; z-index: 1; font-family: var(--font-heading);
   font-size: 22px; margin: 2px 0 0; line-height: 1.05;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45); text-wrap: balance;
 }
 .agebadge {
   position: absolute; z-index: 1; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.45);
   color: #fff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
   backdrop-filter: blur(4px);
 }
-.ebody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.ebody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .emeta { font-size: 12px; opacity: 0.65; display: flex; gap: 8px; flex-wrap: wrap; }
-.eprice { font-family: var(--font-heading); font-size: 15px; margin-top: 2px; }
+.evenue {
+  font-size: 12.5px; opacity: 0.8;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.efoot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: auto; padding-top: 6px;
+}
+.eprice { font-family: var(--font-heading); font-size: 15px; }
+.ego {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent); color: var(--color-accent);
+  transition: background 0.15s, color 0.15s;
+}
+.ecard:hover .ego { background: var(--color-accent); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .ecard, .poster .poster-img { transition: none; }
+  .ecard:hover, .ecard:hover .poster .poster-img { transform: none; }
+}
 
 .pager { display: flex; justify-content: center; gap: 8px; margin: 0 0 48px; flex-wrap: wrap; }
 .pgbtn {

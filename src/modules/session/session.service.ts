@@ -184,6 +184,13 @@ export class SessionService {
           ? 'HELD'
           : 'FREE';
 
+    // Sahnaga eng yaqin (eng qimmat) sektor birinchi — alifbo tartibi zal sxemasini buzardi
+    sectors.sort(
+      (a, b) =>
+        Number(categoryBySector.get(b.id)!.price) -
+        Number(categoryBySector.get(a.id)!.price),
+    );
+
     const data = sectors.map((sector) => {
       const category = categoryBySector.get(sector.id)!;
       return {
