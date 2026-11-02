@@ -29,6 +29,7 @@
  * @property {string} message
  * @property {number} expiresIn  sekund
  * @property {number} resendAfter  sekund
+ * @property {string} [demoCode]  faqat OTP_DEMO rejimida: email o'rniga kodning o'zi
  */
 
 /** @typedef {{ name: string, address: string }} VenueRef */

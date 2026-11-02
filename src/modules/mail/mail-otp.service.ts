@@ -56,13 +56,11 @@ export class EmailOtpService {
     const attemptsKey = this.attemptsKey(email);
     const resendKey = this.resendKey(email);
 
-    const cooldown = await redis.set(
-      resendKey,
-      '1',
-      'EX',
-      env.OTP.RESEND,
-      'NX',
-    );
+    // Demo rejimda email yuborilmaydi — spamdan himoya (cooldown) kerak emas.
+    // Aks holda qayta kirishda 429 qaytib, sahifada kod ko'rinmay qolardi.
+    const cooldown = env.OTP.DEMO
+      ? 'OK'
+      : await redis.set(resendKey, '1', 'EX', env.OTP.RESEND, 'NX');
 
     if (cooldown !== 'OK') {
       const remaining = await redis.ttl(resendKey);
@@ -89,6 +87,17 @@ export class EmailOtpService {
         .set(otpKey, otpHash, 'EX', env.OTP.TTL)
         .set(attemptsKey, '0', 'EX', env.OTP.TTL)
         .exec();
+
+      // OTP_DEMO=true: email yuborilmaydi, kod javobda qaytadi (faqat demo serverlar uchun!)
+      if (env.OTP.DEMO) {
+        return {
+          success: true,
+          message: "Demo rejim: kod email o'rniga sahifada ko'rsatiladi",
+          expiresIn: env.OTP.TTL,
+          resendAfter: env.OTP.RESEND,
+          demoCode: code,
+        };
+      }
 
       await this.mailerService.sendMail({
         to: email,

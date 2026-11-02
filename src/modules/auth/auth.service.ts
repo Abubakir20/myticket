@@ -33,6 +33,8 @@ export class AuthService {
       const hashedPassword = await Crypt.hash(password);
       const user = await this.db.user.create({
         data: { email, hashedPassword, role: Role.CUSTOMER },
+        // Parol hash'i javobda qaytmasligi kerak
+        omit: { hashedPassword: true },
       });
       return successRes(user, 201);
     }

@@ -41,9 +41,11 @@ const resendRow = $('resend-row');
 const resendTimer = $('resend-timer');
 const resendInline = /** @type {HTMLButtonElement} */ ($('resend'));
 const resendPrimary = /** @type {HTMLButtonElement} */ ($('resend-primary'));
+const demoBox = $('demo');
 
 $('theme').append(themeButton());
 $('email').textContent = pending.email;
+renderSub();
 /** @type {HTMLAnchorElement} */ ($('change-link')).href = pending.fullName
   ? routes.register(pending.next ?? '')
   : routes.login(pending.next ?? '');
@@ -95,6 +97,69 @@ function setState(next, message = null) {
     : 'btn btn-primary btn-block';
   if (expired) input.value = '';
   renderCells();
+  renderDemo();
+}
+
+// ---------- Demo rejim (OTP_DEMO): kod email o'rniga shu yerda ko'rsatiladi ----------
+
+function renderSub() {
+  const email = h('b', { text: pending.email });
+  sub.replaceChildren(
+    ...(pending.demoCode
+      ? [
+          'Tasdiqlash kodi ',
+          email,
+          ' uchun yaratildi. Email yuborilmaydi — kodni pastdan oling.',
+        ]
+      : ['6 xonali kodni ', email, ' manziliga yubordik.']),
+  );
+}
+
+function renderDemo() {
+  const code = pending.demoCode;
+  if (!code || state === 'expired') {
+    demoBox.hidden = true;
+    demoBox.replaceChildren();
+    return;
+  }
+  const digits = [...code].map((digit, i) =>
+    h('span', { class: i === 3 ? 'd d-split' : 'd', text: digit }),
+  );
+  const fill = h('button', {
+    class: 'btn btn-secondary demo-fill',
+    type: 'button',
+    text: 'Kodni avtomatik kiritish',
+    on: {
+      click: () => {
+        input.value = code;
+        setState('input');
+        form.requestSubmit();
+      },
+    },
+  });
+  demoBox.replaceChildren(
+    h(
+      'div',
+      { class: 'demo-head' },
+      h('span', { class: 'demo-badge', text: 'Demo rejim' }),
+      h('span', { id: 'demo-title', text: 'Sizning tasdiqlash kodingiz' }),
+    ),
+    h(
+      'div',
+      {
+        class: 'demo-code',
+        role: 'group',
+        'aria-label': `Kod: ${[...code].join(' ')}`,
+      },
+      digits,
+    ),
+    h('p', {
+      class: 'demo-note',
+      text: "Bu serverda email yuborish o'chirilgan, shuning uchun kod shu yerda ko'rsatiladi.",
+    }),
+    fill,
+  );
+  demoBox.hidden = false;
 }
 
 // ---------- Taymerlar ----------
@@ -112,7 +177,9 @@ every(() => {
     hint.textContent =
       left > 0 ? `Kod ${fmt.countdown(left)} davomida amal qiladi.` : '';
   } else {
-    hint.textContent = 'Emailingizga yuborilgan oxirgi kodni kiriting.';
+    hint.textContent = pending.demoCode
+      ? "Yuqorida ko'rsatilgan kodni kiriting."
+      : 'Emailingizga yuborilgan oxirgi kodni kiriting.';
   }
   const wait = Math.ceil((pending.resendAt - now) / 1000);
   resendTimer.hidden = wait <= 0;
@@ -202,7 +269,9 @@ async function resend() {
     pending.expiresAt = now + sent.expiresIn * 1000;
     pending.resendAt = now + sent.resendAfter * 1000;
     pending.ttl = sent.expiresIn;
+    pending.demoCode = sent.demoCode ?? null;
     savePendingLogin(pending);
+    renderSub();
     setState('input');
     sub.hidden = false;
     input.focus();
