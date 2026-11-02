@@ -11,6 +11,7 @@
     "start:dev": "nest start --watch",
     "seed": "node dist/src/seed/seed.js",
     "seed:reset": "node dist/src/seed/seed.js --reset",
+    "seed:controller": "node dist/src/seed/controller.js",
     "typecheck:web": "tsc -p public/tsconfig.json",
     "lint:web": "eslint public/js test/web",
     "test:web": "node --test test/web/*.test.mjs"

@@ -37,7 +37,15 @@ export class CheckInService {
         },
       },
     });
-    return successRes(controllerEvents.map((item) => item.event));
+    // Eng yaqin seansli tadbir ro'yxat boshida — kontroller bugungi tadbirni darrov topadi
+    const nextStart = (event: (typeof controllerEvents)[number]['event']) =>
+      event.sessions
+        .find((s) => s.startTime.getTime() > Date.now())
+        ?.startTime.getTime() ?? Number.MAX_SAFE_INTEGER;
+    const events = controllerEvents
+      .map((item) => item.event)
+      .sort((a, b) => nextStart(a) - nextStart(b));
+    return successRes(events);
   }
 
   async checkIn(controllerId: string, dto: CheckInDto) {
