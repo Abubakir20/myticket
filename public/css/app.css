@@ -233,3 +233,20 @@ footer.site-footer {
 /* — QR — */
 .qr { display: block; background: #fff; border-radius: 10px; }
 .qr svg { display: block; width: 100%; height: 100%; }
+
+/* — parol maydoni: oxirida ko'rsatish/yashirish (ko'z) tugmasi — */
+.pw { position: relative; }
+.pw .input { padding-right: 52px; }
+.pw-toggle {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 38px; height: 38px; border-radius: 50%; border: 0; padding: 0;
+  display: grid; place-items: center; cursor: pointer; background: transparent;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  transition: background 0.15s, color 0.15s;
+}
+.pw-toggle:hover { background: color-mix(in srgb, var(--color-text) 8%, transparent); color: var(--color-text); }
+.pw-toggle[aria-pressed='true'] { color: var(--color-accent); }
+.pw-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+.pw-toggle svg { width: 20px; height: 20px; display: block; }
+/* Edge'ning o'z "ko'z" tugmasi ikkinchi bo'lib chiqmasligi uchun */
+.pw input::-ms-reveal, .pw input::-ms-clear { display: none; }

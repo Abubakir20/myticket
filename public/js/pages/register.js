@@ -16,6 +16,7 @@ import {
   clearErrorsOnInput,
   withBusy,
   errorMessage,
+  passwordToggle,
 } from '../ui.js';
 
 const form = /** @type {HTMLFormElement} */ ($('form'));
@@ -31,6 +32,7 @@ $('theme').append(themeButton());
   next ?? '',
 );
 clearErrorsOnInput(form);
+passwordToggle(passwordInput);
 
 void getUser().then(
   (user) => {

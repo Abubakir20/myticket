@@ -15,6 +15,7 @@ import {
   clearErrorsOnInput,
   withBusy,
   errorMessage,
+  passwordToggle,
 } from '../ui.js';
 
 const form = /** @type {HTMLFormElement} */ ($('form'));
@@ -30,6 +31,7 @@ $('theme').append(themeButton());
 );
 emailInput.value = param('email') ?? '';
 clearErrorsOnInput(form);
+passwordToggle(passwordInput);
 
 // Allaqachon kirgan bo'lsa login sahifasi kerak emas
 void getUser().then(
