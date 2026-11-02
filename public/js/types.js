@@ -11,6 +11,7 @@
 /** @typedef {'SEATED' | 'GENERAL'} SeatingType */
 /** @typedef {'FREE' | 'HELD' | 'SOLD'} SeatStatus */
 /** @typedef {'PENDING' | 'APPROVED' | 'REJECTED'} ApplicationStatus */
+/** @typedef {'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'} EventStatus */
 
 /**
  * GET /users/me — frontend faqat shu maydonlarni ishlatadi.
@@ -200,3 +201,37 @@
  */
 
 export {};
+
+/**
+ * GET /admin/stats — har bir guruh: holat/rol → soni
+ * @typedef {object} AdminStats
+ * @property {Record<string, number>} users
+ * @property {Record<string, number>} events
+ * @property {Record<string, number>} applications
+ * @property {Record<string, number>} orders
+ * @property {Record<string, number>} tickets
+ * @property {number} revenue  to'langan buyurtmalar summasi
+ */
+
+/**
+ * GET /admin/events — element
+ * @typedef {object} AdminEvent
+ * @property {string} id
+ * @property {string} title
+ * @property {string} description
+ * @property {string} posterUrl
+ * @property {number | null} ageLimit
+ * @property {number} duration
+ * @property {EventStatus} status
+ * @property {string | null} rejectReason
+ * @property {string} createdAt
+ * @property {{ id: string, fullName: string | null, email: string }} organizer
+ * @property {{ sessions: number, images: number }} _count
+ */
+
+/** @typedef {{ items: AdminEvent[], meta: PageMeta }} AdminEventPage */
+
+/**
+ * GET /admin/organizerapplications — element
+ * @typedef {OrganizerApplication & { reviewedAt: string | null, user: { id: string, fullName: string | null, email: string, role: Role } }} AdminApplication
+ */

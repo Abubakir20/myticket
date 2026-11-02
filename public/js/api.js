@@ -16,6 +16,9 @@
 /** @typedef {import('./types.js').OrganizerApplication} OrganizerApplication */
 /** @typedef {import('./types.js').ControllerEvent} ControllerEvent */
 /** @typedef {import('./types.js').CheckInResult} CheckInResult */
+/** @typedef {import('./types.js').AdminStats} AdminStats */
+/** @typedef {import('./types.js').AdminEventPage} AdminEventPage */
+/** @typedef {import('./types.js').AdminApplication} AdminApplication */
 
 const BASE = '/api/v1';
 
@@ -178,5 +181,35 @@ export const api = {
     events: () => request('GET', '/check-in/events'),
     /** @param {string} qrCode @returns {Promise<CheckInResult>} */
     scan: (qrCode) => request('POST', '/check-in', { body: { qrCode } }),
+  },
+  admin: {
+    /** @returns {Promise<AdminStats>} */
+    stats: () => request('GET', '/admin/stats'),
+    /** @param {string} status bo'sh — hammasi @param {number} page @returns {Promise<AdminEventPage>} */
+    events: (status, page) =>
+      request(
+        'GET',
+        `/admin/events?page=${page}&limit=20${status ? `&status=${q(status)}` : ''}`,
+      ),
+    /** @param {string} id */
+    approveEvent: (id) => request('PATCH', `/events/${q(id)}/approve`),
+    /** @param {string} id @param {string} rejectReason */
+    rejectEvent: (id, rejectReason) =>
+      request('PATCH', `/events/${q(id)}/reject`, { body: { rejectReason } }),
+    /** @param {string} id */
+    cancelEvent: (id) => request('PATCH', `/events/${q(id)}/cancel`),
+    /** @param {string} status bo'sh — hammasi @returns {Promise<AdminApplication[]>} */
+    applications: (status) =>
+      request(
+        'GET',
+        `/admin/organizerapplications${status ? `?status=${q(status)}` : ''}`,
+      ),
+    /** @param {string} id */
+    approveApplication: (id) => request('PATCH', `/admin/${q(id)}/approve`),
+    /** @param {string} id @param {string} rejectReason */
+    rejectApplication: (id, rejectReason) =>
+      request('PATCH', `/admin/${q(id)}/reject`, {
+        body: rejectReason ? { rejectReason } : {},
+      }),
   },
 };

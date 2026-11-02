@@ -105,62 +105,123 @@ export class AdminService {
       await File.delete(admin.imageUrl);
     }
     await this.db.user.delete({ where: { id } });
-    return successRes({ message: "Admin muvafaqiyatli o'chirildi" });
+    return successRes({ message: "Admin muvaffaqiyatli o'chirildi" });
   }
 
-  async getOrgApplications() {
-    const applications = await this.db.organizerApplication.findMany();
-    if (!applications) {
-      throw new NotFoundException("Arizalar ro'yxati bo'sh");
-    }
-
+  async getOrgApplications(status?: ApplicationStatus) {
+    const applications = await this.db.organizerApplication.findMany({
+      where: status ? { status } : {},
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: { id: true, fullName: true, email: true, role: true } },
+      },
+    });
     return successRes(applications);
   }
 
-  async approveApplication(id: string) {
+  // Faqat PENDING ariza ko'rib chiqiladi; status sharti ikki admin bir vaqtda
+  // bossa ham faqat bittasini o'tkazadi.
+  private async reviewApplication(
+    adminId: string,
+    id: string,
+    status: ApplicationStatus,
+    rejectReason: string | null,
+  ) {
     const application = await this.db.organizerApplication.findUnique({
       where: { id },
+      include: { user: { select: { role: true } } },
     });
-
     if (!application) {
       throw new NotFoundException('Ariza topilmadi');
     }
-    const userId = application.userId;
+    if (application.status !== ApplicationStatus.PENDING) {
+      throw new ConflictException("Bu ariza allaqachon ko'rib chiqilgan");
+    }
 
-    await this.db.user.update({
-      where: { id: userId },
-      data: {
-        role: Role.ORGANIZER,
-        isVerified: true,
-       },
+    const promoteUser =
+      status === ApplicationStatus.APPROVED &&
+      application.user.role === Role.CUSTOMER;
+
+    await this.db.$transaction(async (tx) => {
+      const { count } = await tx.organizerApplication.updateMany({
+        where: { id, status: ApplicationStatus.PENDING },
+        data: {
+          status,
+          rejectReason,
+          reviewedById: adminId,
+          reviewedAt: new Date(),
+        },
+      });
+      if (!count) {
+        throw new ConflictException("Bu ariza allaqachon ko'rib chiqilgan");
+      }
+      if (promoteUser) {
+        await tx.user.update({
+          where: { id: application.userId },
+          data: { role: Role.ORGANIZER, isVerified: true },
+        });
+      }
     });
-
-    await this.db.organizerApplication.update({
-      where: { id },
-      data: {
-        status: ApplicationStatus.APPROVED,
-      },
-    });
-
-    return successRes({ message: 'Organizator muvafaqilyatli yaratildi' });
   }
 
-  async rejectApplication(id: string) {
-    const application = await this.db.organizerApplication.findUnique({
-      where: { id },
+  async approveApplication(adminId: string, id: string) {
+    await this.reviewApplication(adminId, id, ApplicationStatus.APPROVED, null);
+    return successRes({
+      id,
+      status: ApplicationStatus.APPROVED,
+      message: 'Organizator muvaffaqiyatli yaratildi',
     });
+  }
 
-    if (!application) {
-      throw new NotFoundException('Ariza topilmadi');
-    }
-
-    await this.db.organizerApplication.update({
-      where: { id },
-      data: {
-        status: ApplicationStatus.REJECTED,
-      },
+  async rejectApplication(adminId: string, id: string, rejectReason?: string) {
+    await this.reviewApplication(
+      adminId,
+      id,
+      ApplicationStatus.REJECTED,
+      rejectReason?.trim() || null,
+    );
+    return successRes({
+      id,
+      status: ApplicationStatus.REJECTED,
+      message: 'Arizaga rad javobi berildi',
     });
+  }
 
-    return successRes({ message: 'Customer rad javobini oldi' });
+  async stats() {
+    const [users, events, applications, orders, tickets, revenue] =
+      await Promise.all([
+        this.db.user.groupBy({ by: ['role'], _count: { _all: true } }),
+        this.db.event.groupBy({ by: ['status'], _count: { _all: true } }),
+        this.db.organizerApplication.groupBy({
+          by: ['status'],
+          _count: { _all: true },
+        }),
+        this.db.order.groupBy({ by: ['status'], _count: { _all: true } }),
+        this.db.ticket.groupBy({ by: ['status'], _count: { _all: true } }),
+        this.db.orderItem.aggregate({
+          where: { order: { status: 'PAID' } },
+          _sum: { price: true },
+        }),
+      ]);
+
+    const toMap = <K extends string>(
+      rows: { _count: { _all: number } }[],
+      key: K,
+    ) =>
+      Object.fromEntries(
+        rows.map((row) => [
+          (row as unknown as Record<K, string>)[key],
+          row._count._all,
+        ]),
+      ) as Record<string, number>;
+
+    return successRes({
+      users: toMap(users, 'role'),
+      events: toMap(events, 'status'),
+      applications: toMap(applications, 'status'),
+      orders: toMap(orders, 'status'),
+      tickets: toMap(tickets, 'status'),
+      revenue: Number(revenue._sum.price ?? 0),
+    });
   }
 }

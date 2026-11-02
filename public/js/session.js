@@ -59,14 +59,21 @@ export async function requireUser(roles) {
 
 /** Rolga mos bosh sahifa @param {User} user */
 export function homeFor(user) {
-  return user.role === 'CONTROLLER' ? routes.controller() : routes.home();
+  if (user.role === 'CONTROLLER') return routes.controller();
+  if (isAdmin(user)) return routes.admin();
+  return routes.home();
+}
+
+/** @param {User} user */
+export function isAdmin(user) {
+  return user.role === 'ADMIN' || user.role === 'SUPERADMIN';
 }
 
 /** Login'dan keyingi yo'nalish @param {User} user */
 export function afterLogin(user) {
   const next = safeNext(new URLSearchParams(location.search).get('next'));
   if (user.role === 'CONTROLLER') return routes.controller();
-  return next ?? routes.home();
+  return next ?? (isAdmin(user) ? routes.admin() : routes.home());
 }
 
 export async function logout() {

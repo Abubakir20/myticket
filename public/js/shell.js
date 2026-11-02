@@ -3,9 +3,9 @@
 
 import { h } from './ui.js';
 import { routes } from './routes.js';
-import { getUser, logout } from './session.js';
+import { getUser, isAdmin, logout } from './session.js';
 
-/** @typedef {'home' | 'tickets' | 'orders' | 'profile' | null} NavKey */
+/** @typedef {'home' | 'tickets' | 'orders' | 'profile' | 'admin' | null} NavKey */
 
 const THEME_KEY = 'chipta:theme';
 
@@ -98,6 +98,8 @@ export async function mountNav(mount, active) {
   }
   if (user.role === 'CONTROLLER') {
     links.append(h('a', { href: routes.controller(), text: 'Kontroller' }));
+  } else if (isAdmin(user)) {
+    links.append(link(routes.admin(), 'Admin panel', 'admin'));
   } else {
     links.append(
       link(routes.tickets(), 'Chiptalarim', 'tickets'),

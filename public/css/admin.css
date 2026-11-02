@@ -1,0 +1,111 @@
+/* Admin panel: statistika, tadbirlar moderatsiyasi, tashkilotchi arizalari */
+.admin { padding-bottom: 64px; }
+
+.ahero { padding: 30px 0 22px; }
+.ahero .kicker {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--color-accent); margin-bottom: 8px;
+}
+.ahero h1 { font-size: clamp(30px, 4vw, 42px); margin: 0 0 8px; }
+.ahero-sub { font-size: 14.5px; color: var(--color-muted); margin: 0; max-width: 640px; line-height: 1.5; }
+.ahero-sub strong { color: var(--color-text); }
+
+/* — statistika — */
+.stats {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 30px;
+}
+.stat {
+  background: var(--color-surface); border-radius: 20px; padding: 18px 20px; min-width: 0;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat.lead {
+  background: linear-gradient(140deg, var(--color-accent), var(--color-accent-700));
+  color: #fff8ef;
+}
+.stat .k { font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.7; }
+.stat .v {
+  font-family: var(--font-heading); font-size: 28px; line-height: 1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stat .s { font-size: 12px; opacity: 0.65; }
+.stat.skeleton-tile { min-height: 96px; }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) {
+  .stats { gap: 10px; }
+  .stat { padding: 14px 16px; border-radius: 16px; }
+  .stat .v { font-size: 22px; }
+}
+
+/* — filtr chiplari — */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.chip {
+  border: 1px solid var(--color-divider); background: transparent; color: var(--color-text);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px;
+}
+.chip:hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
+.chip[aria-pressed='true'] {
+  background: var(--color-text); color: var(--color-bg); border-color: var(--color-text);
+}
+.chip .n { font-size: 11.5px; opacity: 0.6; font-weight: 700; }
+
+/* — kartalar — */
+.acard {
+  display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 18px; align-items: start;
+  background: var(--color-surface); border-radius: 20px; padding: 16px; margin-bottom: 12px;
+}
+.aposter {
+  width: 88px; height: 112px; border-radius: 14px; position: relative; overflow: hidden; flex: none;
+}
+.ainfo { min-width: 0; padding-top: 2px; }
+.ainfo .top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ainfo .t { font-weight: 700; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+.ainfo .v { font-size: 12.5px; color: var(--color-muted); line-height: 1.6; overflow-wrap: anywhere; }
+.ainfo .v a { color: inherit; }
+.ainfo details { margin-top: 8px; font-size: 13px; }
+.ainfo summary {
+  cursor: pointer; color: var(--color-accent); font-weight: 600; width: fit-content;
+  list-style: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.ainfo summary::-webkit-details-marker { display: none; }
+.ainfo summary::after { content: '▾'; font-size: 11px; transition: transform 0.15s; }
+.ainfo details[open] summary::after { transform: rotate(180deg); }
+.ainfo .desc {
+  margin: 8px 0 0; line-height: 1.6; white-space: pre-line; max-width: 680px;
+  color: color-mix(in srgb, var(--color-text) 85%, transparent);
+}
+.reason {
+  margin-top: 10px; font-size: 12.5px; line-height: 1.5; padding: 9px 12px; border-radius: 12px;
+  background: var(--c-err-bg); color: var(--c-err-text); max-width: 680px;
+}
+.reason b { font-weight: 700; }
+.aactions { display: flex; flex-direction: column; gap: 8px; min-width: 132px; }
+.aactions .btn { min-height: 38px; padding: 0 16px; font-size: 13px; }
+.btn-danger { color: var(--c-err); }
+.btn-danger:hover { background: color-mix(in srgb, var(--c-err) 10%, transparent); }
+
+/* ariza kartasi — afishasiz, harfli avatar */
+.acard.app { grid-template-columns: 56px minmax(0, 1fr) auto; }
+.avatar {
+  width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
+  font-family: var(--font-heading); font-size: 22px; color: #fff8ef;
+  background: linear-gradient(140deg, var(--color-accent-2), var(--color-accent-2-700));
+}
+
+.more { display: flex; justify-content: center; margin-top: 8px; }
+
+@media (max-width: 640px) {
+  .acard, .acard.app { grid-template-columns: 64px minmax(0, 1fr); gap: 12px 14px; padding: 14px; }
+  .aposter { width: 64px; height: 84px; border-radius: 12px; }
+  .avatar { width: 48px; height: 48px; font-size: 19px; border-radius: 14px; }
+  .aactions { grid-column: 1 / -1; flex-direction: row; min-width: 0; }
+  .aactions .btn { flex: 1; }
+}
+
+/* — modal — */
+.amodal { max-width: 440px; }
+.amodal .field { margin-bottom: 14px; }
+.amodal .banner { margin-bottom: 14px; }
+.amodal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.amodal-actions .btn { min-height: 40px; padding: 0 18px; }
+.amodal.danger .btn-primary { background: var(--c-err); border-color: var(--c-err); }

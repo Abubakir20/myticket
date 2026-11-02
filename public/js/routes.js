@@ -22,6 +22,7 @@ export const routes = {
   ticket: (/** @type {string} */ id) => `/tickets/view/?id=${q(id)}`,
   profile: () => '/profile/',
   controller: () => '/controller/',
+  admin: () => '/admin/',
   scan: (/** @type {string} */ eventId) =>
     `/controller/scan/?event=${q(eventId)}`,
 };
