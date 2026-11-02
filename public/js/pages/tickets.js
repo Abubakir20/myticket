@@ -5,7 +5,7 @@ import { api } from '../api.js';
 import * as fmt from '../format.js';
 import { routes, param } from '../routes.js';
 import { requireUser } from '../session.js';
-import { mountNav } from '../shell.js';
+import { mountNav, mountFooter } from '../shell.js';
 import { qrSvg } from '../qr.js';
 import {
   $,
@@ -33,6 +33,7 @@ const TABS = [
 const tabsEl = $('tabs');
 const content = $('content');
 void mountNav($('topnav'), 'tickets');
+mountFooter($('footer'));
 
 /** @type {Ticket[]} */
 let tickets = [];
@@ -72,7 +73,7 @@ function renderTabs() {
         on: { click: () => select(tab.key) },
       },
       tab.label,
-      count ? h('span', { class: 'count', text: `(${count})` }) : null,
+      count ? h('span', { class: 'count', text: String(count) }) : null,
     );
   });
   // Tablar orasida o'q tugmalari bilan yurish (WAI-ARIA tabs)
@@ -122,7 +123,25 @@ function renderList() {
     );
     return;
   }
-  content.replaceChildren(...list.map(ticketCard));
+  const PAGE = 20;
+  let shown = Math.min(PAGE, list.length);
+  content.replaceChildren(...list.slice(0, shown).map(ticketCard));
+  if (shown < list.length) {
+    const more = h('button', { class: 'btn btn-secondary', type: 'button' });
+    const wrap = h('div', { class: 'more' }, more);
+    const label = () => {
+      more.textContent = `Yana ko'rsatish (${shown} / ${list.length})`;
+    };
+    label();
+    more.addEventListener('click', () => {
+      const next = list.slice(shown, shown + PAGE);
+      shown += next.length;
+      wrap.before(...next.map(ticketCard));
+      if (shown >= list.length) wrap.remove();
+      else label();
+    });
+    content.append(wrap);
+  }
 }
 
 /** @param {Ticket} ticket */

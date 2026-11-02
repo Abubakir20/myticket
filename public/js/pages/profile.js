@@ -4,7 +4,7 @@
 
 import { api, ApiError } from '../api.js';
 import { requireUser } from '../session.js';
-import { mountNav } from '../shell.js';
+import { mountNav, mountFooter } from '../shell.js';
 import * as v from '../validate.js';
 import {
   $,
@@ -23,6 +23,7 @@ import {
 
 const content = $('content');
 void mountNav($('topnav'), 'profile');
+mountFooter($('footer'));
 void load();
 
 async function load() {

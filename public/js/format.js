@@ -94,3 +94,10 @@ export function minPrice(categories) {
   if (!categories.length) return null;
   return Math.min(...categories.map((c) => Number(c.price)));
 }
+
+const WEEKDAYS = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Juma', 'Shan'];
+
+/** Qisqa hafta kuni: "Chor" @param {string | Date} iso */
+export function weekday(iso) {
+  return WEEKDAYS[new Date(iso).getDay()];
+}

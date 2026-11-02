@@ -74,7 +74,7 @@ async function load() {
       location.replace(routes.seats(sessionId, eventId));
       return;
     }
-    back.textContent = `← ${sessionTitle(event, session)}`;
+    back.textContent = sessionTitle(event, session);
     sub.textContent = `${session.venue.name} · Umumiy o'tirish · Maksimal ${MAX_TICKETS} ta chipta`;
     document.title = `Toifani tanlang · ${event.title} — Chipta`;
     if (Date.parse(session.startTime) <= Date.now()) {

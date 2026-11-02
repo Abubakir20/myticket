@@ -3,6 +3,7 @@
 
 import { h } from './ui.js';
 import { routes } from './routes.js';
+import { icon, logoMark } from './icons.js';
 import { getUser, isAdmin, logout } from './session.js';
 
 /** @typedef {'home' | 'tickets' | 'orders' | 'profile' | 'admin' | null} NavKey */
@@ -18,7 +19,7 @@ function currentTheme() {
 /** @param {HTMLButtonElement} button */
 function syncThemeButton(button) {
   const dark = currentTheme() === 'dark';
-  button.textContent = dark ? '☀' : '☾';
+  button.replaceChildren(icon(dark ? 'sun' : 'moon'));
   button.setAttribute(
     'aria-label',
     dark ? "Yorug' mavzuga o'tish" : "Qorong'i mavzuga o'tish",
@@ -41,6 +42,20 @@ export function themeButton() {
   return button;
 }
 
+/** Logotip + so'z belgisi */
+export function brand() {
+  return h(
+    'a',
+    {
+      class: 'nav-brand',
+      href: routes.home(),
+      'aria-label': 'Chipta — bosh sahifa',
+    },
+    logoMark(),
+    h('span', { text: 'Chipta' }),
+  );
+}
+
 /**
  * To'liq navigatsiya: brend, havolalar, mavzu, kirish/chiqish.
  * @param {HTMLElement} mount  <header> elementi
@@ -61,23 +76,20 @@ export async function mountNav(mount, active) {
     link(routes.home(), 'Bosh sahifa', 'home'),
   );
   const actions = h('div', { class: 'navactions' }, themeButton());
-  const menuButton = h('button', {
-    class: 'themebtn menubtn',
-    type: 'button',
-    text: '☰',
-    'aria-label': 'Menyu',
-    'aria-expanded': 'false',
-    'aria-controls': 'navlinks',
-  });
+  const menuButton = h(
+    'button',
+    {
+      class: 'themebtn menubtn',
+      type: 'button',
+      'aria-label': 'Menyu',
+      'aria-expanded': 'false',
+      'aria-controls': 'navlinks',
+    },
+    icon('menu'),
+  );
   actions.append(menuButton);
 
-  const header = h(
-    'div',
-    { class: 'wrap nav' },
-    h('a', { class: 'nav-brand', href: routes.home(), text: 'Chipta' }),
-    links,
-    actions,
-  );
+  const header = h('div', { class: 'wrap nav' }, brand(), links, actions);
   mount.className = 'topnav';
   mount.replaceChildren(header);
   menuButton.addEventListener('click', () => {
@@ -125,20 +137,50 @@ export async function mountNav(mount, active) {
  * @param {string} href
  * @param {string} label
  * @param {string} [wrapClass]  sahifa kontenti bilan bir xil kenglik (masalan 'wrap-md')
- * @returns {HTMLAnchorElement} matnini keyin yangilash uchun
+ * @returns {HTMLSpanElement} matnini keyin yangilash uchun
  */
 export function mountBackBar(mount, href, label, wrapClass = '') {
-  const back = h('a', { class: 'back', href, text: `← ${label}` });
+  const text = h('span', { class: 'back-text', text: label });
+  const back = h('a', { class: 'back', href }, icon('arrow-left'), text);
   mount.className = 'topnav';
   mount.replaceChildren(
-    h('div', { class: `wrap backbar ${wrapClass}` }, back, themeButton()),
+    h(
+      'div',
+      { class: `wrap backbar ${wrapClass}` },
+      back,
+      h('div', { class: 'backbar-end' }, themeButton()),
+    ),
   );
-  return back;
+  return text;
 }
 
 /** @param {HTMLElement} mount */
 export function mountFooter(mount) {
   mount.className = 'site-footer';
-  mount.textContent =
-    '© 2026 Chipta — konsert, teatr va shoular uchun chipta platformasi';
+  mount.replaceChildren(
+    h(
+      'div',
+      { class: 'wrap' },
+      h(
+        'div',
+        { class: 'foot-brand' },
+        brand(),
+        h('p', {
+          text: 'Konsert, teatr va shoularga chiptalar — joyingizni 3D zalda tanlang, QR chiptani telefoningizda oling.',
+        }),
+      ),
+      h(
+        'nav',
+        { class: 'foot-links', 'aria-label': 'Pastki menyu' },
+        h('a', { href: routes.home(), text: 'Afisha' }),
+        h('a', { href: routes.tickets(), text: 'Chiptalarim' }),
+        h('a', { href: routes.orders(), text: 'Buyurtmalarim' }),
+        h('a', { href: routes.profile(), text: 'Profil' }),
+      ),
+      h('div', {
+        class: 'foot-copy',
+        text: '© 2026 Chipta. Barcha huquqlar himoyalangan.',
+      }),
+    ),
+  );
 }

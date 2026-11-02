@@ -8,6 +8,7 @@
 <script src="/js/boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="/vendor/three.js">
 <link rel="stylesheet" href="/css/ds.css">
 <link rel="stylesheet" href="/css/app.css">
 <link rel="stylesheet" href="/css/booking.css">
@@ -15,9 +16,18 @@
 </head>
 <body>
 <header id="topnav"></header>
-<main class="wrap wrap-lg">
-  <h2 class="page-title">O'rindiqni tanlang</h2>
-  <p class="page-sub" id="sub">Maksimal 5 ta chipta bitta buyurtmaga</p>
+<main class="wrap wrap-lg seatpage">
+  <div class="seathead">
+    <div class="seathead-text">
+      <div class="eyebrow">Joy tanlash</div>
+      <h1 class="page-title" id="title">O'rindiqni tanlang</h1>
+      <p class="page-sub" id="sub">Bitta buyurtmaga maksimal 5 ta chipta</p>
+    </div>
+    <div class="viewseg" role="radiogroup" aria-label="Zal ko'rinishi" id="viewseg" hidden>
+      <button type="button" role="radio" data-view="3d" aria-checked="true"><span data-icon="cube"></span>3D zal</button>
+      <button type="button" role="radio" data-view="2d" aria-checked="false"><span data-icon="grid"></span>Sxema</button>
+    </div>
+  </div>
   <div id="content"></div>
 </main>
 </body>

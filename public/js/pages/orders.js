@@ -6,7 +6,7 @@ import { api, ApiError, serverNow } from '../api.js';
 import * as fmt from '../format.js';
 import { routes } from '../routes.js';
 import { requireUser } from '../session.js';
-import { mountNav } from '../shell.js';
+import { mountNav, mountFooter } from '../shell.js';
 import {
   $,
   h,
@@ -17,6 +17,8 @@ import {
   withBusy,
   errorMessage,
   every,
+  fallbackClass,
+  posterImage,
 } from '../ui.js';
 
 /** @typedef {import('../types.js').OrderListItem} OrderListItem */
@@ -24,6 +26,7 @@ import {
 
 const content = $('content');
 void mountNav($('topnav'), 'orders');
+mountFooter($('footer'));
 
 /** @type {Record<OrderStatus, [string, string]>} */
 const BADGES = {
@@ -95,11 +98,18 @@ function orderCard(order) {
     { class: 'ocard', 'aria-label': `Buyurtma ${fmt.orderNo(order.id)}` },
     h(
       'div',
+      {
+        class: `othumb ${fallbackClass(order.session.event.id)}`,
+        'aria-hidden': 'true',
+      },
+      posterImage(order.session.event.posterUrl, ''),
+    ),
+    h(
+      'div',
       { class: 'oinfo' },
       h(
         'div',
         { class: 't' },
-        `${fmt.orderNo(order.id)} · `,
         h('a', {
           href: routes.event(order.session.event.id),
           text: order.session.event.title,
@@ -107,7 +117,11 @@ function orderCard(order) {
       ),
       h('div', {
         class: 'v',
-        text: `${fmt.relativeDateTime(order.createdAt)} · ${order.ticketsCount} ta chipta`,
+        text: `${fmt.weekday(order.session.startTime)}, ${fmt.dateTime(order.session.startTime)} · ${order.session.venue.name}`,
+      }),
+      h('div', {
+        class: 'v dim',
+        text: `${fmt.orderNo(order.id)} · ${fmt.relativeDateTime(order.createdAt)} · ${order.ticketsCount} ta chipta`,
       }),
     ),
     badge,

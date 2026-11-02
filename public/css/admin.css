@@ -6,7 +6,7 @@
   font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--color-accent); margin-bottom: 8px;
 }
-.ahero h1 { font-size: clamp(30px, 4vw, 42px); margin: 0 0 8px; }
+.ahero h1 { font-size: clamp(32px, 4vw, 44px); margin: 0 0 8px; }
 .ahero-sub { font-size: 14.5px; color: var(--color-muted); margin: 0; max-width: 640px; line-height: 1.5; }
 .ahero-sub strong { color: var(--color-text); }
 
@@ -15,16 +15,13 @@
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 30px;
 }
 .stat {
-  background: var(--color-surface); border-radius: 20px; padding: 18px 20px; min-width: 0;
-  display: flex; flex-direction: column; gap: 4px;
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 22px; padding: 18px 20px; min-width: 0;
+  display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow-sm);
 }
-.stat.lead {
-  background: linear-gradient(140deg, var(--color-accent), var(--color-accent-700));
-  color: #fff8ef;
-}
+.stat.lead { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--glow); }
 .stat .k { font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; opacity: 0.7; }
 .stat .v {
-  font-family: var(--font-heading); font-size: 28px; line-height: 1.1;
+  font-family: var(--font-heading); font-weight: 800; letter-spacing: -0.03em; font-size: 30px; line-height: 1.1;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .stat .s { font-size: 12px; opacity: 0.65; }
@@ -36,23 +33,14 @@
   .stat .v { font-size: 21px; white-space: normal; }
 }
 
-/* — filtr chiplari — */
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-.chip {
-  border: 1px solid var(--color-divider); background: transparent; color: var(--color-text);
-  border-radius: 999px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-family: inherit;
-  display: inline-flex; align-items: center; gap: 6px; min-height: 34px;
-}
-.chip:hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
-.chip[aria-pressed='true'] {
-  background: var(--color-text); color: var(--color-bg); border-color: var(--color-text);
-}
-.chip .n { font-size: 11.5px; opacity: 0.6; font-weight: 700; }
+.chips { margin-bottom: 18px; }
+.chip .n { font-size: 11.5px; opacity: 0.6; font-weight: 800; }
 
 /* — kartalar — */
 .acard {
   display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 18px; align-items: start;
-  background: var(--color-surface); border-radius: 20px; padding: 16px; margin-bottom: 12px;
+  background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 22px; padding: 16px; margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
 }
 .aposter {
   width: 88px; height: 112px; border-radius: 14px; position: relative; overflow: hidden; flex: none;
@@ -120,7 +108,7 @@
 .usearch .input { width: 100%; padding-left: 42px; }
 .usort .input { min-width: 230px; cursor: pointer; }
 
-.utable { background: var(--color-surface); border-radius: 20px; overflow: hidden; }
+.utable { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 22px; overflow: hidden; box-shadow: var(--shadow-sm); }
 .urow {
   display: grid; grid-template-columns: minmax(0, 2.4fr) 120px 90px minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 14px; align-items: center; padding: 12px 18px; width: 100%; text-align: left;

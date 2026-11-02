@@ -7,9 +7,12 @@ import * as fmt from '../format.js';
 import { routes, param } from '../routes.js';
 import { requireUser } from '../session.js';
 import * as v from '../validate.js';
+import { icon } from '../icons.js';
 import {
   $,
   h,
+  fallbackClass,
+  posterImage,
   openModal,
   validateFields,
   clearErrorsOnInput,
@@ -99,7 +102,26 @@ async function load() {
 
 /** @param {OrderDetail} o */
 function renderSummary(o) {
-  const meta = `${fmt.dateTime(o.session.startTime)} · ${o.session.venue.name}`;
+  const ev = o.session.event;
+  $('order-event').replaceChildren(
+    h(
+      'div',
+      { class: `oposter ${fallbackClass(ev.id)}` },
+      posterImage(ev.posterUrl, ''),
+    ),
+    h(
+      'div',
+      { class: 'oev-info' },
+      h('b', { text: ev.title }),
+      h(
+        'span',
+        null,
+        icon('calendar', 14),
+        `${fmt.weekday(o.session.startTime)}, ${fmt.dateTime(o.session.startTime)}`,
+      ),
+      h('span', null, icon('pin', 14), o.session.venue.name),
+    ),
+  );
   $('order-lines').replaceChildren(
     ...o.items.map((item) =>
       h(
@@ -108,8 +130,8 @@ function renderSummary(o) {
         h(
           'div',
           null,
-          `${o.session.event.title} · ${fmt.seatLabel(item.ticketCategory.name, item.seat)}`,
-          h('small', { text: meta }),
+          fmt.seatLabel(item.ticketCategory.name, item.seat),
+          h('small', { text: item.ticketCategory.name }),
         ),
         h('div', { text: fmt.price(item.price) }),
       ),
@@ -138,6 +160,14 @@ function startTimer() {
   stopTimer = every(() => {
     const left = secondsLeft();
     $('timer-value').textContent = fmt.countdown(left);
+    if (order) {
+      const totalSec = Math.max(
+        1,
+        (Date.parse(order.expiresAt) - Date.parse(order.createdAt)) / 1000,
+      );
+      $('timer-bar').style.width =
+        `${Math.min(100, (left / totalSec) * 100).toFixed(1)}%`;
+    }
     $('timer').classList.toggle('warn', left < WARN_SECONDS);
     if (left < WARN_SECONDS && left > 0 && !warned) {
       warned = true;
@@ -224,12 +254,23 @@ $('order-cancel').addEventListener('click', (event) => {
 cardNumber.addEventListener('input', () => {
   const digits = cardNumber.value.replace(/\D/g, '').slice(0, 16);
   cardNumber.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+  $('cp-number').textContent = digits
+    .padEnd(16, '•')
+    .replace(/(.{4})(?=.)/g, '$1 ');
 });
 cardExp.addEventListener('input', () => {
   const digits = cardExp.value.replace(/\D/g, '').slice(0, 4);
   cardExp.value =
     digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+  $('cp-exp').textContent = cardExp.value || 'OO/YY';
 });
+payForm.addEventListener('reset', () => {
+  $('cp-number').textContent = '•••• •••• •••• ••••';
+  $('cp-exp').textContent = 'OO/YY';
+});
+for (const el of document.querySelectorAll('[data-icon]')) {
+  el.append(icon(/** @type {HTMLElement} */ (el).dataset.icon ?? '', 18));
+}
 cardCvv.addEventListener('input', () => {
   cardCvv.value = cardCvv.value.replace(/\D/g, '').slice(0, 3);
 });

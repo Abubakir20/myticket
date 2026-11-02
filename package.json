@@ -14,7 +14,8 @@
     "seed:controller": "node dist/src/seed/controller.js",
     "typecheck:web": "tsc -p public/tsconfig.json",
     "lint:web": "eslint public/js test/web",
-    "test:web": "node --test test/web/*.test.mjs"
+    "test:web": "node --test test/web/*.test.mjs",
+    "build:three": "esbuild scripts/three-entry.js --bundle --format=esm --minify --legal-comments=none --outfile=public/vendor/three.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.3.7",
@@ -52,6 +53,8 @@
     "@types/node": "^24.13.6",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.2.1",
+    "@types/three": "^0.187.0",
+    "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
@@ -60,6 +63,7 @@
     "prettier": "^3.9.8",
     "source-map-support": "^0.5.21",
     "supertest": "^7.2.2",
+    "three": "^0.187.0",
     "ts-jest": "^29.4.12",
     "ts-loader": "^9.6.2",
     "ts-node": "^10.9.2",
