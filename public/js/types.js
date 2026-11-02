@@ -235,3 +235,53 @@ export {};
  * GET /admin/organizerapplications — element
  * @typedef {OrganizerApplication & { reviewedAt: string | null, user: { id: string, fullName: string | null, email: string, role: Role } }} AdminApplication
  */
+
+/**
+ * GET /admin/users — element (xarid statistikasi faqat to'langan buyurtmalardan)
+ * @typedef {object} AdminUser
+ * @property {string} id
+ * @property {string | null} fullName
+ * @property {string} email
+ * @property {string | null} phone
+ * @property {Role} role
+ * @property {'PENDING' | 'ACTIVE' | 'BLOCKED'} status
+ * @property {boolean} isVerified
+ * @property {string} createdAt
+ * @property {number} tickets
+ * @property {number} orders
+ * @property {number} spent
+ * @property {string | null} lastPurchaseAt
+ * @property {string | null} lastActiveAt
+ */
+
+/** @typedef {{ items: AdminUser[], meta: PageMeta }} AdminUserPage */
+
+/**
+ * @typedef {object} AdminUserOrder
+ * @property {string} id
+ * @property {OrderStatus} status
+ * @property {string} createdAt
+ * @property {string | null} paidAt
+ * @property {number} total
+ * @property {{ startTime: string, venue: { name: string }, event: { id: string, title: string, posterUrl: string } }} session
+ * @property {{ category: string, price: number, seat: { sector: string, row: number, number: number } | null, status: TicketStatus | null, usedAt: string | null }[]} tickets
+ */
+
+/**
+ * GET /admin/users/:id
+ * @typedef {object} AdminUserDetail
+ * @property {string} id
+ * @property {string | null} fullName
+ * @property {string} email
+ * @property {string | null} phone
+ * @property {Role} role
+ * @property {'PENDING' | 'ACTIVE' | 'BLOCKED'} status
+ * @property {boolean} isVerified
+ * @property {string} createdAt
+ * @property {{ fullName: string | null, email: string } | null} createdBy
+ * @property {{ device: string, lastActiveAt: string, createdAt: string }[]} devices
+ * @property {{ companyName: string, status: ApplicationStatus, createdAt: string }[]} applications
+ * @property {{ organizedEvents: number, checkedTickets: number }} _count
+ * @property {{ tickets: number, orders: number, spent: number, used: number }} summary
+ * @property {AdminUserOrder[]} orders
+ */

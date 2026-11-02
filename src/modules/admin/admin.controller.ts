@@ -24,6 +24,7 @@ import { ImageValidationPipe } from '../../common/pipe/image-validation.pipe';
 import { Role } from '../../common/enum';
 import { UserId } from '../../common/decorator/current-user.decorator';
 import {
+  AdminUserQueryDto,
   ApplicationQueryDto,
   RejectApplicationDto,
 } from './dto/application.dto';
@@ -47,6 +48,18 @@ export class AdminController {
   @Get('stats')
   stats() {
     return this.adminService.stats();
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('users')
+  findUsers(@Query() query: AdminUserQueryDto) {
+    return this.adminService.findUsers(query);
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('users/:id')
+  findUserDetail(@Param('id', ParseUUIDPipe) id: string) {
+    return this.adminService.findUserDetail(id);
   }
 
   @AccessRoles(Role.ADMIN)

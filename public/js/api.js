@@ -19,6 +19,8 @@
 /** @typedef {import('./types.js').AdminStats} AdminStats */
 /** @typedef {import('./types.js').AdminEventPage} AdminEventPage */
 /** @typedef {import('./types.js').AdminApplication} AdminApplication */
+/** @typedef {import('./types.js').AdminUserPage} AdminUserPage */
+/** @typedef {import('./types.js').AdminUserDetail} AdminUserDetail */
 
 const BASE = '/api/v1';
 
@@ -185,6 +187,22 @@ export const api = {
   admin: {
     /** @returns {Promise<AdminStats>} */
     stats: () => request('GET', '/admin/stats'),
+    /**
+     * @param {{ search: string, role: string, sort: string, page: number }} query
+     * @returns {Promise<AdminUserPage>}
+     */
+    users: ({ search, role, sort, page }) => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: '20',
+        sort,
+      });
+      if (search) params.set('search', search);
+      if (role) params.set('role', role);
+      return request('GET', `/admin/users?${params}`);
+    },
+    /** @param {string} id @returns {Promise<AdminUserDetail>} */
+    user: (id) => request('GET', `/admin/users/${q(id)}`),
     /** @param {string} status bo'sh — hammasi @param {number} page @returns {Promise<AdminEventPage>} */
     events: (status, page) =>
       request(

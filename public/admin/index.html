@@ -28,6 +28,7 @@
   <div class="tabs" role="tablist" aria-label="Bo'limlar">
     <button class="tab" role="tab" id="tab-events" aria-controls="panel-events" aria-selected="true" type="button">Tadbirlar<span class="count" id="count-events"></span></button>
     <button class="tab" role="tab" id="tab-apps" aria-controls="panel-apps" aria-selected="false" tabindex="-1" type="button">Arizalar<span class="count" id="count-apps"></span></button>
+    <button class="tab" role="tab" id="tab-users" aria-controls="panel-users" aria-selected="false" tabindex="-1" type="button">Foydalanuvchilar<span class="count" id="count-users"></span></button>
   </div>
 
   <section class="apanel" id="panel-events" role="tabpanel" aria-labelledby="tab-events">
@@ -39,8 +40,38 @@
     <div class="chips" id="app-filters" role="group" aria-label="Ariza holati"></div>
     <div id="app-list"></div>
   </section>
+
+  <section class="apanel" id="panel-users" role="tabpanel" aria-labelledby="tab-users" hidden>
+    <div class="utools">
+      <label class="usearch">
+        <span class="sr-only">Qidirish</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input class="input" id="user-search" type="search" placeholder="Ism, email yoki telefon bo'yicha qidirish" autocomplete="off">
+      </label>
+      <label class="usort">
+        <span class="sr-only">Saralash</span>
+        <select class="input" id="user-sort">
+          <option value="new">Yangi ro'yxatdan o'tganlar</option>
+          <option value="tickets">Ko'p chipta olganlar</option>
+          <option value="spent">Ko'p pul sarflaganlar</option>
+        </select>
+      </label>
+    </div>
+    <div class="chips" id="user-filters" role="group" aria-label="Rol"></div>
+    <div id="user-list"></div>
+  </section>
 </main>
 <footer id="footer"></footer>
+
+<div class="drawerbg" id="user-drawer" hidden>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-head">
+      <h4 id="drawer-title">Foydalanuvchi</h4>
+      <button class="themebtn" type="button" id="drawer-close" aria-label="Yopish">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+</div>
 
 <div class="modalbg" id="action-modal" hidden>
   <form class="modal amodal" id="action-form" role="dialog" aria-modal="true" aria-labelledby="action-title" novalidate>
