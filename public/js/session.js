@@ -93,7 +93,7 @@ const PENDING_KEY = 'chipta:pending-login';
  * @property {number | null} [ttl]  kodning umumiy amal qilish muddati (sekund)
  * @property {string | null} fullName  ro'yxatdan o'tishda kiritilgan ism — tasdiqlangach profilga yoziladi
  * @property {string | null} next
- * @property {string | null} [demoCode]  demo rejimda sahifada ko'rsatiladigan kod
+ * @property {string | null} [code]  tasdiqlash sahifasida ko'rsatiladigan kod
  */
 
 /** @param {PendingLogin} value */

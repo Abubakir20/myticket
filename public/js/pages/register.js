@@ -87,7 +87,7 @@ form.addEventListener('submit', (event) => {
           ttl: sent.expiresIn,
           fullName: nameInput.value.trim(),
           next,
-          demoCode: sent.demoCode ?? null,
+          code: sent.code ?? null,
         });
         location.assign(routes.verify());
       } catch (error) {

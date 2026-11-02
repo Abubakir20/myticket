@@ -67,7 +67,7 @@ form.addEventListener('submit', (event) => {
           email,
           password: passwordInput.value,
         });
-        goVerify(email, sent.expiresIn, sent.resendAfter, sent.demoCode);
+        goVerify(email, sent.expiresIn, sent.resendAfter, sent.code);
       } catch (error) {
         if (error instanceof ApiError && error.status === 400)
           return showInvalid();
@@ -95,9 +95,9 @@ function showInvalid() {
  * @param {string} email
  * @param {number | null} expiresIn
  * @param {number} resendAfter
- * @param {string} [demoCode]  demo rejimda kodning o'zi
+ * @param {string} [code]  tasdiqlash kodi (sahifada ko'rsatiladi)
  */
-function goVerify(email, expiresIn, resendAfter, demoCode) {
+function goVerify(email, expiresIn, resendAfter, code) {
   const now = Date.now();
   savePendingLogin({
     email,
@@ -106,7 +106,7 @@ function goVerify(email, expiresIn, resendAfter, demoCode) {
     ttl: expiresIn,
     fullName: null,
     next,
-    demoCode: demoCode ?? null,
+    code: code ?? null,
   });
   location.assign(routes.verify());
 }

@@ -31,8 +31,6 @@ export const env = {
     RESEND: Number(process.env.OTP_RESEND),
     ATTEMPTS: Number(process.env.OTP_ATTEMPTS),
     SECRET: String(process.env.OTP_SECRET),
-    // Demo rejim: SMTP yopiq serverlar uchun — kod email o'rniga javobda qaytadi va sahifada ko'rsatiladi
-    DEMO: process.env.OTP_DEMO === 'true',
   },
 
   SMTP: {

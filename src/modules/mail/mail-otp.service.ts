@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { createHmac, randomInt } from 'crypto';
 import { RedisService } from '../../config/redis/redis.service';
@@ -11,6 +12,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class EmailOtpService {
+  private readonly logger = new Logger(EmailOtpService.name);
+
   constructor(
     private readonly redisService: RedisService,
     private readonly mailerService: MailerService,
@@ -43,10 +46,6 @@ export class EmailOtpService {
     return `email-otp:attempts:${email}`;
   }
 
-  private resendKey(email: string) {
-    return `email-otp:resend:${email}`;
-  }
-
   async sendOtp(emailInput: string) {
     const redis = this.redisService.client;
 
@@ -54,67 +53,35 @@ export class EmailOtpService {
 
     const otpKey = this.otpKey(email);
     const attemptsKey = this.attemptsKey(email);
-    const resendKey = this.resendKey(email);
-
-    // Demo rejimda email yuborilmaydi — spamdan himoya (cooldown) kerak emas.
-    // Aks holda qayta kirishda 429 qaytib, sahifada kod ko'rinmay qolardi.
-    const cooldown = env.OTP.DEMO
-      ? 'OK'
-      : await redis.set(resendKey, '1', 'EX', env.OTP.RESEND, 'NX');
-
-    if (cooldown !== 'OK') {
-      const remaining = await redis.ttl(resendKey);
-
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.TOO_MANY_REQUESTS,
-          message: `OTP qayta yuborish uchun ${Math.max(
-            remaining,
-            1,
-          )} sekund kuting`,
-          retryAfter: Math.max(remaining, 1),
-        },
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
-    }
 
     const code = this.generateOtp();
     const otpHash = this.hashOtp(email, code);
 
-    try {
-      await redis
-        .multi()
-        .set(otpKey, otpHash, 'EX', env.OTP.TTL)
-        .set(attemptsKey, '0', 'EX', env.OTP.TTL)
-        .exec();
+    await redis
+      .multi()
+      .set(otpKey, otpHash, 'EX', env.OTP.TTL)
+      .set(attemptsKey, '0', 'EX', env.OTP.TTL)
+      .exec();
 
-      // OTP_DEMO=true: email yuborilmaydi, kod javobda qaytadi (faqat demo serverlar uchun!)
-      if (env.OTP.DEMO) {
-        return {
-          success: true,
-          message: "Demo rejim: kod email o'rniga sahifada ko'rsatiladi",
-          expiresIn: env.OTP.TTL,
-          resendAfter: env.OTP.RESEND,
-          demoCode: code,
-        };
-      }
-
-      await this.mailerService.sendMail({
+    // Kod tasdiqlash sahifasida ko'rsatiladi (javobdagi `code`). Email fonda yuborishga
+    // urinib ko'riladi — SMTP yopiq bo'lsa ham jarayon to'xtamaydi, xato faqat logga yoziladi.
+    this.mailerService
+      .sendMail({
         to: email,
         subject: 'Myticket - Tasdiqlash kodi',
         text: `Sizning tasdiqlash kodingiz: ${code}
     Kod ${env.OTP.TTL} sekund davomida amal qiladi.`,
-      });
-    } catch (error) {
-      await redis.del(otpKey, attemptsKey, resendKey);
-      throw error;
-    }
+      })
+      .catch((error: Error) =>
+        this.logger.warn(`OTP email yuborilmadi (${email}): ${error.message}`),
+      );
 
     return {
       success: true,
-      message: 'OTP kodingiz email manzilingizga yuborildi',
+      message: 'Tasdiqlash kodi yaratildi',
       expiresIn: env.OTP.TTL,
       resendAfter: env.OTP.RESEND,
+      code,
     };
   }
 

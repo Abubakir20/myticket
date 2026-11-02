@@ -41,7 +41,7 @@ const resendRow = $('resend-row');
 const resendTimer = $('resend-timer');
 const resendInline = /** @type {HTMLButtonElement} */ ($('resend'));
 const resendPrimary = /** @type {HTMLButtonElement} */ ($('resend-primary'));
-const demoBox = $('demo');
+const codeCard = $('otp-card');
 
 $('theme').append(themeButton());
 $('email').textContent = pending.email;
@@ -97,36 +97,36 @@ function setState(next, message = null) {
     : 'btn btn-primary btn-block';
   if (expired) input.value = '';
   renderCells();
-  renderDemo();
+  renderCodeCard();
 }
 
-// ---------- Demo rejim (OTP_DEMO): kod email o'rniga shu yerda ko'rsatiladi ----------
+// ---------- Tasdiqlash kodi kartasi: kod shu sahifada ko'rsatiladi ----------
 
 function renderSub() {
   const email = h('b', { text: pending.email });
   sub.replaceChildren(
-    ...(pending.demoCode
+    ...(pending.code
       ? [
-          'Tasdiqlash kodi ',
+          'Hisobingiz ',
           email,
-          ' uchun yaratildi. Email yuborilmaydi — kodni pastdan oling.',
+          ' uchun tasdiqlash kodi tayyor. Uni pastdagi maydonga kiriting.',
         ]
       : ['6 xonali kodni ', email, ' manziliga yubordik.']),
   );
 }
 
-function renderDemo() {
-  const code = pending.demoCode;
+function renderCodeCard() {
+  const code = pending.code;
   if (!code || state === 'expired') {
-    demoBox.hidden = true;
-    demoBox.replaceChildren();
+    codeCard.hidden = true;
+    codeCard.replaceChildren();
     return;
   }
   const digits = [...code].map((digit, i) =>
     h('span', { class: i === 3 ? 'd d-split' : 'd', text: digit }),
   );
   const fill = h('button', {
-    class: 'btn btn-secondary demo-fill',
+    class: 'btn btn-secondary otp-card-fill',
     type: 'button',
     text: 'Kodni avtomatik kiritish',
     on: {
@@ -137,29 +137,29 @@ function renderDemo() {
       },
     },
   });
-  demoBox.replaceChildren(
+  codeCard.replaceChildren(
     h(
       'div',
-      { class: 'demo-head' },
-      h('span', { class: 'demo-badge', text: 'Demo rejim' }),
-      h('span', { id: 'demo-title', text: 'Sizning tasdiqlash kodingiz' }),
+      { class: 'otp-card-head' },
+      h('span', { class: 'otp-card-badge', text: 'Bir martalik kod' }),
+      h('span', { id: 'otp-card-title', text: 'Tasdiqlash kodingiz' }),
     ),
     h(
       'div',
       {
-        class: 'demo-code',
+        class: 'otp-card-code',
         role: 'group',
         'aria-label': `Kod: ${[...code].join(' ')}`,
       },
       digits,
     ),
     h('p', {
-      class: 'demo-note',
-      text: "Bu serverda email yuborish o'chirilgan, shuning uchun kod shu yerda ko'rsatiladi.",
+      class: 'otp-card-note',
+      text: `Kod ${ttlLabel()} amal qiladi va faqat bir marta ishlatiladi. Uni hech kimga bermang.`,
     }),
     fill,
   );
-  demoBox.hidden = false;
+  codeCard.hidden = false;
 }
 
 // ---------- Taymerlar ----------
@@ -177,7 +177,7 @@ every(() => {
     hint.textContent =
       left > 0 ? `Kod ${fmt.countdown(left)} davomida amal qiladi.` : '';
   } else {
-    hint.textContent = pending.demoCode
+    hint.textContent = pending.code
       ? "Yuqorida ko'rsatilgan kodni kiriting."
       : 'Emailingizga yuborilgan oxirgi kodni kiriting.';
   }
@@ -269,7 +269,7 @@ async function resend() {
     pending.expiresAt = now + sent.expiresIn * 1000;
     pending.resendAt = now + sent.resendAfter * 1000;
     pending.ttl = sent.expiresIn;
-    pending.demoCode = sent.demoCode ?? null;
+    pending.code = sent.code ?? null;
     savePendingLogin(pending);
     renderSub();
     setState('input');
