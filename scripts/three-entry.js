@@ -34,6 +34,11 @@ export {
   WebGLRenderer,
   CylinderGeometry,
   TorusGeometry,
+  RepeatWrapping,
+  AdditiveBlending,
+  Euler,
+  FrontSide,
+  CircleGeometry,
 } from 'three';
 export { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 export { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';

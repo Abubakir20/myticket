@@ -32,10 +32,15 @@ import {
 /** @typedef {{ seatId: string, sector: string, sectorIndex: number, row: number, num: number, price: number }} Selected */
 
 const VIEW_KEY = 'chipta:seatview';
-const PALETTE = {
-  dark: ['#f5b84a', '#ff6b5a', '#8b73ff', '#2ec5ff', '#3ddc97', '#ff4d93'],
-  light: ['#e59a1c', '#ff5640', '#6c4dff', '#0ea5e9', '#10a36a', '#ff2e7e'],
-};
+// hall3d.js dagi SECTOR_COLORS bilan bir xil (baxmal qoplama ranglari)
+const PALETTE = [
+  '#d9a13b',
+  '#c8323f',
+  '#6d4bd1',
+  '#2a7fc0',
+  '#2e9e6b',
+  '#c23a7c',
+];
 
 const sessionId = param('session') ?? '';
 const eventId = param('event') ?? '';
@@ -126,7 +131,7 @@ const themeName = () =>
     ? 'dark'
     : 'light';
 /** @param {number} i */
-const sectorColor = (i) => PALETTE[themeName()][i % 6];
+const sectorColor = (i) => PALETTE[i % PALETTE.length];
 
 // ---------- Sahifa ----------
 
@@ -162,6 +167,12 @@ function render(map) {
     (seatBar = h('div', { class: 'seatbar', hidden: true })),
   );
   plan2d = planView(map);
+  // Zalga tegilganda (aylantirish/qarash) ochiq panel yig'iladi
+  stage3d.addEventListener('pointerdown', (e) => {
+    if (e.target instanceof Node && seatBar.contains(e.target)) return;
+    clearTimeout(seatBarTimer);
+    seatBar.classList.remove('open');
+  });
 
   panelList = h('div', { class: 'plist' });
   totalEl = h('span');
@@ -384,15 +395,54 @@ function viewFrom(seatId) {
   });
 }
 
-/** @param {string | null} seatId */
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let seatBarTimer;
+let seatBarSeat = /** @type {string | null} */ (null);
+
+/**
+ * "Joydan ko'rinish" paneli: odatda kichik yarim shaffof tugmacha (manzarani to'smaydi),
+ * kursor ustiga borganda yoki bosilganda to'liq ochiladi. O'rindiqqa o'tirgach bir necha soniya ochiq turadi.
+ * @param {string | null} seatId
+ */
 function renderSeatBar(seatId) {
   seatBar.hidden = !seatId;
-  if (!seatId) return;
+  clearTimeout(seatBarTimer);
+  if (!seatId) {
+    seatBarSeat = null;
+    seatBar.classList.remove('open');
+    return;
+  }
   const seat = seats.get(seatId);
   if (!seat) return;
   const isSel = selected.has(seatId);
   const free = seat.status === 'FREE';
-  seatBar.replaceChildren(
+  const touch = matchMedia('(pointer: coarse)').matches;
+
+  const pill = h(
+    'button',
+    {
+      class: 'sb-pill',
+      type: 'button',
+      'aria-expanded': 'false',
+      'aria-label': `${seat.info.row}-qator, ${seat.info.num}-o'rin: boshqaruv panelini ochish`,
+      on: {
+        click: () => {
+          const open = !seatBar.classList.contains('open');
+          seatBar.classList.toggle('open', open);
+          pill.setAttribute('aria-expanded', String(open));
+          clearTimeout(seatBarTimer);
+        },
+      },
+    },
+    icon('eye', 16),
+    h('b', { text: `${seat.info.row}-qator, ${seat.info.num}-o'rin` }),
+    h('span', { class: 'sb-chev', 'aria-hidden': 'true' }),
+  );
+
+  // Ochiq holat — to'liq panel: chapda ma'lumot, o'ngda tugmalar
+  const full = h(
+    'div',
+    { class: 'sb-full' },
     h(
       'div',
       { class: 'sb-info' },
@@ -402,7 +452,13 @@ function renderSeatBar(seatId) {
         null,
         h('b', { text: `${seat.info.row}-qator, ${seat.info.num}-o'rin` }),
         h('span', {
-          text: `${seat.info.sector} · ${fmt.price(seat.info.price)} · sahna shunday ko'rinadi`,
+          text: `${seat.info.sector} · ${fmt.price(seat.info.price)}`,
+        }),
+        h('small', {
+          class: 'sb-hint',
+          text: touch
+            ? 'Atrofga qarash uchun suring · ikki barmoq bilan yaqinlashtiring'
+            : "Atrofga qarash uchun torting · g'ildirak bilan yaqinlashtiring",
         }),
       ),
     ),
@@ -434,6 +490,23 @@ function renderSeatBar(seatId) {
         : null,
     ),
   );
+  seatBar.replaceChildren(pill, full);
+
+  // Yangi o'rindiqqa o'tirilganda qisqa vaqt ochiq turadi, keyin yig'iladi
+  if (seatBarSeat !== seatId) {
+    seatBarSeat = seatId;
+    seatBar.classList.add('open');
+    pill.setAttribute('aria-expanded', 'true');
+    seatBarTimer = setTimeout(() => {
+      seatBar.classList.remove('open');
+      pill.setAttribute('aria-expanded', 'false');
+    }, 3500);
+  } else {
+    pill.setAttribute(
+      'aria-expanded',
+      String(seatBar.classList.contains('open')),
+    );
+  }
 }
 
 // ---------- 2D sxema ----------

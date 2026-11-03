@@ -15,7 +15,7 @@
     "typecheck:web": "tsc -p public/tsconfig.json",
     "lint:web": "eslint public/js test/web",
     "test:web": "node --test test/web/*.test.mjs",
-    "build:three": "esbuild scripts/three-entry.js --bundle --format=esm --minify --legal-comments=none --outfile=public/vendor/three.js"
+    "build:three": "esbuild scripts/three-entry.js --bundle --format=esm --minify --legal-comments=none --banner:js=\"// three.js r187 (MIT) — scripts/three-entry.js dan yig'ilgan, qo'lda tahrirlamang\" --outfile=public/vendor/three.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.3.7",
