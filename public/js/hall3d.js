@@ -101,7 +101,7 @@ const FIRST_ROW = 7.5; // sahna markazidan birinchi qatorgacha
 const SECTOR_GAP = 1.6; // sektorlar orasidagi ko'ndalang yo'lak
 const FOCUS = new THREE.Vector3(0, 0, -3); // qatorlar yoyining markazi
 const BALCONY = /balkon|beletaj|loja|yarus|lodge|balcony|mezzanine/i;
-const EYE = 1.6; // odam bo'yi: ko'z balandligi (poldan ≈1.6 m) — oldingi qatorlar sahnani to'smaydi
+const EYE = 1.3; // o'tirgan odam ko'zi balandligi (poldan ≈1.3 m)
 
 /**
  * @param {{
