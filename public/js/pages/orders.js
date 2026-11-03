@@ -5,7 +5,7 @@
 import { api, ApiError, serverNow } from '../api.js';
 import * as fmt from '../format.js';
 import { routes } from '../routes.js';
-import { requireUser } from '../session.js';
+import { requireUser, BUYER_ROLES } from '../session.js';
 import { mountNav, mountFooter } from '../shell.js';
 import {
   $,
@@ -43,7 +43,7 @@ let pending = [];
 void load();
 
 async function load() {
-  await requireUser(['CUSTOMER']);
+  await requireUser(BUYER_ROLES);
   showLoading(content);
   let orders;
   try {

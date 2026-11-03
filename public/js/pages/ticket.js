@@ -4,7 +4,7 @@
 import { api, ApiError } from '../api.js';
 import * as fmt from '../format.js';
 import { routes, param } from '../routes.js';
-import { requireUser } from '../session.js';
+import { requireUser, BUYER_ROLES } from '../session.js';
 import { qrSvg } from '../qr.js';
 import {
   $,
@@ -33,7 +33,7 @@ const id = param('id');
 void load();
 
 async function load() {
-  await requireUser(['CUSTOMER']);
+  await requireUser(BUYER_ROLES);
   if (!id) {
     showEmpty(content, "Chipta ko'rsatilmagan", {
       label: 'Chiptalarim',

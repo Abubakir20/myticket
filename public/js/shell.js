@@ -6,7 +6,7 @@ import { routes } from './routes.js';
 import { icon, logoMark } from './icons.js';
 import { getUser, isAdmin, logout } from './session.js';
 
-/** @typedef {'home' | 'tickets' | 'orders' | 'profile' | 'admin' | null} NavKey */
+/** @typedef {'home' | 'tickets' | 'orders' | 'profile' | 'admin' | 'organizer' | null} NavKey */
 
 const THEME_KEY = 'chipta:theme';
 
@@ -110,9 +110,11 @@ export async function mountNav(mount, active) {
   }
   if (user.role === 'CONTROLLER') {
     links.append(h('a', { href: routes.controller(), text: 'Kontroller' }));
-  } else if (isAdmin(user)) {
-    links.append(link(routes.admin(), 'Admin panel', 'admin'));
   } else {
+    if (isAdmin(user))
+      links.append(link(routes.admin(), 'Admin panel', 'admin'));
+    if (user.role === 'ORGANIZER')
+      links.append(link(routes.organizer(), 'Tashkilotchi', 'organizer'));
     links.append(
       link(routes.tickets(), 'Chiptalarim', 'tickets'),
       link(routes.orders(), 'Buyurtmalarim', 'orders'),

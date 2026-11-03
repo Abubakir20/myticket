@@ -5,7 +5,7 @@
 import { api, ApiError, serverNow } from '../api.js';
 import * as fmt from '../format.js';
 import { routes, param } from '../routes.js';
-import { requireUser } from '../session.js';
+import { requireUser, BUYER_ROLES } from '../session.js';
 import * as v from '../validate.js';
 import { icon } from '../icons.js';
 import {
@@ -76,7 +76,7 @@ function handleError(error, inline) {
 async function load() {
   if (!orderId) return showError("Buyurtma ko'rsatilmagan");
   show('loading');
-  await requireUser(['CUSTOMER']);
+  await requireUser(BUYER_ROLES);
   try {
     order = await api.orders.get(orderId);
   } catch (error) {

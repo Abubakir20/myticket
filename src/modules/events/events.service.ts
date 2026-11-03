@@ -16,17 +16,11 @@ import {
   eventListCacheKey,
 } from '../../common/helper/redis-keys';
 import { Role } from '../../common/enum';
-import {
-  EventStatus,
-  SessionStatus,
-} from '../../../generated/prisma/enums';
+import { EventStatus, SessionStatus } from '../../../generated/prisma/enums';
 import { OrderService } from '../order/order.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import {
-  AdminEventQueryDto,
-  PaginationQueryDto,
-} from './dto/event-query.dto';
+import { AdminEventQueryDto, PaginationQueryDto } from './dto/event-query.dto';
 
 @Injectable()
 export class EventsService {
@@ -157,7 +151,10 @@ export class EventsService {
           ageLimit: true,
           duration: true,
           sessions: {
-            where: { status: SessionStatus.ACTIVE, startTime: { gt: new Date() } },
+            where: {
+              status: SessionStatus.ACTIVE,
+              startTime: { gt: new Date() },
+            },
             orderBy: { startTime: 'asc' },
             select: {
               startTime: true,
@@ -242,11 +239,45 @@ export class EventsService {
             seatingType: true,
             status: true,
             venue: { select: { id: true, name: true } },
+            ticketCategories: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                quantity: true,
+                sectorId: true,
+              },
+            },
           },
         },
+        controllers: { select: { id: true, controllerId: true } },
       },
     });
-    return successRes(events);
+
+    // Har bir seans bo'yicha sotuv: to'langan buyurtmalardagi chiptalar soni va tushum
+    const sessionIds = events.flatMap((e) => e.sessions.map((s) => s.id));
+    const sales = sessionIds.length
+      ? await this.db.$queryRaw<
+          { sessionId: string; sold: number; revenue: number }[]
+        >`
+          SELECT o."sessionId", COUNT(oi.id)::int AS sold, COALESCE(SUM(oi.price), 0)::float AS revenue
+          FROM orders o
+          JOIN order_items oi ON oi."orderId" = o.id
+          WHERE o.status = 'PAID' AND o."sessionId" = ANY(${sessionIds}::uuid[])
+          GROUP BY o."sessionId"`
+      : [];
+    const bySession = new Map(sales.map((row) => [row.sessionId, row]));
+
+    return successRes(
+      events.map((event) => ({
+        ...event,
+        sessions: event.sessions.map((session) => ({
+          ...session,
+          sold: bySession.get(session.id)?.sold ?? 0,
+          revenue: bySession.get(session.id)?.revenue ?? 0,
+        })),
+      })),
+    );
   }
 
   // Admin: moderatsiya ro'yxati

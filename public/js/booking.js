@@ -77,8 +77,11 @@ export async function placeOrder(dto, draft) {
     location.assign(routes.login(currentPath()));
     return;
   }
-  if (user.role !== 'CUSTOMER') {
-    throw new ApiError(403, 'Chipta faqat mijoz akkaunti orqali sotib olinadi');
+  if (user.role === 'CONTROLLER') {
+    throw new ApiError(
+      403,
+      'Kontroller akkaunti chipta sotib ololmaydi. Shaxsiy akkauntingiz bilan kiring.',
+    );
   }
   try {
     const order = await api.orders.create(dto);

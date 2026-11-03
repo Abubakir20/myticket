@@ -285,3 +285,54 @@ export {};
  * @property {{ tickets: number, orders: number, spent: number, used: number }} summary
  * @property {AdminUserOrder[]} orders
  */
+
+/**
+ * GET /events/my — tashkilotchining tadbiri (sotuv statistikasi bilan)
+ * @typedef {object} OrganizerEvent
+ * @property {string} id
+ * @property {string} title
+ * @property {string} description
+ * @property {number | null} ageLimit
+ * @property {number} duration
+ * @property {string} posterUrl
+ * @property {EventStatus} status
+ * @property {string | null} rejectReason
+ * @property {string} createdAt
+ * @property {{ id: string, url: string }[]} images
+ * @property {{ id: string, controllerId: string }[]} controllers
+ * @property {OrganizerSession[]} sessions
+ */
+
+/**
+ * @typedef {object} OrganizerSession
+ * @property {string} id
+ * @property {string} startTime
+ * @property {SeatingType} seatingType
+ * @property {'ACTIVE' | 'CANCELLED'} status
+ * @property {{ id: string, name: string }} venue
+ * @property {{ id: string, name: string, price: Money, quantity: number | null, sectorId: string | null }[]} ticketCategories
+ * @property {number} sold
+ * @property {number} revenue
+ */
+
+/** @typedef {{ id: string, name: string, address: string, isActive: boolean, _count: { sectors: number } }} VenueBrief */
+
+/**
+ * GET /venues/:id
+ * @typedef {object} VenueDetail
+ * @property {string} id
+ * @property {string} name
+ * @property {string} address
+ * @property {{ id: string, name: string, rows: { id: string, number: number, seats: { id: string, number: number }[] }[] }[]} sectors
+ */
+
+/**
+ * GET /organizer/mycontrollers
+ * @typedef {object} OrganizerController
+ * @property {string} id
+ * @property {string | null} fullName
+ * @property {string} email
+ * @property {string} createdAt
+ * @property {{ id: string, event: { id: string, title: string } }[]} controllerEvents
+ * @property {{ checkedTickets: number }} _count
+ */

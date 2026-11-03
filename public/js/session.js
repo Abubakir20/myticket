@@ -61,8 +61,16 @@ export async function requireUser(roles) {
 export function homeFor(user) {
   if (user.role === 'CONTROLLER') return routes.controller();
   if (isAdmin(user)) return routes.admin();
+  if (user.role === 'ORGANIZER') return routes.organizer();
   return routes.home();
 }
+
+/** Chipta sotib olishi mumkin bo'lgan rollar (SUPERADMIN requireUser'da doim o'tadi) */
+export const BUYER_ROLES = /** @type {Role[]} */ ([
+  'CUSTOMER',
+  'ORGANIZER',
+  'ADMIN',
+]);
 
 /** @param {User} user */
 export function isAdmin(user) {
@@ -73,7 +81,10 @@ export function isAdmin(user) {
 export function afterLogin(user) {
   const next = safeNext(new URLSearchParams(location.search).get('next'));
   if (user.role === 'CONTROLLER') return routes.controller();
-  return next ?? (isAdmin(user) ? routes.admin() : routes.home());
+  if (next) return next;
+  if (isAdmin(user)) return routes.admin();
+  if (user.role === 'ORGANIZER') return routes.organizer();
+  return routes.home();
 }
 
 export async function logout() {

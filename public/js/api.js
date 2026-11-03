@@ -17,6 +17,10 @@
 /** @typedef {import('./types.js').ControllerEvent} ControllerEvent */
 /** @typedef {import('./types.js').CheckInResult} CheckInResult */
 /** @typedef {import('./types.js').AdminStats} AdminStats */
+/** @typedef {import('./types.js').OrganizerEvent} OrganizerEvent */
+/** @typedef {import('./types.js').OrganizerController} OrganizerController */
+/** @typedef {import('./types.js').VenueBrief} VenueBrief */
+/** @typedef {import('./types.js').VenueDetail} VenueDetail */
 /** @typedef {import('./types.js').AdminEventPage} AdminEventPage */
 /** @typedef {import('./types.js').AdminApplication} AdminApplication */
 /** @typedef {import('./types.js').AdminUserPage} AdminUserPage */
@@ -67,7 +71,7 @@ function refreshSession() {
  * @template T
  * @param {'GET' | 'POST' | 'PATCH' | 'DELETE'} method
  * @param {string} path
- * @param {{ body?: unknown, auth?: boolean }} [options] auth: false — 401 da refresh qilinmaydi (login, refresh)
+ * @param {{ body?: unknown, auth?: boolean }} [options] body: obyekt (JSON) yoki FormData; auth: false — 401 da refresh qilinmaydi (login, refresh)
  * @returns {Promise<T>}
  */
 async function request(method, path, { body, auth = true } = {}) {
@@ -77,8 +81,15 @@ async function request(method, path, { body, auth = true } = {}) {
       method,
       credentials: 'same-origin',
       headers:
-        body === undefined ? undefined : { 'Content-Type': 'application/json' },
-      body: body === undefined ? undefined : JSON.stringify(body),
+        body === undefined || body instanceof FormData
+          ? undefined
+          : { 'Content-Type': 'application/json' },
+      body:
+        body === undefined
+          ? undefined
+          : body instanceof FormData
+            ? body
+            : JSON.stringify(body),
     });
 
   let res;
@@ -183,6 +194,43 @@ export const api = {
     events: () => request('GET', '/check-in/events'),
     /** @param {string} qrCode @returns {Promise<CheckInResult>} */
     scan: (qrCode) => request('POST', '/check-in', { body: { qrCode } }),
+  },
+  organizer: {
+    /** @returns {Promise<OrganizerEvent[]>} */
+    events: () => request('GET', '/events/my'),
+    /** @param {FormData} form */
+    createEvent: (form) => request('POST', '/events', { body: form }),
+    /** @param {string} id @param {FormData} form */
+    updateEvent: (id, form) =>
+      request('PATCH', `/events/${q(id)}`, { body: form }),
+    /** @param {string} id */
+    cancelEvent: (id) => request('PATCH', `/events/${q(id)}/cancel`),
+    /** @param {string} id @param {FormData} form */
+    addImages: (id, form) =>
+      request('POST', `/events/${q(id)}/images`, { body: form }),
+    /** @param {string} id @param {unknown} dto */
+    createSession: (id, dto) =>
+      request('POST', `/events/${q(id)}/sessions`, { body: dto }),
+    /** @param {string} id */
+    cancelSession: (id) => request('PATCH', `/sessions/${q(id)}/cancel`),
+    /** @returns {Promise<VenueBrief[]>} */
+    venues: () => request('GET', '/venues'),
+    /** @param {string} id @returns {Promise<VenueDetail>} */
+    venue: (id) => request('GET', `/venues/${q(id)}`),
+    /** @returns {Promise<OrganizerController[]>} */
+    controllers: () => request('GET', '/organizer/mycontrollers'),
+    /** @param {{ fullName: string, email: string, password: string }} dto */
+    createController: (dto) =>
+      request('POST', '/organizer/createcontroller', { body: dto }),
+    /** @param {string} id */
+    deleteController: (id) => request('DELETE', `/organizer/${q(id)}`),
+    /** @param {string} controllerId @param {string} eventId */
+    assign: (controllerId, eventId) =>
+      request('POST', '/controller-events', {
+        body: { controllerId, eventId },
+      }),
+    /** @param {string} id ControllerEvent id */
+    unassign: (id) => request('DELETE', `/controller-events/${q(id)}`),
   },
   admin: {
     /** @returns {Promise<AdminStats>} */

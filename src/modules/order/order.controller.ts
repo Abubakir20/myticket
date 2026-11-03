@@ -17,7 +17,7 @@ import { UserId } from '../../common/decorator/current-user.decorator';
 import { Role } from '../../common/enum';
 
 @UseGuards(AuthGuard, RolesGuard)
-@AccessRoles(Role.CUSTOMER)
+@AccessRoles(Role.CUSTOMER, Role.ORGANIZER, Role.ADMIN)
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}

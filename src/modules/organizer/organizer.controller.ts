@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '../../common/guard/jwt-auth.guard';
 import { UserId } from '../../common/decorator/current-user.decorator';
@@ -26,7 +27,10 @@ export class OrganizerController {
     @UserId() organizerId: string,
     @Body() createControllerDto: CreateControllerDto,
   ) {
-    return this.organizerService.createController(organizerId, createControllerDto);
+    return this.organizerService.createController(
+      organizerId,
+      createControllerDto,
+    );
   }
 
   @UseGuards(RolesGuard)
@@ -39,7 +43,10 @@ export class OrganizerController {
   @UseGuards(RolesGuard)
   @AccessRoles(Role.ORGANIZER)
   @Delete(':id')
-  deleteController(@Param('id') id: string) {
-    return this.organizerService.deleteController(id);
+  deleteController(
+    @UserId() organizerId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.organizerService.deleteController(organizerId, id);
   }
 }

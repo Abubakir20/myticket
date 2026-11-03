@@ -4,7 +4,7 @@
 import { api } from '../api.js';
 import * as fmt from '../format.js';
 import { routes, param } from '../routes.js';
-import { requireUser } from '../session.js';
+import { requireUser, BUYER_ROLES } from '../session.js';
 import { mountNav, mountFooter } from '../shell.js';
 import { qrSvg } from '../qr.js';
 import {
@@ -45,7 +45,7 @@ let active = /** @type {TicketStatus} */ (
 void load();
 
 async function load() {
-  await requireUser(['CUSTOMER']);
+  await requireUser(BUYER_ROLES);
   showLoading(content);
   try {
     tickets = await api.tickets.mine();
