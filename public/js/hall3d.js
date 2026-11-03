@@ -101,6 +101,7 @@ const FIRST_ROW = 7.5; // sahna markazidan birinchi qatorgacha
 const SECTOR_GAP = 1.6; // sektorlar orasidagi ko'ndalang yo'lak
 const FOCUS = new THREE.Vector3(0, 0, -3); // qatorlar yoyining markazi
 const BALCONY = /balkon|beletaj|loja|yarus|lodge|balcony|mezzanine/i;
+const AMPHI = /amfiteatr|amphi/i;
 const EYE = 1.3; // o'tirgan odam ko'zi balandligi (poldan ≈1.3 m)
 
 /**
@@ -273,6 +274,8 @@ export function createHall3D(options) {
   let maxY = 0;
   let distance = FIRST_ROW;
   let base = 0;
+  let prevTop = 0; // oldingi sektor oxirgi qatorining balandligi
+  let crossTheta = 0.5; // oldingi sektor yarim burchagi (ko'ndalang yo'lak uchun)
   const hall = new THREE.Group();
   scene.add(hall);
 
@@ -292,10 +295,30 @@ export function createHall3D(options) {
 
   map.sectors.forEach((sector, si) => {
     const balcony = si > 0 && BALCONY.test(sector.sectorName);
-    const rake = balcony ? 0.36 : si === 0 ? 0.12 : 0.24;
+    // Qiyalik: parter yumshoq, amfiteatr tik (stadion uslubi), balkon eng tik
+    const rake = balcony
+      ? 0.36
+      : AMPHI.test(sector.sectorName)
+        ? 0.32
+        : si === 0
+          ? 0.12
+          : 0.18;
     if (si > 0) {
+      // Har sektor oldingisining oxirgi qatoridan yuqorida boshlanadi — ko'rish chizig'i to'silmaydi
+      const prevEnd = distance - ROW_GAP;
       distance += SECTOR_GAP;
-      base += balcony ? 2.8 : 0.5;
+      if (!balcony) {
+        // Ko'ndalang yo'lak — oldingi sektor balandligida tekis maydoncha
+        const cross = annulus(
+          prevEnd + ROW_GAP / 2,
+          distance - ROW_GAP / 2,
+          crossTheta,
+          prevTop,
+          0,
+        );
+        hall.add(new THREE.Mesh(cross, [mats.riserTop, mats.riserSide]));
+      }
+      base = prevTop + (balcony ? 2.6 : rake + 0.15);
     }
     const rows = [...sector.rows].sort((a, b) => a.number - b.number);
     const sectorStart = distance;
@@ -306,7 +329,7 @@ export function createHall3D(options) {
 
     rows.forEach((row, ri) => {
       const d = distance + ri * ROW_GAP;
-      const y = base + ri * rake + (si === 0 ? 0 : 0.2);
+      const y = base + ri * rake;
       const seats = [...row.seats].sort((a, b) => a.number - b.number);
       const n = seats.length;
       // Bloklar: ≤9 — bitta (yon yo'laklar), ≤18 — ikkita (markaziy yo'lak), aks holda uchta
@@ -429,7 +452,7 @@ export function createHall3D(options) {
     });
 
     const end = distance + (rows.length - 1) * ROW_GAP;
-    const firstY = base + (si === 0 ? 0 : 0.2);
+    const firstY = base;
 
     // Tik sektorlarda yo'lak tutqichlari
     if (rake >= 0.24 && rows.length > 1) {
@@ -530,6 +553,8 @@ export function createHall3D(options) {
     });
 
     maxDist = end;
+    prevTop = lastY;
+    crossTheta = widest;
     distance = end + ROW_GAP;
   });
 
@@ -915,7 +940,13 @@ export function createHall3D(options) {
   const wallLen = hallBack - portalZ;
   const wallH = Math.max(portalH + 2, maxY + 6);
   const wallMidZ = (hallBack + portalZ) / 2;
+  /** Devor bezaklari: kamera devor tashqarisida bo'lsa yashiriladi (zalni to'smasligi uchun) */
+  /** @type {Record<number, THREE.Group>} */
+  const sideDecor = { [-1]: new THREE.Group(), [1]: new THREE.Group() };
+  const backDecor = new THREE.Group();
+  scene.add(sideDecor[-1], sideDecor[1], backDecor);
   for (const side of [-1, 1]) {
+    const decor = sideDecor[side];
     const rotY = side === -1 ? Math.PI / 2 : -Math.PI / 2;
     const wall = new THREE.Mesh(
       new THREE.PlaneGeometry(wallLen, wallH),
@@ -930,7 +961,7 @@ export function createHall3D(options) {
       mats.dado,
     );
     dado.position.set(side * (wallX - 0.03), 0.6, wallMidZ);
-    scene.add(dado);
+    decor.add(dado);
     // Akustik yog'och reykalar
     const slats = [];
     const count = Math.floor(wallLen / 0.45);
@@ -951,7 +982,7 @@ export function createHall3D(options) {
       slats.length,
     );
     slats.forEach((m, i) => slatMesh.setMatrixAt(i, m));
-    scene.add(slatMesh);
+    decor.add(slatMesh);
     // Bra chiroqlari
     for (let i = 0; i < 4; i += 1) {
       const z = apronFront + 2 + i * ((maxDist + 2) / 4);
@@ -960,15 +991,15 @@ export function createHall3D(options) {
         mats.sconce,
       );
       sc.position.set(side * (wallX - 0.12), maxY * 0.45 + 2.8, z);
-      scene.add(sc);
+      decor.add(sc);
       // Devordagi yorug' dog' (haqiqiy chiroq o'rniga — telefonlarda ham tez)
       const halo = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.4), haloMat);
       halo.rotation.y = rotY;
       halo.position.set(side * (wallX - 0.08), maxY * 0.45 + 2.8, z);
-      scene.add(halo);
+      decor.add(halo);
     }
     // Old tomondagi eshik va "CHIQISH" belgisi (sahna yonida)
-    addExit(side * (wallX - 0.04), apronFront + 0.6, rotY);
+    addExit(side * (wallX - 0.04), apronFront + 0.6, rotY, 0, decor);
   }
   const back = new THREE.Mesh(
     new THREE.PlaneGeometry(wallX * 2, wallH),
@@ -978,14 +1009,20 @@ export function createHall3D(options) {
   back.position.set(0, wallH / 2, hallBack);
   scene.add(back);
   for (const side of [-1, 1])
-    addExit(side * (wallX - 2), hallBack - 0.04, Math.PI, maxY + 0.2);
+    addExit(
+      side * (wallX - 2),
+      hallBack - 0.04,
+      Math.PI,
+      maxY + 0.2,
+      backDecor,
+    );
 
-  /** @param {number} x @param {number} z @param {number} rotY @param {number} [y0] */
-  function addExit(x, z, rotY, y0 = 0) {
+  /** @param {number} x @param {number} z @param {number} rotY @param {number} y0 @param {THREE.Group} parent */
+  function addExit(x, z, rotY, y0, parent) {
     const door = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.3), mats.black);
     door.rotation.y = rotY;
     door.position.set(x, y0 + 1.15, z);
-    scene.add(door);
+    parent.add(door);
     const sign = new THREE.Mesh(
       new THREE.PlaneGeometry(0.9, 0.3),
       new THREE.MeshBasicMaterial({ map: exitTexture(), toneMapped: false }),
@@ -993,7 +1030,7 @@ export function createHall3D(options) {
     sign.rotation.y = rotY;
     sign.position.set(x, y0 + 2.65, z);
     sign.translateZ(0.02);
-    scene.add(sign);
+    parent.add(sign);
   }
 
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), mats.floor);
@@ -1214,6 +1251,9 @@ export function createHall3D(options) {
     }
     if (changed || needsRender) {
       orientBeams();
+      sideDecor[-1].visible = camera.position.x > -wallX;
+      sideDecor[1].visible = camera.position.x < wallX;
+      backDecor.visible = camera.position.z < hallBack;
       renderer.render(scene, camera);
       updateLabels();
       needsRender = false;
