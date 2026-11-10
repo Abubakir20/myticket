@@ -12,6 +12,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SSH_OPTS: -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=20
     steps:
       - uses: actions/checkout@v4
 
@@ -32,15 +34,24 @@ jobs:
 
       - name: Setup SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          ssh-keygen -y -f "$HOME/.ssh/deploy_key" > /dev/null \
+            && echo "kalit formati to'g'ri" \
+            || { echo "SSH_PRIVATE_KEY secret noto'g'ri (BEGIN/END qatorlari bilan to'liq private kalit kerak)"; exit 1; }
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> "$HOME/.ssh/known_hosts" || true
+
+      - name: Verify SSH connection
+        run: |
+          ssh $SSH_OPTS -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'echo "ulanish OK: $(hostname), node $(node -v)"'
 
       - name: Upload build to server
         run: |
           rsync -az --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519" \
+            -e "ssh $SSH_OPTS -p ${{ secrets.SSH_PORT }}" \
             --exclude 'node_modules' --exclude '.env' \
             --exclude 'uploads' --exclude 'logs' \
             dist public prisma generated package.json pnpm-lock.yaml \
@@ -49,7 +60,7 @@ jobs:
 
       - name: Install prod deps, migrate & restart
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519 \
+          ssh $SSH_OPTS -p "${{ secrets.SSH_PORT }}" \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "DEPLOY_PATH='${{ secrets.DEPLOY_PATH }}' bash -s" < deploy/remote-deploy.sh
 
