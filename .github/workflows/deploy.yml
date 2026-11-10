@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SSH_OPTS: -i /home/runner/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p "$HOME/.ssh"
+          KEY_FILE="$HOME/.ssh/deploy_key"
+          # CR (Windows qator oxiri) ni olib tashlaymiz — nusxalashda tez-tez qo'shilib qoladi
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+
+          if ! ssh-keygen -y -f "$KEY_FILE" > /dev/null 2>&1; then
+            echo "::error::SSH_PRIVATE_KEY secret o'qilmadi. Diagnostika:"
+            echo "  bayt soni  : $(wc -c < "$KEY_FILE")"
+            echo "  qator soni : $(wc -l < "$KEY_FILE")"
+            echo "  1-qator    : $(head -1 "$KEY_FILE" | cut -c1-40)"
+            echo "  oxirgi     : $(tail -1 "$KEY_FILE" | cut -c1-40)"
+            echo "Kutilgani: 1-qator '-----BEGIN OPENSSH PRIVATE KEY-----',"
+            echo "oxirgisi '-----END OPENSSH PRIVATE KEY-----', jami 7+ qator."
+            echo "Secret nomi aynan SSH_PRIVATE_KEY bo'lishi va kalit to'liq (public emas) bo'lishi kerak."
+            exit 1
+          fi
+          echo "kalit formati to'g'ri, fingerprint:"
+          ssh-keygen -lf "$KEY_FILE"
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> "$HOME/.ssh/known_hosts" || true
+
+      - name: Verify SSH connection
+        run: |
+          ssh $SSH_OPTS -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'echo "ulanish OK: $(hostname), node $(node -v)"'
+
+      - name: Upload build to server
+        run: |
+          rsync -az --delete \
+            -e "ssh $SSH_OPTS -p ${{ secrets.SSH_PORT }}" \
+            --exclude 'node_modules' --exclude '.env' \
+            --exclude 'uploads' --exclude 'logs' \
+            dist public prisma generated package.json pnpm-lock.yaml \
+            ecosystem.config.js prisma.config.ts \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/
+
+      - name: Install prod deps, migrate & restart
+        run: |
+          ssh $SSH_OPTS -p "${{ secrets.SSH_PORT }}" \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "DEPLOY_PATH='${{ secrets.DEPLOY_PATH }}' bash -s" < deploy/remote-deploy.sh
+
+      - name: Health check
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' \
+              "http://${{ secrets.SSH_HOST }}:${{ secrets.PUBLIC_PORT }}/api/v1/docs" || true)
+            echo "attempt $i -> $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 5
+          done
+          echo "Health check muvaffaqiyatsiz"; exit 1

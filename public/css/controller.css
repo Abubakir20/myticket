@@ -1,0 +1,74 @@
+/* Kontroller ilovasi (dizayn: Chipta Controller 4a–4g) — mobil, katta ekranda markazdagi ustun */
+body { background: var(--page-bg-alt); }
+.capp {
+  max-width: 480px; min-height: 100vh; margin: 0 auto; background: var(--color-bg); width: 100%;
+  display: flex; flex-direction: column; position: relative;
+}
+.chead { padding: 26px 22px 16px; display: flex; align-items: flex-end; gap: 10px; }
+.chead .k { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-accent); font-weight: 800; }
+.chead h3 { margin: 2px 0 0; font-size: 28px; font-weight: 800; letter-spacing: -0.03em; }
+.chead .actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.cbody { flex: 1; padding: 4px 16px 24px; }
+.evrow {
+  display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 10px; border-radius: 20px;
+  background: var(--color-surface); border: 1px solid var(--color-divider); box-shadow: var(--shadow-sm);
+}
+.evposter { width: 52px; height: 64px; border-radius: 12px; flex: none; position: relative; overflow: hidden; }
+.evinfo { flex: 1; min-width: 0; }
+.evinfo .t { font-weight: 800; font-size: 15px; }
+.evinfo .v { font-size: 12.5px; color: var(--color-muted); margin-top: 2px; font-weight: 600; }
+.evrow .btn { --btn-h: 38px; padding: 0 16px; font-size: 13px; flex: none; }
+
+/* Skaner */
+.scan { background: #07070c; color: #f4f2ee; }
+.scanhead { padding: 16px 22px 10px; display: flex; align-items: center; gap: 12px; }
+.scanhead a { color: inherit; opacity: 0.7; text-decoration: none; font-size: 20px; padding: 4px; }
+.scanhead .t { font-weight: 600; font-size: 14.5px; }
+.scanhead .v { font-size: 11.5px; opacity: 0.6; }
+.scanframe {
+  flex: 1; min-height: 360px; background: radial-gradient(60% 50% at 50% 45%, rgba(108, 77, 255, 0.18), transparent 70%), #07070c; position: relative;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.scanframe video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.scanbox { width: 230px; height: 230px; border-radius: 24px; position: relative; z-index: 1; overflow: hidden; }
+.scanbox::after {
+  content: ''; position: absolute; left: 8%; right: 8%; height: 2px; top: 10%; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #ff5d3f, transparent); box-shadow: 0 0 14px #ff5d3f;
+  animation: scanline 2.2s ease-in-out infinite alternate;
+}
+@keyframes scanline { to { top: 88%; } }
+.scancorner { position: absolute; width: 34px; height: 34px; border-color: #ff5d3f; border-style: solid; filter: drop-shadow(0 0 8px rgba(255, 93, 63, 0.6)); }
+.scancorner.tl { top: -3px; left: -3px; border-width: 4px 0 0 4px; border-radius: 8px 0 0 0; }
+.scancorner.tr { top: -3px; right: -3px; border-width: 4px 4px 0 0; border-radius: 0 8px 0 0; }
+.scancorner.bl { bottom: -3px; left: -3px; border-width: 0 0 4px 4px; border-radius: 0 0 0 8px; }
+.scancorner.br { bottom: -3px; right: -3px; border-width: 0 4px 4px 0; border-radius: 0 0 8px 0; }
+.scanhint { position: absolute; z-index: 1; bottom: 26px; left: 20px; right: 20px; text-align: center; font-size: 13px; opacity: 0.75; margin: 0; }
+.manual { padding: 20px 22px 28px; background: #111119; border-radius: 26px 26px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.manual label { font-size: 12px; opacity: 0.65; }
+.manual .input {
+  background: #1a1a25; border: 1.5px solid rgba(255, 255, 255, 0.12); border-radius: 14px;
+  padding: 13px 16px; color: #f4f2ee; font-size: 15px; min-height: 50px;
+}
+.manual .field-error { color: #ff9c85; }
+.manual .btn-primary { color: #fff; }
+
+/* Natija */
+.result {
+  position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 0 30px 110px; color: #fff;
+}
+.result.ok { background: linear-gradient(160deg, #12a26b, #064a31); }
+.result.warn { background: linear-gradient(160deg, #f0a020, #7a4a00); }
+.result.err { background: linear-gradient(160deg, #e0352b, #6b0f0a); }
+.ricon {
+  width: 88px; height: 88px; border-radius: 50%; background: rgba(255, 255, 255, 0.18);
+  display: grid; place-items: center; font-size: 44px; margin-bottom: 20px;
+}
+.rtitle { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 10px; }
+.rmeta { font-size: 14px; opacity: 0.9; line-height: 1.6; white-space: pre-line; }
+.rback {
+  position: absolute; bottom: 36px; left: 26px; right: 26px; max-width: 428px; margin: 0 auto;
+  background: rgba(255, 255, 255, 0.16); border: none; border-radius: 14px; padding: 14px;
+  color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.rback:hover { background: rgba(255, 255, 255, 0.24); }

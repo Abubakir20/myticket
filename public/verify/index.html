@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Kirishni tasdiqlash — Chipta</title>
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/auth.css">
+<script type="module" src="/js/pages/verify.js"></script>
+</head>
+<body>
+<main class="auth">
+  <aside class="auth-art" aria-hidden="true">
+    <div class="art-glow"></div>
+    <div class="art-copy">
+      <div class="art-eyebrow">Chipta</div>
+      <p class="art-title">Sevimli tadbiringizga<br><span class="grad-text">bir qadam</span> qoldi</p>
+      <p class="art-sub">Joyingizni 3D zalda tanlang, chiptani bir zumda telefoningizga oling.</p>
+    </div>
+    <div class="art-stack">
+      <div class="art-ticket t1"><b>Ko'k soat: jazz kechasi</b><span>Parter · 4-qator, 12-o'rin</span><i></i></div>
+      <div class="art-ticket t2"><b>Hamlet</b><span>Beletaj · 2-qator, 7-o'rin</span><i></i></div>
+      <div class="art-ticket t3"><b>Neon Pulse</b><span>Umumiy kirish · VIP</span><i></i></div>
+    </div>
+  </aside>
+  <div class="auth-body">
+    <div class="auth-top"><a class="brand" href="/"><img class="logo-mark" src="/favicon.svg" alt="" width="32" height="32">Chipta</a><span id="theme"></span></div>
+    <p class="eyebrow kicker">Tasdiqlash</p>
+    <h1>Kirishni<br>tasdiqlang</h1>
+    <p class="sub" id="sub">6 xonali kodni <b id="email"></b> manziliga yubordik.</p>
+    <div class="banner" id="banner" role="alert" hidden></div>
+    <section class="otp-card" id="otp-card" aria-labelledby="otp-card-title" hidden></section>
+    <form id="form" novalidate>
+      <label class="sr-only" for="code">Tasdiqlash kodi</label>
+      <div class="otp" id="otp">
+        <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{6}" required>
+        <div class="cell" aria-hidden="true"></div><div class="cell" aria-hidden="true"></div><div class="cell" aria-hidden="true"></div>
+        <div class="cell" aria-hidden="true"></div><div class="cell" aria-hidden="true"></div><div class="cell" aria-hidden="true"></div>
+      </div>
+      <p class="field-error otp-error" id="code-error" role="alert" hidden></p>
+      <p class="otp-hint" id="hint"></p>
+      <div class="resend" id="resend-row"><span>Qayta yuborish</span><b id="resend-timer" aria-live="off"></b><button type="button" id="resend" hidden>Yuborish</button></div>
+      <button class="btn btn-primary btn-block" id="resend-primary" type="button" hidden>Qayta yuborish</button>
+      <button class="btn btn-primary btn-block" id="submit" type="submit">Tasdiqlash</button>
+    </form>
+    <p class="foot">Email noto'g'rimi? <a id="change-link" href="/login/">O'zgartirish</a></p>
+  </div>
+</main>
+</body>
+</html>

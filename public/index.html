@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Chipta — konsert, teatr va shoular uchun chiptalar</title>
+<meta name="description" content="Konsert, teatr va shoularga chiptalarni bir joyda oling. Joyingizni 3D zalda tanlang.">
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/home.css">
+<script type="module" src="/js/pages/home.js"></script>
+</head>
+<body>
+<header id="topnav"></header>
+<main>
+  <section class="wrap" id="hero" aria-label="Tanlangan tadbirlar"></section>
+
+  <section class="wrap perks" aria-label="Afzalliklar">
+    <div class="perk"><span class="perk-ic" data-icon="cube"></span><div><b>3D zal</b><span>Joyingizdan sahna qanday ko'rinishini oldindan ko'ring</span></div></div>
+    <div class="perk"><span class="perk-ic" data-icon="qr"></span><div><b>QR chipta</b><span>Chipta telefoningizda — chop etish shart emas</span></div></div>
+    <div class="perk"><span class="perk-ic" data-icon="shield"></span><div><b>Xavfsiz band qilish</b><span>Tanlagan joyingiz to'lov paytida siz uchun saqlanadi</span></div></div>
+  </section>
+
+  <section class="wrap afisha" aria-labelledby="events-title">
+    <div class="sectionh">
+      <div>
+        <div class="eyebrow">Afisha</div>
+        <h2 id="events-title">Barcha tadbirlar</h2>
+      </div>
+      <div class="filters">
+        <label class="search">
+          <span class="sr-only">Tadbir qidirish</span>
+          <span class="search-ic" data-icon="search"></span>
+          <input class="input" id="search" type="search" placeholder="Tadbir yoki zal nomi" autocomplete="off">
+        </label>
+        <div class="chips" id="when" role="group" aria-label="Sana bo'yicha"></div>
+      </div>
+    </div>
+    <div id="events"></div>
+    <nav id="pager" class="pager" aria-label="Sahifalar"></nav>
+  </section>
+</main>
+<footer id="footer"></footer>
+</body>
+</html>

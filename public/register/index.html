@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Ro'yxatdan o'tish — Chipta</title>
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/auth.css">
+<script type="module" src="/js/pages/register.js"></script>
+</head>
+<body>
+<main class="auth">
+  <aside class="auth-art" aria-hidden="true">
+    <div class="art-glow"></div>
+    <div class="art-copy">
+      <div class="art-eyebrow">Chipta</div>
+      <p class="art-title">Sevimli tadbiringizga<br><span class="grad-text">bir qadam</span> qoldi</p>
+      <p class="art-sub">Joyingizni 3D zalda tanlang, chiptani bir zumda telefoningizga oling.</p>
+    </div>
+    <div class="art-stack">
+      <div class="art-ticket t1"><b>Ko'k soat: jazz kechasi</b><span>Parter · 4-qator, 12-o'rin</span><i></i></div>
+      <div class="art-ticket t2"><b>Hamlet</b><span>Beletaj · 2-qator, 7-o'rin</span><i></i></div>
+      <div class="art-ticket t3"><b>Neon Pulse</b><span>Umumiy kirish · VIP</span><i></i></div>
+    </div>
+  </aside>
+  <div class="auth-body">
+    <div class="auth-top"><a class="brand" href="/"><img class="logo-mark" src="/favicon.svg" alt="" width="32" height="32">Chipta</a><span id="theme"></span></div>
+    <p class="eyebrow kicker">Yangi akkaunt</p>
+    <h1>Ro'yxatdan<br>o'tish</h1>
+    <p class="sub">Konsert, teatr va shoularga chiptalarni bir joyda oling.</p>
+    <div class="banner" id="banner" role="alert" hidden></div>
+    <form id="form" novalidate>
+      <div class="f">
+        <div class="field"><label for="fullName">To'liq ism</label><input class="input" id="fullName" name="fullName" autocomplete="name" required></div>
+        <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+        <div class="field"><label for="password">Parol</label><input class="input" id="password" name="password" type="password" autocomplete="new-password" required></div>
+      </div>
+      <button class="btn btn-primary btn-block submit" id="submit" type="submit">Ro'yxatdan o'tish</button>
+    </form>
+    <p class="foot">Akkauntingiz bormi? <a id="login-link" href="/login/">Kirish</a></p>
+  </div>
+</main>
+</body>
+</html>

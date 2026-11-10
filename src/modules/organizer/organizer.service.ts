@@ -10,6 +10,16 @@ import { File } from '../../infrastructure/lib/File';
 import { CreateControllerDto } from './dto/create-controller.dto';
 import { Role, UserStatus } from '../../common/enum';
 
+// Parol xeshi hech qachon javobga chiqmaydi
+const CONTROLLER_SELECT = {
+  id: true,
+  fullName: true,
+  email: true,
+  role: true,
+  status: true,
+  createdAt: true,
+} as const;
+
 @Injectable()
 export class OrganizerService {
   constructor(private readonly db: PrismaService) {}
@@ -21,6 +31,7 @@ export class OrganizerService {
     }
     const hashedPassword = await Crypt.hash(password);
     const controller = await this.db.user.create({
+      select: CONTROLLER_SELECT,
       data: {
         fullName,
         email,
@@ -35,26 +46,32 @@ export class OrganizerService {
   }
 
   async getControllers(organizerId: string) {
-    const constrollers = await this.db.user.findMany({
-      where: { createdById: organizerId },
+    const controllers = await this.db.user.findMany({
+      where: { createdById: organizerId, role: Role.CONTROLLER },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        ...CONTROLLER_SELECT,
+        controllerEvents: {
+          select: { id: true, event: { select: { id: true, title: true } } },
+        },
+        _count: { select: { checkedTickets: true } },
+      },
     });
-
-    if (!constrollers) {
-      throw new NotFoundException('Siz hali Controller yaratmagansiz');
-    }
-
-    return successRes(constrollers);
+    return successRes(controllers);
   }
 
-  async deleteController(id: string) {
-    const controller = await this.db.user.findUnique({ where: { id } });
+  // Faqat o'zi yaratgan kontrollerni o'chira oladi
+  async deleteController(organizerId: string, id: string) {
+    const controller = await this.db.user.findFirst({
+      where: { id, createdById: organizerId, role: Role.CONTROLLER },
+    });
     if (!controller) {
-      throw new NotFoundException();
+      throw new NotFoundException('Kontroller topilmadi');
     }
     if (controller.imageUrl && (await File.exist(controller.imageUrl))) {
       await File.delete(controller.imageUrl);
     }
     await this.db.user.delete({ where: { id } });
-    return successRes({ message: "Controller muvafaqiyatli o'chirildi" });
+    return successRes({ message: "Kontroller muvaffaqiyatli o'chirildi" });
   }
 }

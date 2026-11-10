@@ -1,0 +1,63 @@
+/* Bitta chipta (QR) — skanerlash uchun doim to'q fon */
+body {
+  background:
+    radial-gradient(50% 40% at 15% 10%, rgba(255, 77, 46, 0.22), transparent 70%),
+    radial-gradient(50% 40% at 90% 90%, rgba(108, 77, 255, 0.24), transparent 70%),
+    #07070c;
+  color: #fff;
+}
+.twrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 72px 18px 40px; }
+.twrap .state { color: rgba(255, 255, 255, 0.7); }
+.tback {
+  position: fixed; top: 18px; left: 18px; z-index: 3; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; text-decoration: none;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.tback:hover { background: rgba(255, 255, 255, 0.18); }
+
+.ticket {
+  width: min(400px, 100%); border-radius: 30px; overflow: hidden; background: #fff; color: #0e0f1a;
+  box-shadow: 0 40px 90px -20px rgba(0, 0, 0, 0.8); animation: tin 0.7s var(--ease) both;
+}
+@keyframes tin { from { opacity: 0; transform: translateY(24px) scale(0.97); } }
+.t-top { position: relative; min-height: 200px; padding: 18px 20px 20px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; isolation: isolate; }
+.t-top .poster-img { z-index: -2; }
+.t-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.75) 100%); }
+.t-topbar { display: flex; justify-content: space-between; align-items: center; }
+.t-brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 800; font-size: 17px; letter-spacing: -0.03em; }
+.t-brand .logo-mark { width: 26px; height: 26px; }
+.t-top h1 { font-size: 30px; line-height: 1.05; margin: 40px 0 0; text-wrap: balance; text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4); }
+.status {
+  display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.status-ACTIVE { background: rgba(18, 162, 107, 0.9); }
+.status-USED { background: rgba(120, 122, 140, 0.9); }
+.status-CANCELLED { background: rgba(224, 53, 43, 0.92); }
+
+.t-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 12px; padding: 22px 22px 18px; }
+.tcell { min-width: 0; }
+.tcell.wide { grid-column: span 3; }
+.tcell.span2 { grid-column: span 2; }
+.tcell small { display: block; font-size: 11px; font-weight: 700; color: #8b8fa3; text-transform: uppercase; letter-spacing: 0.06em; }
+.tcell b { display: block; font-size: 16px; font-weight: 800; margin-top: 2px; }
+
+.t-perf { position: relative; height: 26px; }
+.t-perf::before {
+  content: ''; position: absolute; left: 22px; right: 22px; top: 50%; border-top: 2px dashed #dfe2ea;
+}
+.t-perf::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 0 50%, #07070c 12px, transparent 12.5px),
+    radial-gradient(circle at 100% 50%, #07070c 12px, transparent 12.5px);
+}
+.t-qrbox { padding: 12px 22px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.qrbig { width: min(250px, 70vw); aspect-ratio: 1; background: #fff; border-radius: 16px; padding: 6px; }
+.qrbig svg { width: 100%; height: 100%; display: block; }
+.qrbig.used { opacity: 0.25; filter: grayscale(1); }
+.t-hint { margin: 12px 0 0; font-size: 13px; font-weight: 700; color: #4a4d60; }
+.code { margin: 8px 0 0; font: 11.5px ui-monospace, Menlo, monospace; color: #8b8fa3; user-select: all; word-break: break-all; }
+.ticket.is-off .t-top { filter: grayscale(0.7); }
+@media (max-width: 380px) { .t-details { padding: 18px 16px 14px; } .tcell b { font-size: 14.5px; } }

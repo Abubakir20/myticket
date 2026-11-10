@@ -10,6 +10,8 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseIntPipe,
+  ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -20,6 +22,12 @@ import { AccessRoles } from '../../common/decorator/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageValidationPipe } from '../../common/pipe/image-validation.pipe';
 import { Role } from '../../common/enum';
+import { UserId } from '../../common/decorator/current-user.decorator';
+import {
+  AdminUserQueryDto,
+  ApplicationQueryDto,
+  RejectApplicationDto,
+} from './dto/application.dto';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('admin')
@@ -34,6 +42,30 @@ export class AdminController {
   @Get()
   findAll() {
     return this.adminService.findAll();
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('stats')
+  stats() {
+    return this.adminService.stats();
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('users')
+  findUsers(@Query() query: AdminUserQueryDto) {
+    return this.adminService.findUsers(query);
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('users/:id')
+  findUserDetail(@Param('id', ParseUUIDPipe) id: string) {
+    return this.adminService.findUserDetail(id);
+  }
+
+  @AccessRoles(Role.ADMIN)
+  @Get('organizerapplications')
+  getOrgApplications(@Query() query: ApplicationQueryDto) {
+    return this.adminService.getOrgApplications(query.status);
   }
 
   @AccessRoles('ID')
@@ -64,20 +96,21 @@ export class AdminController {
   }
 
   @AccessRoles(Role.ADMIN)
-  @Get('organizerapplications')
-  getOrgApplications() {
-    return this.adminService.getOrgApplications();
-  }
-
-  @AccessRoles(Role.ADMIN)
   @Patch(':id/approve')
-  approveApplication(@Param('id') id: string) {
-    return this.adminService.approveApplication(id);
+  approveApplication(
+    @UserId() adminId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.adminService.approveApplication(adminId, id);
   }
 
   @AccessRoles(Role.ADMIN)
   @Patch(':id/reject')
-  rejectApplication(@Param('id') id: string) {
-    return this.adminService.rejectApplication(id);
+  rejectApplication(
+    @UserId() adminId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: RejectApplicationDto,
+  ) {
+    return this.adminService.rejectApplication(adminId, id, dto.rejectReason);
   }
 }

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Tashkilotchi paneli — Chipta</title>
+<script src="/js/boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/css/ds.css">
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/organizer.css">
+<script type="module" src="/js/pages/organizer.js"></script>
+</head>
+<body>
+<header id="topnav"></header>
+<main class="wrap admin">
+  <section class="ahero" aria-labelledby="org-title">
+    <div class="eyebrow">Tashkilotchi paneli</div>
+    <h1 id="org-title">Tadbirlaringiz</h1>
+    <p class="ahero-sub" id="org-sub">Tadbir yarating, seans va narxlarni belgilang — admin tasdiqlagach, tadbir afishada chiqadi.</p>
+  </section>
+
+  <section class="stats" id="stats" aria-label="Statistika"></section>
+
+  <div class="orgbar">
+    <div class="tabs" role="tablist" aria-label="Bo'limlar">
+      <button class="tab" role="tab" id="tab-events" aria-controls="panel-events" aria-selected="true" type="button">Tadbirlarim<span class="count" id="count-events"></span></button>
+      <button class="tab" role="tab" id="tab-form" aria-controls="panel-form" aria-selected="false" tabindex="-1" type="button">Yangi tadbir</button>
+      <button class="tab" role="tab" id="tab-ctrl" aria-controls="panel-ctrl" aria-selected="false" tabindex="-1" type="button">Kontrollerlar<span class="count" id="count-ctrl"></span></button>
+    </div>
+    <button class="btn btn-grad" type="button" id="new-event"><span data-icon="sparkle"></span>Yangi tadbir</button>
+  </div>
+
+  <section class="apanel" id="panel-events" role="tabpanel" aria-labelledby="tab-events">
+    <div id="event-list"></div>
+  </section>
+
+  <section class="apanel" id="panel-form" role="tabpanel" aria-labelledby="tab-form" hidden>
+    <form class="evform" id="event-form" novalidate>
+      <div class="evform-main panel-card">
+        <h2 class="evform-title" id="form-title">Yangi tadbir</h2>
+        <p class="evform-sub" id="form-sub">Afisha va asosiy ma'lumotlarni kiriting. Saqlangach, seans va narxlarni qo'shasiz.</p>
+        <div class="banner" id="form-banner" role="alert" hidden></div>
+        <div class="field">
+          <label for="ev-title">Tadbir nomi</label>
+          <input class="input" id="ev-title" maxlength="200" placeholder="Masalan: Yulduzlar konserti" required>
+        </div>
+        <div class="field">
+          <label for="ev-desc">Tavsif <span class="hint" id="desc-count">0 / 10+</span></label>
+          <textarea class="input" id="ev-desc" rows="6" placeholder="Tadbir haqida: kimlar ishtirok etadi, nimani kutish mumkin…" required></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ev-duration">Davomiyligi (daqiqa)</label>
+            <input class="input" id="ev-duration" type="number" min="1" max="1440" step="5" placeholder="120" required>
+          </div>
+          <div class="field">
+            <label for="ev-age">Yosh chegarasi</label>
+            <select class="input" id="ev-age">
+              <option value="">Cheklovsiz</option>
+              <option value="0">0+</option>
+              <option value="6">6+</option>
+              <option value="12">12+</option>
+              <option value="16">16+</option>
+              <option value="18">18+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" id="gallery-field">
+          <label for="ev-gallery">Fotogalereya <span class="hint">ixtiyoriy · 10 tagacha</span></label>
+          <input class="input filein" id="ev-gallery" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+          <div class="gallery-preview" id="gallery-preview"></div>
+        </div>
+        <div class="evform-actions">
+          <button class="btn btn-secondary" type="button" id="form-cancel">Bekor qilish</button>
+          <button class="btn btn-grad btn-lg" type="submit" id="form-submit">Tadbirni yaratish</button>
+        </div>
+      </div>
+      <aside class="evform-side">
+        <label class="dropzone" id="dropzone" for="ev-poster">
+          <input id="ev-poster" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only">
+          <img id="poster-preview" alt="" hidden>
+          <span class="dz-empty" id="dz-empty">
+            <span class="dz-ic" data-icon="sparkle"></span>
+            <b>Afisha yuklang</b>
+            <small>JPG, PNG yoki WEBP · 5 MB gacha<br>Tavsiya: tik (3:4) rasm</small>
+          </span>
+          <span class="dz-change" id="dz-change" hidden>Afishani almashtirish</span>
+        </label>
+        <p class="field-error" id="poster-error" hidden></p>
+        <div class="evflow">
+          <b>Keyingi qadamlar</b>
+          <ol>
+            <li>Tadbirni saqlang</li>
+            <li>Seans qo'shing: zal, vaqt va narxlar</li>
+            <li>Admin tasdiqlaydi — tadbir afishada chiqadi</li>
+            <li>Kontroller biriktiring — kirishda QR skanerlanadi</li>
+          </ol>
+        </div>
+      </aside>
+    </form>
+  </section>
+
+  <section class="apanel" id="panel-ctrl" role="tabpanel" aria-labelledby="tab-ctrl" hidden>
+    <div class="ctrlgrid">
+      <form class="panel-card ctrlform" id="ctrl-form" novalidate>
+        <h2 class="evform-title">Yangi kontroller</h2>
+        <p class="evform-sub">Kontroller kirishda chiptalardagi QR kodni skanerlaydi. Unga login va parol berasiz.</p>
+        <div class="banner" id="ctrl-banner" role="alert" hidden></div>
+        <div class="field"><label for="c-name">To'liq ism</label><input class="input" id="c-name" autocomplete="off" required></div>
+        <div class="field"><label for="c-email">Email (login)</label><input class="input" id="c-email" type="email" autocomplete="off" required></div>
+        <div class="field"><label for="c-pass">Parol</label><input class="input" id="c-pass" type="password" autocomplete="new-password" required></div>
+        <p class="hint-line">Kamida 8 belgi: katta va kichik harf, raqam va belgi (masalan <code>Kirish#2026</code>)</p>
+        <button class="btn btn-primary btn-block" type="submit" id="ctrl-submit">Kontroller yaratish</button>
+      </form>
+      <div id="ctrl-list"></div>
+    </div>
+  </section>
+</main>
+<footer id="footer"></footer>
+
+<div class="drawerbg" id="session-drawer" hidden>
+  <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="sd-title">
+    <div class="drawer-head">
+      <div><h4 id="sd-title">Seans qo'shish</h4><small class="sd-event" id="sd-event"></small></div>
+      <button class="themebtn" type="button" id="sd-close" aria-label="Yopish"></button>
+    </div>
+    <form class="drawer-body sdform" id="session-form" novalidate>
+      <div class="banner" id="sd-banner" role="alert" hidden></div>
+      <div class="field">
+        <label for="sd-venue">Zal</label>
+        <select class="input" id="sd-venue" required></select>
+      </div>
+      <div class="field">
+        <label for="sd-time">Sana va vaqt</label>
+        <input class="input" id="sd-time" type="datetime-local" required>
+      </div>
+      <div class="field">
+        <span class="lbl">Kirish turi</span>
+        <div class="seatseg" role="radiogroup" aria-label="Kirish turi">
+          <label><input type="radio" name="seating" value="SEATED" checked><span><b>O'rindiqli</b><small>3D zal, joy tanlanadi</small></span></label>
+          <label><input type="radio" name="seating" value="GENERAL"><span><b>Umumiy kirish</b><small>Toifa va soni bo'yicha</small></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl" id="cats-label">Sektorlar va narxlar</span>
+        <div id="cats"></div>
+      </div>
+      <div class="sd-actions">
+        <button class="btn btn-secondary" type="button" id="sd-cancel">Bekor qilish</button>
+        <button class="btn btn-grad" type="submit" id="sd-submit">Seansni qo'shish</button>
+      </div>
+    </form>
+  </aside>
+</div>
+
+<div class="modalbg" id="confirm-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+    <h4 id="cm-title"></h4>
+    <p class="modal-sub" id="cm-sub"></p>
+    <div class="banner" id="cm-banner" role="alert" hidden></div>
+    <div class="amodal-actions">
+      <button class="btn btn-secondary" type="button" id="cm-cancel">Yo'q</button>
+      <button class="btn btn-primary danger-btn" type="button" id="cm-ok">Ha</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

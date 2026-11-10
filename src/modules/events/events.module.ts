@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { EventsController } from './events.controller';
+import { AdminEventsController, EventsController } from './events.controller';
+import { EventCacheService } from '../../config/redis/event-cache.service';
+import { OrderModule } from '../order/order.module';
 
 @Module({
-  controllers: [EventsController],
-  providers: [EventsService],
+  imports: [OrderModule],
+  controllers: [EventsController, AdminEventsController],
+  providers: [EventsService, EventCacheService],
 })
 export class EventsModule {}
