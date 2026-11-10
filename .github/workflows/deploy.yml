@@ -35,11 +35,24 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p "$HOME/.ssh"
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/deploy_key"
-          chmod 600 "$HOME/.ssh/deploy_key"
-          ssh-keygen -y -f "$HOME/.ssh/deploy_key" > /dev/null \
-            && echo "kalit formati to'g'ri" \
-            || { echo "SSH_PRIVATE_KEY secret noto'g'ri (BEGIN/END qatorlari bilan to'liq private kalit kerak)"; exit 1; }
+          KEY_FILE="$HOME/.ssh/deploy_key"
+          # CR (Windows qator oxiri) ni olib tashlaymiz — nusxalashda tez-tez qo'shilib qoladi
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+
+          if ! ssh-keygen -y -f "$KEY_FILE" > /dev/null 2>&1; then
+            echo "::error::SSH_PRIVATE_KEY secret o'qilmadi. Diagnostika:"
+            echo "  bayt soni  : $(wc -c < "$KEY_FILE")"
+            echo "  qator soni : $(wc -l < "$KEY_FILE")"
+            echo "  1-qator    : $(head -1 "$KEY_FILE" | cut -c1-40)"
+            echo "  oxirgi     : $(tail -1 "$KEY_FILE" | cut -c1-40)"
+            echo "Kutilgani: 1-qator '-----BEGIN OPENSSH PRIVATE KEY-----',"
+            echo "oxirgisi '-----END OPENSSH PRIVATE KEY-----', jami 7+ qator."
+            echo "Secret nomi aynan SSH_PRIVATE_KEY bo'lishi va kalit to'liq (public emas) bo'lishi kerak."
+            exit 1
+          fi
+          echo "kalit formati to'g'ri, fingerprint:"
+          ssh-keygen -lf "$KEY_FILE"
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> "$HOME/.ssh/known_hosts" || true
 
       - name: Verify SSH connection
